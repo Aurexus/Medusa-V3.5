@@ -27,7 +27,6 @@ from flask import (
 
 # from flask_session import Session
 from fuzzywuzzy import process
-from ultralytics import YOLO
 import pytesseract
 import numpy as np
 from io import BytesIO
