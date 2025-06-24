@@ -11,11 +11,12 @@ ACCEPT_EULA=Y apt-get install -y msodbcsql17
 source env/bin/activate
 
 # Install dependencies
-pip install -r requirements.txt
+pip install --user -r requirements.txt
 
 # Set environment variables
 export FLASK_ENV=production
 export FLASK_APP=app.py
 
 # Start Flask application
-flask run --host=0.0.0.0 --port=8000
+#flask run --host=0.0.0.0 --port=8000
+gunicorn app:app --bind=0.0.0.0:8000
