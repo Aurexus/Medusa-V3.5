@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aurexus Medusa</title>
+
+    <!-- ================= Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
+
+    <!-- Styles -->
+    <link href="{{ url_for('static', filename='assets/css/lib/font-awesome.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/jquery.verySimpleImageViewer.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/lib/themify-icons.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/lib/data-table/buttons.bootstrap.min.css') }}"
+        rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/css/lib/menubar/sidebar.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/lib/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/lib/sweetalert/sweetalert.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/lib/helper.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/style.css') }}" rel="stylesheet">
+
+    <style>
+       
+
+        #content::-webkit-scrollbar {
+            width: 8px;
+            color: #dcdcdf;
+
+        }
+
+        #content::-webkit-scrollbar-track {
+            background-color: rgb(234 234 239);
+
+        }
+
+        #content::-webkit-scrollbar-thumb {
+            background-color: rgb(184 184 196);
+
+        }
+
+        textarea::-webkit-scrollbar {
+            width: 5px;
+            color: #dcdcdf;
+        }
+
+        textarea::-webkit-scrollbar-track {
+            background-color: rgb(234 234 239);
+        }
+
+        textarea::-webkit-scrollbar-thumb {
+            background-color: rgb(184 184 196);
+			
+        }
+		#imageViewerContainer {
+            position: relative;
+            max-width: 100%;
+            overflow: hidden;
+        }
+        .bounding-box {
+            position: absolute;            
+            background-color: rgb(64 57 57 / 30%);
+            pointer-events: none;
+        }
+        .bounding-box span {
+            background-color: rgba(255, 0, 0, 0.7);
+            color: white;
+            padding: 2px 4px;
+            font-size: 12px;
+            position: absolute;
+            top: -1.5em;
+            left: 0;
+        }
+		.badge-light-red {
+            background-color: lightcoral;
+        }
+		.badge {
+			border-radius:0px;
+			border:0px;
+		}
+    </style>
+
+
+</head>
+
+<body>
+    {% include 'logheader.html' %}
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <div class="row">
+                    <a type="button" class="btn btn-labeled btn-primary"
+                        href="ocr">
+                        <span class="btn-label"><i class="fa fa-fw fa-home"></i></span> Retourner
+                    </a>
+                </div>
+                <!-- /# row -->
+                <section id="main-content">
+                    <div class="row">
+                        <div class="card col-lg-6">
+							<div class="form-group col-md-12">
+                                <!--<button id="prev-button" class="btn btn-sm btn-primary form-control col-md-2" id="prebtn"><<</button>
+                                <button id="next-button" class="btn btn-sm btn-primary form-control col-md-2">>></button>
+                                <button class="btn btn-sm btn-primary form-control col-md-2" id="reset"><|></button>
+								<button class="btn btn-sm btn-primary form-control col-md-2" id="ocr_do">OCR</button>-->
+                                <a class="col-md-2" id="imgsrs">
+                                   
+                                </a>
+                                <!--<input type="checkbox" name="zoomset" class="" id="zoomset"> Correction de la
+                                zone de zoom</input>-->
+                                <span>
+                                    <div id="jquery-script-menu">
+                                        <div class="jquery-script-clear"></div>
+										
+                                    </div>
+									<textarea id="ocr" name="ocr" ng-model="ocr" class="form-control col-sm-12"
+                                            placeholder="ocr" style="height: 150px;font-size:12px;font-size:12px;"
+                                            value="" ></textarea>
+                                    <div id="imageViewerContainer" style="width: 100%; height:480px;">
+									
+                                    <img id="zoom_07" style="object-fit:fill;" src='' width="570" height="550" data-zoom='' hidden></img>
+									</div>
+                                    <!--<img id="zoom_07" style="object-fit:fill;" src='<?php /*echo $image_link.$image*/?>' width="570" height="550" data-zoom='<?php /*echo $image_link.$image*/?>'></img>-->
+                                </span>
+                            </div>
+
+                            <!--<div class="form-group col-md-6-right" > <button type="button" class="btn btn-labeled btn-primary">
+                <span class="btn-label"><i class="glyphicon glyphicon-chevron-left"></i></span>Prev</button>
+            <button type="button" class="btn btn-labeled btn-primary">
+                <span class="btn-label"><i class="glyphicon glyphicon-chevron-right"></i></span>
+                Next</button></div>-->
+                            
+
+                        </div>
+                        <div class="card col-lg-6">
+                            <div id="content" style="height:600px;overflow-y:scroll;">
+                                <form method="POST" class="form-inline" style="background-color:#e6e7ec;">
+								 <div class="form-group col-md-12">
+									<label class="text-danger"><b>Author </b>&nbsp;&nbsp;<i class="badge badge-sm {% if author_con|int >= 90 %}badge-success{% elif author_con|int >= 70 %}badge-warning{% elif author_con|int >= 50 %}badge-light-red{% else %}badge-danger{% endif %}">{{author_con}}%</i></label>
+                                    <input class="form-control col-sm-12" type="text" id="fullname" name="fullname" placeholder="Author" value='{{author}}'>
+                                </div>
+								<div class="form-group col-md-12">
+									<label class="text-danger"><b>Title </b>&nbsp;&nbsp;<i class="badge badge-sm {% if title_con|int >= 90 %}badge-success{% elif title_con|int >= 70 %}badge-warning{% elif title_con|int >= 50 %}badge-light-red{% else %}badge-danger{% endif %}">{{title_con}}%</i></label>
+                                    <textarea class="form-control col-sm-12" id="title" name="title" rows="4" placeholder="Title" style="height:150px">{{title}}</textarea>
+                                </div>
+                                <div class="form-group col-md-12">
+									<label class="text-danger"><b>Address </b>&nbsp;&nbsp;<i class="badge badge-sm {% if address_con|int >= 90 %}badge-success{% elif address_con|int >= 70 %}badge-warning{% elif address_con|int >= 50 %}badge-light-red{% else %}badge-danger{% endif %}">{{address_con}}%</i></label>
+                                    <input class="form-control col-sm-12" type="text" id="address" name="address" placeholder="Address" value='{{address}}' >
+                                </div>
+                                <div class="form-group col-md-12">
+									<label class="text-danger"><b>Format </b>&nbsp;&nbsp;<i class="badge badge-sm {% if format_con|int >= 90 %}badge-success{% elif format_con|int >= 70 %}badge-warning{% elif format_con|int >= 50 %}badge-light-red{% else %}badge-danger{% endif %}">{{format_con}}%</i></label>
+                                    <input class="form-control col-sm-12" type="text" id="format" name="format" placeholder="Format" value='{{format}}' >
+                                </div>
+                                
+                                <div class="form-group col-md-12">
+									<label class="text-danger"><b>Cote </b>&nbsp;&nbsp;<i class="badge badge-sm {% if cote_con|int >= 90 %}badge-success{% elif cote_con|int >= 70 %}badge-warning{% elif cote_con|int >= 50 %}badge-light-red{% else %}badge-danger{% endif %}">{{cote_con}}%</i></label>
+                                    <input class="form-control col-sm-12" type="text" id="Cote" name="Cote" placeholder="Cote" value='{{cote}}'>
+                                </div>
+                                <div class="form-group col-md-12">
+									<label class="text-danger"><b>Comment </b>&nbsp;&nbsp;<i class="badge badge-sm "></i></label>
+                                    <textarea class="form-control col-sm-12" id="extra-details" name="extra-details" rows="2" placeholder="Extra Details" style="height:150px"></textarea>
+                                </div>
+                               
+                                    
+                                </form>
+                                <div class="form-group col-md-12">
+                                    <button class="btn btn-primary form-control input-flat col-sm" id="save_record"
+                                        name="recordsave">Sauvegarder</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- /# column -->
+                    </div>
+                    <!-- /# row -->
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="footer">
+                                <p>
+                                     © Aurexus. - <a href="www.aurexus.com">aurexus.com</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- jquery vendor -->
+
+    <!--<script src="assets/js/lib/jquery.min.js"></script>-->
+    <!-- jquery vendor -->
+    <!-- nano scroller -->
+    <!-- bootstrap -->
+    <script src="{{ url_for('static', filename='') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/lib/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.verySimpleImageViewer.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.verySimpleImageViewer.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/lib/jquery.nanoscroller.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/lib/menubar/sidebar.js' ) }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/lib/preloader/pace.min.js' ) }}"></script>
+
+    <script src="{{ url_for('static', filename='assets/js/lib/bootstrap.min.js' ) }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/scripit.js' ) }}"></script>
+    <!-- scripit init-->
+
+    <!--<script type="text/javascript" src="https://pagead2.googlesyndication.com/pagead/show_ads.js"></script>-->
+
+    <script src="{{ url_for('static', filename='assets/js/lib/sweetalert/sweetalert.min.js' ) }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/lib/sweetalert/sweetalert.init.js') }}"></script>
+
+    <script>
+        function myclickFunction() {
+            window.location.href = "../index.php";
+        }
+    </script>
+    <script>
+		$(document).ready(function() {
+             
+			 $('#ocr').hide();
+             $('#ocr_do').click(function () {
+                 $('#ocr').show().addClass('loading').val('Loading...');
+				var imageSrc = $('#zoom_07').attr('src');
+				
+				 $.ajax({
+                    url: '/analyze_image',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({                        
+                        image: imageSrc
+                    }),
+                    success: function(response) {
+                        var result = response.content.join('\n');
+                        $('#ocr').removeClass('loading').val(result);
+                    },
+                    error: function(xhr, status, error) {
+                        $('#ocr').removeClass('loading').val('Error: ' + xhr.responseText);
+                    }
+                });
+				
+			})
+            
+          
+            if($('#zoomset').is(':checked'))
+            {
+                setzoom=true;
+            }
+            else
+            {
+                setzoom=false;
+            }
+    const imageConfig = {
+        imagePath: "https://aurexus.net/auximages/GEO2/{{folder}}/{{imageNo}}",
+        boxes: {{ point | safe}}
+    };
+
+function createBoundingBox(box, container, scale) {
+        const boundingBox = document.createElement('div');
+        boundingBox.classList.add('bounding-box');
+        
+        const top = box.coordinates[0][1] * scale;
+        const left = box.coordinates[0][0] * scale;
+        const width = (box.coordinates[1][0] - box.coordinates[0][0]) * scale;
+        const height = (box.coordinates[1][1] - box.coordinates[0][1]) * scale;
+
+        boundingBox.style.top = `${top}px`;
+        boundingBox.style.left = `${left}px`;
+        boundingBox.style.width = `${width}px`;
+        boundingBox.style.height = `${height}px`;
+
+        const label = document.createElement('span');
+        label.textContent = `${box.text} (${(box.confidence * 100).toFixed(2)}%)`;
+        boundingBox.appendChild(label);
+
+        container.appendChild(boundingBox);
+    }
+
+    function updateBoundingBoxes(container, scale) {
+        const boundingBoxes = container.getElementsByClassName('bounding-box');
+        imageConfig.boxes.forEach((box, index) => {
+            const boundingBox = boundingBoxes[index];
+            const top = box.coordinates[0][1] * scale;
+            const left = box.coordinates[0][0] * scale;
+            const width = (box.coordinates[1][0] - box.coordinates[0][0]) * scale;
+            const height = (box.coordinates[1][1] - box.coordinates[0][1]) * scale;
+
+            boundingBox.style.top = `${top}px`;
+            boundingBox.style.left = `${left}px`;
+            boundingBox.style.width = `${width}px`;
+            boundingBox.style.height = `${height}px`;
+        });
+    }
+
+    function displayImageWithBoundingBoxes(imageConfig) {
+        const imageViewerContainer = document.getElementById('imageViewerContainer');
+        imageViewerContainer.innerHTML = ''; // Clear previous content
+
+        const image = new Image();
+        image.src = imageConfig.imagePath;
+        image.style.transformOrigin = 'top left';
+        imageViewerContainer.appendChild(image);
+
+        image.onload = () => {
+            const scale = image.naturalWidth / image.width;
+            imageConfig.boxes.forEach(box => {
+                createBoundingBox(box, imageViewerContainer, scale);
+            });
+
+            let currentScale = 1;
+            imageViewerContainer.addEventListener('wheel', (event) => {
+                event.preventDefault();
+                if (event.deltaY < 0) {
+                    currentScale *= 1.1;
+                } else {
+                    currentScale /= 1.1;
+                }
+                image.style.transform = `scale(${currentScale})`;
+                updateBoundingBoxes(imageViewerContainer, currentScale * scale);
+            });
+        };
+    }
+
+    // Load the image with bounding boxes
+    displayImageWithBoundingBoxes(imageConfig);
+		 }) 
+    </script>
+</body>
+
+</html>

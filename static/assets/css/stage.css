@@ -1,0 +1,336 @@
+ html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .content-wrap{
+            height: 87vh;
+        }
+
+        .table-responsive{
+            height:85vh;
+            overflow-y: scroll;
+        }
+
+        .table-wrapper {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            padding: 20px;
+            height:100%;
+        }
+       
+        .step-progress {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .step {
+            width: 30px;
+            height: 30px;
+            font-size: 14px;
+            border-radius: 50%;
+            background-color: #dcdcdc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            transition: 0.2s ease;
+            position: relative;
+        }
+
+        .step:hover::after {
+            content: attr(data-title);
+            position: absolute;
+            bottom: 130%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #000;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 9999;
+            opacity: 1;
+            pointer-events: none;
+        }
+
+        .step.completed {
+            background-color: #00bfa6;
+            color: #fff;
+        }
+
+        .step.current {
+            background-color: #007bff;
+            color: #fff;
+            box-shadow: 0 0 0 4px #cfe2ff;
+        }
+
+        .line {
+            width: 16px;
+            height: 3px;
+            background-color: #ccc;
+            border-radius: 3px;
+        }
+
+        .detail-panel {
+            background: #ffffff;
+            border: 1px solid #e1e7f0;
+            padding: 25px;
+            border-radius: 12px;
+            min-height: 420px;
+            transition: all 0.3s ease;
+            height:100%;
+        }
+
+        .stage-card{
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+        .stage-card h5 {
+            color: #030A76;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .stage-card p {
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #444;
+        }
+
+        .stage-card img {
+            max-width: 100%;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-top: 12px;
+            transition: transform 0.3s;
+        }
+
+        .stage-card img:hover {
+            transform: scale(1.02);
+        }
+
+        .stage-card .meta {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+
+        
+        /* test table UI */
+        .table {
+            border-collapse: separate;
+            border-spacing: 0 12px;
+        }
+
+        .table thead {
+            background-color: #e8f0fe;
+            color: #000;
+            font-weight: bold;
+            position: sticky;
+            top:0;
+            z-index: 100;
+        }
+
+        .table thead th {
+            vertical-align: middle;
+            text-align: center;
+            padding: 16px;
+            border: none;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .table tbody tr {
+            background-color:#F5F8FD;
+            transition: box-shadow 0.3s ease;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(7, 7, 7, 0.05);
+        }
+
+        .table tbody tr:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .table td {
+            vertical-align: middle;
+            padding: 14px 12px;
+            font-size: 14px;
+            border: none;
+            color: #333;
+            background: #f8f7f7;
+        }
+
+        .table td:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+
+        .table td:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        @media (max-width:1800px) {
+            .table thead tr th{
+                font-size: 10px;
+            }
+
+            .table tr td{
+                font-size: 10px;
+            }
+
+            .step {
+                width: 20px;
+                height: 20px;
+                font-size: 9px;
+                border-radius: 50%;
+                background-color: #dcdcdc;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                color: #333;
+                cursor: pointer;
+                transition: 0.2s ease;
+                position: relative;
+            }
+
+            .step:hover::after {
+                content: attr(data-title);
+                position: absolute;
+                bottom: 130%;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #000;
+                color: #fff;
+                padding: 5px 10px;
+                border-radius: 5px;
+                font-size: 12px;
+                white-space: nowrap;
+                z-index: 9999;
+                opacity: 1;
+                pointer-events: none;
+            }
+
+            .step.completed {
+                background-color: #00bfa6;
+                color: #fff;
+            }
+
+            .step.current {
+                background-color: #007bff;
+                color: #fff;
+                box-shadow: 0 0 0 4px #cfe2ff;
+            }
+
+            .line {
+                width: 9px;
+                height: 2px;
+                background-color: #ccc;
+                border-radius: 3px;
+            }
+            .step-progress {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+             .table td {
+                vertical-align: middle;
+                padding: 7px 6px;
+                font-size: 10px;
+                border: none;
+                color: #333;
+                background: #f8f7f7;
+            }
+
+
+        }
+
+
+
+        /* @media (max-width: 768px) {
+            .table thead {
+                display: none;
+            }
+
+            .table, .table tbody, .table tr, .table td {
+                display: block;
+                width: 100%;
+            }
+
+            .table tr {
+                margin-bottom: 20px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+                border-radius: 8px;
+                overflow: hidden;
+            }
+
+            .table td {
+                text-align: right;
+                padding-left: 50%;
+                position: relative;
+            }
+
+            .table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 16px;
+                width: 45%;
+                font-weight: bold;
+                text-align: left;
+                color: #555;
+            }
+        }
+
+        .detail-panel {
+            background: #ffffff;
+            border: 1px solid #e1e7f0;
+            padding: 25px;
+            border-radius: 12px;
+            min-height: 420px;
+            transition: all 0.3s ease;
+        }
+
+        .stage-card h5 {
+            color: #030A76;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .stage-card p {
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #444;
+        }
+
+        .stage-card img {
+            max-width: 100%;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-top: 12px;
+            transition: transform 0.3s;
+        }
+
+        .stage-card img:hover {
+            transform: scale(1.02);
+        }
+
+        .stage-card .meta {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 5px;
+        } */

@@ -1,0 +1,376 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AUREXUS</title>
+    <!-- ================= Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
+    <!-- Styles -->
+    <link href="static/assets/css/lib/calendar2/pignose.calendar.min.css" rel="stylesheet">
+    <link href="static/assets/css/lib/chartist/chartist.min.css" rel="stylesheet">
+    <link href="static/assets/css/lib/font-awesome.min.css" rel="stylesheet">
+    <link href="static/assets/css/lib/themify-icons.css" rel="stylesheet">
+    <link href="static/assets/css/lib/owl.carousel.min.css" rel="stylesheet" />
+    <link href="static/assets/css/lib/owl.theme.default.min.css" rel="stylesheet" />
+    <link href="static/assets/css/lib/weather-icons.css" rel="stylesheet" />
+    <link href="static/assets/css/lib/menubar/sidebar.css" rel="stylesheet">
+    <link href="static/assets/css/lib/bootstrap.min.css" rel="stylesheet">
+    <link href="static/assets/css/lib/helper.css" rel="stylesheet">
+    <link href="static/assets/css/style.css" rel="stylesheet">
+    <style>
+        .pagination > li {margin-right:2px !important;}
+        .swal-wide{width:500px !important;height:200px !important;position:center !important;}
+        .dataTables_paginate a {    
+	        padding: 0px 12px 1px 7px !important;
+            color: white !important;
+            border: 0.5px solid white !important;
+            background-color:#5873fe !important;
+            cursor: pointer;}
+		select{font-size:14px !important;}
+		.badge {
+			border-radius:0px;
+			border:0px;
+		}
+        .language-toggle-container {
+    display: flex;
+    align-items: center;
+}
+
+.form-check-input {
+    display: none; /* Hide the default checkbox */
+}
+
+.form-check-label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 10px 20px;
+    background-color: #ccc;
+    border-radius: 30px;
+    transition: background-color 0.3s;
+}
+
+.form-check-label .switch {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+    transform: translateY(-50%);
+}
+
+.form-check-input:checked + .form-check-label {
+    background-color: #4CAF50; /* Green when toggled */
+}
+
+.form-check-input:checked + .form-check-label .switch {
+    transform: translate(50%, -50%); /* Move the switch */
+}
+
+.flag {
+    width: 20px; /* Adjust the flag size */
+    height: auto;
+    margin-left: 10px; /* Space between flags */
+}
+    </style>
+</head>
+
+<body>
+
+	    <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
+        <div class="nano">
+            <div class="nano-content">
+                <ul>
+                    <div class="logo"><img src="static/assets/images/Aurexuslogo.png" width="130px" height="130px"></div>                    
+                    
+                    <li><a href="/homepage"><i class="ti-home"></i> Tableau de bord</a></li>  
+					<li><a href="/stage"><i class="ti-layers-alt"></i> Stage</a></li>
+					<li><a href="/ocr"><i class="ti-layout"></i> OCR</a></li>	
+                    
+					<!--<li><a href="ui-progressbar.html"><i class="ti-progress"></i> Progressbar</a></li>-->	
+					<li><a href="/listdata?chkTest=1&amp;page_no=1"><i class="ti-menu-alt"></i>Test</a></li></a></li>
+					<li><a href="/listdata?chkTest=2&amp;page_no=1"><i class="ti-menu-alt"></i>Anomalies</a></li></a></li>
+					<li><a href="/listdata?chkTest=0&amp;page_no=1"><i class="ti-menu-alt"></i> Notices <span class="badge badge-sm badge-warning rounded-0" style="position:static;font-size:10px;font-weight:bold">5338</span></a></li></a></li>
+					
+                    <!--<li><a class="sidebar-sub-toggle"><i class="ti-layout-grid4-alt"></i> Table <span
+                                class="sidebar-collapse-icon ti-angle-down"></span></a>
+                        <ul>
+                            
+
+                            <li><a href="table-export.html">Datatable Export</a></li>
+                            <li><a href="table-row-select.html">Datatable Row Select</a></li>
+                            <li><a href="table-jsgrid.html">Editable </a></li>
+                        </ul>
+                    </li> --> 
+                    <!--<li><a href="form-basic.html"><i class="ti-view-list-alt"></i> Basic Form </a></li>-->                     
+                    <li><a href="/logout"><i class="ti-power-off"></i> Déconnexion</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /# sidebar -->
+    <div class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="float-left">
+                        <div class="hamburger sidebar-toggle">
+                            <span class="line"></span>
+                            <span class="line"></span>
+                            <span class="line"></span>
+                        </div>
+                    </div>
+                    <div class="float-left">
+                            <div class="">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="#">Notices</a></li>
+                                    
+                                </ol>
+                            </div>
+                    </div>
+                    <div class="float-left">
+                        <div class="">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a class='badge badge-warning'><b>PROJET PERPIGAN</b></a></li>
+                                </ol>
+                            </div>
+                         
+                    </div>
+                    <div class="float-right">
+                        <div class="header-icon" disabled="disabled">
+                            <img  width="90px" height="30px" src="https://www.aurexus.com/wp-content/uploads/2021/10/1_80x50mm_adobe_illustratorwhite.png"></img>
+                        </div>
+                        <div class="header-icon">
+                            
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             <img class="form-control-sm" src="static/assets/images/fr_flag.png">French
+                            </button>
+                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="?lang=en"><img class="form-control-sm" src="static/assets/images/us_flag.png">English</a>
+                             </div>
+                        </div>                       
+                        
+                        <div class="dropdown dib">
+                            <div class="header-icon" data-toggle="dropdown">
+                                <span class="user-avatar">AuxClient020
+                                    <i class="ti-angle-down f-s-10"></i>
+                                </span>
+                                <div class="drop-down dropdown-profile dropdown-menu dropdown-menu-right">
+                                    
+                                    <div class="dropdown-content-body">
+                                        <ul>                                            
+                                            <li>
+                                            <a href='#' target='_blank'>
+                                                <i class="ti-file"></i> Documentation</a>
+                                            </li>
+                                            <li>
+                                            <a href='#' onclick="myclickFunction()">
+                                                <i class="ti-power-off"></i>  Déconnexion</a>
+                                            </li>
+                                            
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                
+                <!-- /# row -->
+                <section id="main-content">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div clas="card">
+                                <form method="POST" class="form-inline" action="?chkTest=0&page_no=1">
+                                    <!--<div class="form-group col-md-2">
+                                        <label>Lot(s)</label>
+                                        <select  id="folder" name="dossier" class="form-control col-sm-12 p-1">
+                                            <option value="ALL">TOUT</option>
+                                            <option value="RBX20">RBX20</option><option value="RBX21">RBX21</option><option value="RBX22">RBX22</option><option value="RBX23">RBX23</option><option value="RBX24">RBX24</option><option value="REMI01">REMI01</option><option value="REMI02">REMI02</option><option value="REMI03">REMI03</option><option value="REMI04">REMI04</option><option value="REMI05">REMI05</option><option value="RMSBX_01-01">RMSBX_01-01</option><option value="RMSBX_01-02">RMSBX_01-02</option><option value="RMSBX_01-03">RMSBX_01-03</option><option value="RMSBX_01-04">RMSBX_01-04</option><option value="RMSBX_01-05">RMSBX_01-05</option><option value="RMSBX_01-06">RMSBX_01-06</option><option value="RMSBX_01-07">RMSBX_01-07</option><option value="TestBA">TestBA</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group  col-md-2">
+                                        <label>Traitement</label>
+                                         <select id="traitement" name="traitement" class="form-control col-sm-12 p-1">
+                                            <option value="ALL">TOUT</option>													
+                                            <option value="DERIVATION">DERIVATION</option><option value="DERIVATION MEME NOTICE">DERIVATION MEME NOTICE</option><option value="NE PAS TRAITER">NE PAS TRAITER</option><option value="DOUBLON">DOUBLON</option><option value="SUITE">SUITE</option><option value="SAISIE">SAISIE</option><option value="SAISIE_DM">SAISIE_DM</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label>Code d&#39;anomalie</label>
+                                        <select id="type" name="type" class="form-control col-sm-12 p-1">
+                                            <option value="ALL">TOUT</option>
+                                            <option value="_">_</option><option value="SAI">SAI</option><option value="DER">DER</option><option value="DIV">DIV</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label>Statut</label>
+                                        <select id="anscode" name="anscode" class="form-control col-sm-12 p-1">
+                                               <option value="ALL">TOUT</option>
+                                            <option value="Todo">TODO</option>
+                                            <option value="Ok">OK</option>
+                                            <option value="A revoir">A revoir</option>
+                                            <option value="A revoir, avec modification de la notice">A revoir, avec modification de la notice</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label>Filtrer par</label>
+                                        <select id="sort" name="sort" class="form-control col-sm-12 p-1">
+                                            <option value="order by z001_x0">IMAGE</option>
+                                               <option value="order by QCote">COTE</option>                                                	
+                                            <option value="order by traitement">TRAITEMENT</option>   
+                                            <option value="order by u990_b">ANO TYPE</option> 													
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label>Type de filtre</label>
+                                        <select id="sortype" name="sortype" class="form-control col-sm-12 p-1">
+                                               <option value="ASC">A-Z SORT</option>
+                                            <option value="DESC">Z-A SORT</option>
+                                                                                                
+                                        </select>
+                                    </div>-->
+                                    <div class="form-group col-md-6">																								
+                                        <input id="serachword" name="searchword" class="form-control col-sm-8 p-2" placeholder="Mot-clé" value="pier">
+                                        </input>
+                                        <select id="keycol" name="keycol" class="form-control col-md-4  p-1" style="height:42px!important">   
+                                            <option value="qcote">Nom</option>                                            
+											<option value="Notice_Traitee_Aff">Prénom</option>
+											<option value="Notice_Traitee_Aff">Année</option>
+											<option value="Notice_Traitee_Aff">Mois</option>
+											<option value="Notice_Traitee_Aff">Matricule</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <input type="submit"  id="" name='filters'   class="btn btn-primary  input-flat col-sm-12" value="Filtre"></input>
+                                    </div>
+                                    <!-- <div class="form-group col-md-2">
+                                        <a href="/download_csv" target="_blank" class="btn btn-primary fa fa-save input-flat col-sm-12"> Exporter</a>
+                                    </div> -->
+                                </form>
+                            </div>
+                            <div class="card p-t-5">
+                                <div class="" style="float:right">
+                                    <ul class="pagination" style="float:right">
+                                        <li><a class="btn btn-sm btn-primary" href="/listdata?chkTest=0&amp;page_no=1">Premier</a></li>
+                                        <li><a class="btn btn-sm btn-primary" href="/listdata?chkTest=0&amp;page_no=0">Précédent</a></li>
+                                        <li><a class="btn btn-sm btn-primary" href="/listdata?chkTest=0&amp;page_no=2">Suivant</a></li>
+                                        <li><a class="btn btn-sm btn-primary" href="/listdata?chkTest=0&amp;page_no=267">Dernier ››</a></li>
+                                    </ul>
+                                
+                                    <div style="padding: 10px 20px 0px;float:right;">
+                                        <strong>Page 1 sur 267 (5338 entrée)</strong>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class='table table-striped table-bordered border-top' style=''><thead><tr><th>Nom</th><th>Prénom</th><th>Année</th><th>Mois</th><th>Matricule</th><th>Action</th></tr></thead><tbody>
+									<tr><td>BAILLS</td><td>FERNAND</td><td>1980</td><td>Décembre</td><td>46000</td><td><a href='form-edit?list=1' class='btn-sm btn-primary btn-flat'><i class='fa fa-solid fa-edit'></i></a></td></tr>
+									<tr><td>JEAN</td><td>JOHN</td><td>1981</td><td>Décembre</td><td>46001</td><td><a href='form-edit?list=1' class='btn-sm btn-primary btn-flat'><i class='fa fa-solid fa-edit'></i></a></td></tr>
+									<tr><td>MICHEL</td><td>MICHAEL</td><td>1980</td><td>Décembre</td><td>46002</td><td><a href='form-edit?list=1' class='btn-sm btn-primary btn-flat'><i class='fa fa-solid fa-edit'></i></a></td></tr>
+									<tr><td>PIERRE</td><td>PETER</td><td>1981</td><td>Mai</td><td>46003</td><td><a href='form-edit?list=1' class='btn-sm btn-primary btn-flat'><i class='fa fa-solid fa-edit'></i></a></td></tr>
+									<tr><td>JEAN-BAPTISTE</td><td>JOHN THE BAPTIST</td><td>1985</td><td>Décembre</td><td>46004</td><td><a href='form-edit?list=1' class='btn-sm btn-primary btn-flat'><i class='fa fa-solid fa-edit'></i></a></td></tr>
+									<tr><td>MARIE</td><td>MARY</td><td>1980</td><td>Décembre</td><td>46005</td><td><a href='form-edit?list=1' class='btn-sm btn-primary btn-flat'><i class='fa fa-solid fa-edit'></i></a></td></tr>
+									<tr><td>JEANNE</td><td>JANE</td><td>1980</td><td>Décembre</td><td>46006</td><td><a href='form-edit?list=1' class='btn-sm btn-primary btn-flat'><i class='fa fa-solid fa-edit'></i></a></td></tr>
+									<tr><td>MARGUERITE</td><td>MARGARET</td><td>1979</td><td>Décembre</td><td>46007</td><td><a href='form-edit?list=1' class='btn-sm btn-primary btn-flat'><i class='fa fa-solid fa-edit'></i></a></td></tr>
+									<tr><td>FRANÇOISE</td><td>FRANCES</td><td>1988</td><td>Juillet</td><td>46008</td><td><a href='form-edit?list=1' class='btn-sm btn-primary btn-flat'><i class='fa fa-solid fa-edit'></i></a></td></tr>
+									<tr><td>ÉLISABETH</td><td>ELIZABETH</td><td>1982</td><td>Janvier</td><td>46009</td><td><a href='form-edit?list=1' class='btn-sm btn-primary btn-flat'><i class='fa fa-solid fa-edit'></i></a></td></tr>
+
+
+									</tbody></table>
+                                </div>
+                            </div>
+                        </div>                       
+                    </div>                  
+                                        
+                   <!--  <div class="row">
+                        <div class="col-lg-12">
+                            <div class="footer">
+                                <p>© Aurexus. - <a href="#">aurexus.com</a></p>
+                            </div>
+                        </div>
+                    </div> -->
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- jquery vendor -->
+    <script src="static/assets/js/lib/jquery.min.js"></script>
+    <script src="static/assets/js/lib/jquery.nanoscroller.min.js"></script>
+    <!-- nano scroller -->
+    <script src="static/assets/js/lib/menubar/sidebar.js"></script>
+    <script src="static/assets/js/lib/preloader/pace.min.js"></script>
+    <!-- sidebar -->
+
+    <script src="static/assets/js/lib/bootstrap.min.js"></script>
+    <script src="static/assets/js/scripts.js"></script>
+    <!-- bootstrap -->
+
+    <script src="static/assets/js/lib/calendar-2/moment.latest.min.js"></script>
+    <script src="static/assets/js/lib/calendar-2/pignose.calendar.min.js"></script>
+    <script src="static/assets/js/lib/calendar-2/pignose.init.js"></script>
+
+
+    <script src="static/assets/js/lib/weather/jquery.simpleWeather.min.js"></script>
+    <script src="static/assets/js/lib/weather/weather-init.js"></script>
+    <script src="static/assets/js/lib/circle-progress/circle-progress.min.js"></script>
+    <script src="static/assets/js/lib/circle-progress/circle-progress-init.js"></script>
+    <script src="static/assets/js/lib/chartist/chartist.min.js"></script>
+    <script src="static/assets/js/lib/sparklinechart/jquery.sparkline.min.js"></script>
+    <script src="static/assets/js/lib/sparklinechart/sparkline.init.js"></script>
+    <script src="static/assets/js/lib/owl-carousel/owl.carousel.min.js"></script>
+    <script src="static/assets/js/lib/owl-carousel/owl.carousel-init.js"></script>
+    <!-- scripit init-->
+    <script src="static/assets/js/dashboard2.js"></script>
+	
+	<!-- Get suggestions -->
+    <script>
+        function getSuggestions(button) {
+            const row = button.closest('tr');
+            const userInput = row.querySelector('.userInput').value;
+
+            fetch('/get_suggestions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_input: userInput
+                })
+            })
+			
+            .then(response => response.json())
+            .then(data => {
+                const suggestionsDiv = row.querySelector('.suggestions');
+                suggestionsDiv.innerHTML = `Filtered Suggestions: ${data.suggestions.join(', ')}`;
+            })
+			
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+
+</html>

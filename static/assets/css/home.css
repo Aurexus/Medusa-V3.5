@@ -1,0 +1,310 @@
+#main-content {
+  height: 91.75vh;
+  width: 100%;
+  overflow: hidden;
+  /* background: #000; */
+}
+
+.border {
+  border: 2px solid #fff;
+}
+
+/* Column I Card A  starts here*/
+		.progresscircle{
+			width: 150px;
+			height: 150px;
+			line-height: 150px;
+			background: none;
+			margin: 0 auto;
+			box-shadow: none;
+			position: relative;
+		}
+		.progresscircle:after{
+			content: "";
+			width: 100%;
+			height: 100%;
+			border-radius: 50%;
+			border: 12px solid #fff;
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+		.progresscircle > span{
+			width: 50%;
+			height: 100%;
+			overflow: hidden;
+			position: absolute;
+			top: 0;
+			z-index: 1;
+		}
+		.progresscircle .progresscircle-left{
+			left: 0;
+		}
+		.progresscircle .progresscircle-bar{
+			width: 100%;
+			height: 100%;
+			background: none;
+			border-width: 12px;
+			border-style: solid;
+			position: absolute;
+			top: 0;
+		}
+		.progresscircle .progresscircle-left .progresscircle-bar{
+			left: 100%;
+			border-top-right-radius: 80px;
+			border-bottom-right-radius: 80px;
+			border-left: 0;
+			-webkit-transform-origin: center left;
+			transform-origin: center left;
+		}
+		.progresscircle .progresscircle-right{
+			right: 0;
+		}
+		.progresscircle .progresscircle-right .progresscircle-bar{
+			left: -100%;
+			border-top-left-radius: 80px;
+			border-bottom-left-radius: 80px;
+			border-right: 0;
+			-webkit-transform-origin: center right;
+			transform-origin: center right;
+			animation: loading-1 1.8s linear forwards;
+		}
+		.progresscircle .progresscircle-value{
+			width: 90%;
+			height: 90%;
+			border-radius: 50%;
+			background: #44484b;
+			font-size: 24px;
+			color: #fff;
+			line-height: 135px;
+			text-align: center;
+			position: absolute;
+			top: 5%;
+			left: 5%;
+		}
+		.progresscircle.blue .progresscircle-bar{
+			border-color: #049dff;
+		}
+		.progresscircle.blue .progresscircle-left .progresscircle-bar{
+			animation: loading-2 1.5s linear forwards 1.8s;
+		}
+		 
+		 .progresscircle-left .progresscircle-bar{
+			animation: loading-3 1s linear forwards 1.8s;
+		}
+
+		 .progresscircle-left .progresscircle-bar{
+			animation: loading-4 0.4s linear forwards 1.8s;
+		}
+
+		 .progresscircle-left .progresscircle-bar{
+			animation: loading-5 1.2s linear forwards 1.8s;
+		}
+
+		@keyframes loadings-1 {
+		  0% {
+			-webkit-transform: rotate(0deg);
+			transform: rotate(0deg);
+		  }
+		  100% {
+			-webkit-transform: rotate(180deg);
+			transform: rotate(180deg);
+		  }
+		}
+		@keyframes loadings-2 {
+		  0% {
+			-webkit-transform: rotate(0deg);
+			transform: rotate(0deg);
+		  }
+		  100% {
+			-webkit-transform: rotate(144deg);
+			transform: rotate(144deg);
+		  }
+		}
+		@keyframes loadings-3 {
+		  0% {
+			-webkit-transform: rotate(0deg);
+			transform: rotate(0deg);
+		  }
+		  100% {
+			-webkit-transform: rotate(135deg);
+			transform: rotate(135deg);
+		  }
+		}
+		@keyframes loading-1{
+			0%{
+				-webkit-transform: rotate(0deg);
+				transform: rotate(0deg);
+			}
+			100%{
+				-webkit-transform: rotate(180deg);
+				transform: rotate(180deg);
+			}
+		}
+		@keyframes loading-2{
+			0%{
+				-webkit-transform: rotate(0deg);
+				transform: rotate(0deg);
+			}
+			100%{
+				-webkit-transform: rotate(180deg);
+				transform: rotate(180deg);
+			}
+		}
+		@keyframes loading-3{
+			0%{
+				-webkit-transform: rotate(0deg);
+				transform: rotate(0deg);
+			}
+			100%{
+				-webkit-transform: rotate(90deg);
+				transform: rotate(90deg);
+			}
+		}
+		@keyframes loading-4{
+			0%{
+				-webkit-transform: rotate(0deg);
+				transform: rotate(0deg);
+			}
+			100%{
+				-webkit-transform: rotate(180deg);
+				transform: rotate(180deg);
+			}
+		}
+		@media only screen and (max-width: 990px){
+			.progresscircle{ margin-bottom: 20px; }
+		}
+
+	/*Column I Chart A end here */
+
+		/* Table */
+		.table-responsive{
+			max-height:80%;
+			overflow-y: auto;
+		}
+
+		.sticky-top{
+			background-color:#2A4377; 
+			color: white;
+			z-index: 2;
+		}
+
+	/* Progress bar css code starts here */
+		.left__container{
+			display: flex;
+			justify-content: center;
+			padding: 1.25rem 0 ;
+			padding-right: 1.8rem;
+		}
+
+		.side__titles{
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.title__name{
+			padding: 0.6rem 0.1rem;
+			margin-bottom: 0.25rem;
+		}
+
+		.title__name h3{
+			margin-bottom: 0.20rem;
+			text-align: right;
+			font-size: 0.8rem;
+			letter-spacing: 1px;
+		}
+		.title__name p{
+			text-align: right;
+			color: #ff8d04;
+			font-size: 0.75rem;
+		}
+
+		.progress__bar__container{
+			padding-top:0.6rem ;
+		}
+		.progress__bar__container ul .active{
+			background-color: var(--secondery-color);
+
+		}
+
+		.progress__bar__container ul li{
+			display: flex;
+			align-items:center ;
+			justify-content: center;
+			list-style: none;
+			background: var(--shadow-color);
+			padding: 0.5rem 0.6rem;
+			margin-bottom: 2.3rem;
+			border-radius: 50%;
+			font-size: 1.4rem;
+			color: #ffffff;
+			margin-left:2rem ;
+		}
+
+		.progress__bar__container ul li::before{
+			content: '';
+			width: 1px;
+			height: 11vh;
+			position: absolute;
+			background-color: var(--shadow-color);
+
+		}
+
+		.progress__bar__container ul .active::before{
+			content: '';
+			width: 1px;
+			height: 11vh;
+			position: absolute;
+			background-color: var(--secondery-color);
+			/* z-index: -1; */
+		}
+
+	/* Progress bar css code ends here */
+
+	canvas{
+		display: block;
+	}
+
+	/* column 3 */
+	.gauge {
+		  width: 100%;
+		 /* max-width: 250px;*/
+		  font-family: "Roboto", sans-serif;
+		  font-size: 32px;
+		  color: #004033;
+		}
+
+		.gauge__body {
+		  width: 100%;
+		  height: 0;
+		  padding-bottom: 50%;
+		  background: #e7e7e7;
+		  position: relative;
+		  border-top-left-radius: 100% 200%;
+		  border-top-right-radius: 100% 200%;
+		  overflow: hidden;
+		}
+
+		.gauge__fill {
+		  position: absolute;
+		  top: 100%;
+		  left: 0;
+		  width: inherit;
+		  height: 100%;
+		  background: #005CE1;
+		  transform-origin: center top;
+		  transform: rotate(0.25turn);
+		  transition: transform 0.2s ease-out;
+		}
+
+		.gauge__cover {
+		  width: 75%;
+		  height: 150%;
+		  background: #ffffff;
+		  border-radius: 50%;
+		  position: absolute;
+		  top: 25%;
+		  left: 50%;
+		  transform: translateX(-50%);
+		}

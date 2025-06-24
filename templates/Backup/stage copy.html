@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AUREXUS</title>
+    <!-- ================= Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
+    <!-- Styles -->
+    <link href="{{url_for('static',filename='assets/css/lib/calendar2/pignose.calendar.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/chartist/chartist.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/font-awesome.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/themify-icons.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/owl.carousel.min.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/owl.theme.default.min.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/weather-icons.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/menubar/sidebar.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/helper.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/style.css')}}" rel="stylesheet">
+    <style>
+
+		#main-content{
+			height:90vh;
+			overflow: hidden;
+			background-color: white;
+		}
+
+        .pagination > li {margin-right:2px !important;}
+        .swal-wide{width:500px !important;height:200px !important;position:center !important;}
+        .dataTables_paginate a {    
+	        padding: 0px 12px 1px 7px !important;
+            color: white !important;
+            border: 0.5px solid white !important;
+            background-color:#5873fe !important;
+            cursor: pointer;}
+		select{font-size:14px !important;}
+		:root{
+			--primary-color:#02044A;
+			--secondery-color:#25CC88;
+			--shadow-color:#9d9fb3; 
+		}
+
+		
+		.stepper-wrapper {
+			display: flex;
+			justify-content: space-between;
+			margin: 20px 0;
+			position: relative;
+		}
+
+		.stepper-item {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			position: relative;
+			flex: 1;
+			margin-right:3px;
+		}
+
+		.stepper-item::before {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: 0;
+			width: 100%;
+			height: 4px;
+			background-color: #e0e0e0;
+			z-index: -1;
+		}
+
+		.stepper-item:first-child::before {
+			left: 50%;
+			width: 50%;
+		}
+
+		.stepper-item:last-child::before {
+			width: 50%;
+		}
+
+		.stepper-item.completed::before {
+			background-color: #f1c2c2;
+		}
+
+		.stepper-item .step-counter {
+			width: 30px;
+			height: 5px;
+			background-color: #cd9898;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 17px;
+			font-weight: bold;
+			color: #fff;
+		}
+		.step-counters {
+			width: 30px;
+			height: 5px;
+			border-radius: 50%;
+			
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 12px;
+			font-weight: bold;
+			color: #484772;
+		}
+
+		.stepper-item.completed .step-counter {
+			background-color: #4caf50;
+		}
+
+		.stepper-item .step-name {
+			margin-top: 0px;
+			font-size: 12px;
+			color: #333;
+		}
+
+		.stepper-item.completed .step-name {
+			color: #4caf50;
+			
+		}
+
+		.title__container h1{
+			letter-spacing: 2px;
+			color: white;
+			font-size: 1.25rem;
+			margin-bottom: 0.4rem;
+		}
+
+		.title__container p{
+			color: var(--shadow-color);
+			font-size: 0.75rem;
+		}
+
+
+		
+
+		.progress__bar__container{
+			padding-top:0.6rem ;
+			/* height: 100%; */
+		}
+		.progress__bar__container ul .active{
+			background-color: var(--secondery-color);
+
+		}
+
+		.progress__bar__container ul li{
+			display: flex;
+			align-items:center ;
+			justify-content: center;
+			list-style: none;
+			background: var(--shadow-color);
+			padding: 0.5rem 0.6rem;
+			margin-bottom: 2.3rem;
+			border-radius: 50%;
+			font-size: 1.4rem;
+			color: #ffffff;
+			margin-left:2rem ;
+		}
+
+		.progress__bar__container ul li::before{
+			content: '';
+			width: 1px;
+			height: 11vh;
+			position: absolute;
+			background-color: var(--shadow-color);
+
+		}
+
+		.progress__bar__container ul .active::before{
+			content: '';
+			width: 1px;
+			/* height: 11vh; */
+			position: absolute;
+			background-color: var(--secondery-color);
+			/* z-index: -1; */
+		}
+
+		
+
+		.nxt__btn{
+			width: 25%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			/* float: right; */
+			/* width: 30%; */
+			padding: 0.75rem 0;
+			font-size: 1.1rem;
+			font-weight: bold;
+			border-radius: 2rem;
+			background: var(--secondery-color);
+			color: #ffffff;
+		}
+
+		.nxt__btn:hover{
+			transform: scale(1.03);
+			background:#1cd68c ;
+			cursor: pointer;
+		}
+		.buttons{
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin:0;
+			padding: 0;
+		}
+
+		.prev__btn{
+			margin: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: none;
+			border: none;
+			color: #ffffff;
+			font-size: 18px;
+			cursor: pointer;
+		}
+
+		thead{
+			position: sticky;
+			top:0px;
+			background-color: white;
+			z-index: 1000;
+			border:1px gray solid;
+			margin-top: 10px;
+		}
+
+
+		/* Table Wrapper */
+.table-responsive {
+  border-radius: 12px;
+  overflow: auto;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Table Styling */
+.table {
+  margin-bottom: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table thead {
+  background-color: #f8f9fa;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.table th {
+  color: #6c757d;
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 2px solid #dee2e6;
+  padding: 12px 16px;
+  background-color: #f8f9fa;
+}
+
+.table td {
+  padding: 14px 16px;
+  font-size: 14px;
+  vertical-align: middle;
+  border-top: 1px solid #f1f1f1;
+  background-color: #fff;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f3f5;
+  transition: background-color 0.2s ease-in-out;
+}
+
+
+
+/* Smooth scroll for table content */
+.table-responsive::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
+
+		
+    </style>
+</head>
+
+<body>
+
+    {% include 'logheader.html' %}
+
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                
+                <!-- /# row -->
+                <section id="main-content" >
+                    
+					<div class="row" style="display: none;">
+						<div class="card p-t-5 col-md-8" style="height:700px">
+							<div class="" style="float:right">
+								<ul class="pagination" style="float:right">
+									<li>
+										<a class="btn btn-sm btn-primary" href="{{ url_for('stage', page_no=1) }}">Premier</a>
+									</li>
+									<li>
+										<a class="btn btn-sm btn-primary" href="{{ url_for('stage', page_no=page_no-1) }}">Précédent</a>
+									</li>
+									<li>
+										<a class="btn btn-sm btn-primary" href="{{ url_for('stage', page_no=page_no+1) }}">Suivant</a>
+									</li>
+									<li>
+										<a class="btn btn-sm btn-primary" href="{{ url_for('stage', page_no=total_no_of_pages) }}">Dernier ››</a>
+									</li>
+								</ul>
+									
+								<div style="padding: 10px 20px 0px;float:right;">
+									<strong>Page {{ page_no }} of {{ total_no_of_pages }} ({{ total_records }} records)</strong>
+								</div>
+							</div>
+							<div class="table-responsive">
+								{{ html_content | safe }}
+							</div>
+										
+						</div>
+						
+					</div>
+					
+					<div class="row d-flex justify-content-center align-items-center">
+						<div class="col-9 p-4" >
+							<div class="" style="float:right;overflow: auto;">
+								<ul class="pagination" style="float:right">
+									<li><a class="btn btn-sm btn-primary" href="{{ url_for('stage', page_no=1) }}">Premier</a></li>
+									<li><a class="btn btn-sm btn-primary" href="{{ url_for('stage', page_no=page_no-1) }}">Précédent</a></li>
+									<li><a class="btn btn-sm btn-primary" href="{{ url_for('stage', page_no=page_no+1) }}">Suivant</a></li>
+									<li><a class="btn btn-sm btn-primary" href="{{ url_for('stage', page_no=total_no_of_pages) }}">Dernier ››</a></li>
+								</ul>
+								
+								<div style="padding: 10px 20px 0px;float:right;">
+									<strong>Page {{ page_no }} of {{ total_no_of_pages }} ({{ total_records }} records)</strong>
+								</div>
+							</div>
+							<div class="table-responsive" style="height:80vh;overflow-y: auto;">
+									{{ html_content | safe }}
+							</div>
+						</div>
+					</div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- jquery vendor -->
+
+
+    <script src="{{url_for('static',filename='assets/js/lib/jquery.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/jquery.nanoscroller.min.js')}}"></script>
+    <!-- nano scroller -->
+    <script src="{{url_for('static',filename='assets/js/lib/menubar/sidebar.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/preloader/pace.min.js')}}"></script>
+    <!-- sidebar -->
+
+    <script src="{{url_for('static',filename='assets/js/lib/bootstrap.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/scripts.js')}}"></script>
+    <!-- bootstrap -->
+
+    <script src="{{url_for('static',filename='assets/js/lib/calendar-2/moment.latest.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/calendar-2/pignose.calendar.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/calendar-2/pignose.init.js')}}"></script>
+
+
+    <script src="{{url_for('static',filename='assets/js/lib/weather/jquery.simpleWeather.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/weather/weather-init.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/circle-progress/circle-progress.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/circle-progress/circle-progress-init.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/chartist/chartist.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/sparklinechart/jquery.sparkline.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/sparklinechart/sparkline.init.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/owl-carousel/owl.carousel.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/owl-carousel/owl.carousel-init.js')}}"></script>
+    <!-- scripit init-->
+    <script src="{{url_for('static',filename='assets/js/dashboard2.js')}}"></script>
+	<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+	<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+	
+	<!-- Get suggestions -->
+    <script>
+		$(document).ready(function() {
+            $('li').each(function() {
+                if ($(this).find('ion-icon').attr('name') === 'pricetag-outline') {
+                    $(this).find('div').addClass('blink-border');
+                }
+            });
+			 $('tbody tr').first().trigger('click');
+        });
+		
+        function getSuggestions(button) {
+            const row = button.closest('tr');
+            const userInput = row.querySelector('.userInput').value;
+
+            fetch('/get_suggestions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_input: userInput
+                })
+            })
+			
+            .then(response => response.json())
+            .then(data => {
+                const suggestionsDiv = row.querySelector('.suggestions');
+                suggestionsDiv.innerHTML = `Filtered Suggestions: ${data.suggestions.join(', ')}`;
+            })
+			
+            .catch(error => console.error('Error:', error));
+        }
+		
+		$('.table tbody').on('click', 'tr', function () {
+                var $tr = $(this).closest('tr');
+                var data = $tr.children("td").map(function() {
+                    return $(this).text();
+                }).get();
+                
+                
+                var str = data[4];
+                console.log(str);
+
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                } else {
+                    $('.table tbody tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+
+                $('.progress__bar__container').empty(); 
+
+                var icons = ["scan-outline", "book-outline", "search-outline", "pricetag-outline", 
+                             "search-outline", "mail-outline", "mail-outline", "mail-outline", "mail-outline"];
+
+                var ul = $('<ul></ul>');
+                for (var j = 0; j < icons.length; j++) {
+                    var li = $('<li></li>').attr('id', 'icon' + (j + 1));
+                    if (j < str) {
+                        li.addClass('active');
+                    }
+                    if (j == str-1) {
+                        li.addClass('blink-border');
+                    }
+                    li.append($('<ion-icon></ion-icon>').attr('name', icons[j]));
+                    ul.append(li);
+                }
+                $('.progress__bar__container').append(ul);
+            });
+		
+    </script>
+</body>
+
+</html>

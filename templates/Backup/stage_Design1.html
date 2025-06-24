@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AUREXUS</title>
+    <!-- ================= Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
+    <!-- Styles -->
+    <link href="{{url_for('static',filename='assets/css/lib/calendar2/pignose.calendar.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/chartist/chartist.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/font-awesome.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/themify-icons.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/owl.carousel.min.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/owl.theme.default.min.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/weather-icons.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/menubar/sidebar.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/helper.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/style.css')}}" rel="stylesheet">
+    <link href="https://cdn.botpress.cloud/webchat/v3.0/shareable.html?configUrl=https://files.bpcontent.cloud/2025/06/12/12/20250612122144-4VSS41ZQ.json" rel="stylesheet">
+    
+    <style>
+       
+        .step-progress {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 10px;
+        }
+
+        .step {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        position: relative;
+        z-index: 1;
+        transition: all 0.3s ease;
+        }
+
+        .step.completed {
+        background-color: #00bfa6;
+        }
+
+        .step.current {
+        background-color: #00bfa6;
+        border: 3px solid #fff;
+        transform: scale(1.1);
+        }
+
+        .line {
+        flex-grow: 1;
+        height: 4px;
+        background-color: #ccc;
+        margin: 0 5px;
+        border-radius: 2px;
+        position: relative;
+        top: -2px;
+        z-index: 0;
+        }
+
+        .step.completed + .line {
+        background-color: #00bfa6;
+        }
+
+        /* test table UI */
+        .table {
+        border-collapse: separate;
+        border-spacing: 0 12px;
+        }
+
+        .table thead {
+        background-color: #e8f0fe;
+        color: #000;
+        font-weight: bold;
+        position: sticky;
+        top:0;
+        z-index: 100;
+        }
+
+        .table thead th {
+        vertical-align: middle;
+        text-align: center;
+        padding: 16px;
+        border: none;
+        font-size: 14px;
+        text-transform: uppercase;
+        }
+
+        .table tbody tr {
+        background-color: #fff;
+        transition: box-shadow 0.3s ease;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .table tbody tr:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .table td {
+        vertical-align: middle;
+        padding: 14px 12px;
+        font-size: 14px;
+        border: none;
+        color: #333;
+        background: #fff;
+        }
+
+        .table td:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+        }
+
+        .table td:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+        .table thead {
+            display: none;
+        }
+
+        .table, .table tbody, .table tr, .table td {
+            display: block;
+            width: 100%;
+        }
+
+        .table tr {
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table td {
+            text-align: right;
+            padding-left: 50%;
+            position: relative;
+        }
+
+        .table td::before {
+            content: attr(data-label);
+            position: absolute;
+            left: 16px;
+            width: 45%;
+            font-weight: bold;
+            text-align: left;
+            color: #555;
+        }
+        }
+
+        .table-responsive{
+            height:85vh;
+            overflow-y: scroll;
+        }
+
+    </style>
+</head>
+
+<body>
+    {% include 'logheader.html' %}
+    <div class="content-wrap">
+		<div class="container my-2" style="width:100%">
+            <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
+                <div id="page-info" class="text-muted mb-2 mb-md-0">Page 1 sur 1 (0 Cotes)</div>
+                <nav>
+                    <ul class="pagination mb-0">
+                        <li class="page-item"><button class="page-link" id="first-page">Premier</button></li>
+                        <li class="page-item"><button class="page-link" id="prev-page">Précédent</button></li>
+                        <li class="page-item"><button class="page-link" id="next-page">Suivant</button></li>
+                        <li class="page-item"><button class="page-link" id="last-page">Dernier »</button></li>
+                    </ul>
+                </nav>
+            </div>
+			<div class="col-12 table-responsive">
+				<table class="table table-bordered align-middle text-center">
+					<thead class="table-light" style="position: sticky;top:0;">
+					<tr>
+						<th>FOLDER</th>
+						<th>IMAGE</th>
+						<th>TRAITEMENT</th>
+						<th>STAGES</th>
+					</tr>
+					</thead>
+					<tbody class="paginated">
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>9</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>9</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>9</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>9</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>9</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>9</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>9</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>9</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>9</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>9</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>9</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>9</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>9</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>9</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>9</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td>20A01</td>
+						<td>20A01_00012.jpg</td>
+						<td>ENRICHISSEMENT</td>
+						<td>
+                            <div class="step-progress">
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step completed"><span>&#10003;</span></div>
+                                <div class="line"></div>
+                                <div class="step current"><span>3</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>4</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>5</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>6</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>7</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>8</span></div>
+                                <div class="line"></div>
+                                <div class="step"><span>9</span></div>
+                            </div>
+                        </td>
+					</tr>
+					<!-- Repeat for more rows -->
+					</tbody>
+				</table>
+			</div>
+            <!-- <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
+                <div id="page-info" class="text-muted mb-2 mb-md-0">Page 1 sur 1 (0 Cotes)</div>
+                <nav>
+                    <ul class="pagination mb-0">
+                        <li class="page-item"><button class="page-link" id="first-page">Premier</button></li>
+                        <li class="page-item"><button class="page-link" id="prev-page">Précédent</button></li>
+                        <li class="page-item"><button class="page-link" id="next-page">Suivant</button></li>
+                        <li class="page-item"><button class="page-link" id="last-page">Dernier »</button></li>
+                    </ul>
+                </nav>
+            </div> -->
+		</div>
+	</div>
+
+    <!-- jquery vendor -->
+
+
+    <script src="{{url_for('static',filename='assets/js/lib/jquery.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/jquery.nanoscroller.min.js')}}"></script>
+    <!-- nano scroller -->
+    <script src="{{url_for('static',filename='assets/js/lib/menubar/sidebar.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/preloader/pace.min.js')}}"></script>
+    <!-- sidebar -->
+
+    <script src="{{url_for('static',filename='assets/js/lib/bootstrap.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/scripts.js')}}"></script>
+    <!-- bootstrap -->
+
+   
+    <script src="https://cdn.botpress.cloud/webchat/v3.0/inject.js" defer></script>
+    <script src="https://files.bpcontent.cloud/2025/06/12/12/20250612122143-RDBO6V5I.js" defer></script>
+    
+	
+	<!-- Get suggestions -->
+    
+</body>
+
+</html>

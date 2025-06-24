@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- table header -->
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.2/dist/bootstrap-table.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.2/dist/extensions/sticky-header/bootstrap-table-sticky-header.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/4.1.4/css/flag-icon.min.css" >
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+
+        .wrapper {
+            height: 100vh;
+            display:flex;
+        }
+
+        #addRowIcon i {
+            font-size: 24px;
+            color: white;
+            padding: 5px;
+        }
+
+        tr, th {
+            text-align: center;
+        }
+
+        .header {
+            background-color: #030A76;    
+        }
+
+        .fixed-height-container {
+            height: 80vh;
+            overflow: scroll;
+            margin: 0.5rem;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1),
+                        0 2px 4px rgba(0, 0, 0, 0.06);
+            border-radius: 10px;
+        }
+
+        /* Add this CSS */
+        .table tbody tr.highlight {
+            background-color: rgba(204, 204, 209, 0.445); /* background color */
+        }
+
+
+        ::after,
+        ::before {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        h1 {
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .main {
+            min-height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            transition: all 0.35s ease-in-out;
+            background-color: #fafbfe;
+        }
+
+        #sidebar {
+            width: 70px;
+            min-width: 70px;
+            z-index: 1000;
+            transition: all .25s ease-in-out;
+            background-color:#030A76;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #sidebar.expand {
+            width: 260px;
+            min-width: 260px;
+        }
+
+        .toggle-btn {
+            background-color: transparent;
+            cursor: pointer;
+            border: 0;
+            padding: 1rem 1.5rem;
+        }
+
+        .toggle-btn i {
+            font-size: 1.5rem;
+            color: #FFF;
+        }
+
+        .sidebar-logo {
+            margin: auto 0;
+        }
+
+        .sidebar-logo a {
+            color: #FFF;
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+
+        #sidebar:not(.expand) .sidebar-logo,
+        #sidebar:not(.expand) a.sidebar-link span {
+            display: none;
+        }
+
+        .sidebar-nav {
+            padding: 2rem 0;
+            flex: 1 1 auto;
+        }
+
+        a.sidebar-link {
+            padding: .625rem 1.625rem;
+            color: #FFF;
+            display: block;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-link i {
+            font-size: 1.1rem;
+            margin-right: .75rem;
+        }
+
+        a.sidebar-link:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-left: 3px solid #030A76;
+            color: black;
+        }
+
+        .sidebar-item {
+            position: relative;
+        }
+
+        #sidebar:not(.expand) .sidebar-item .sidebar-dropdown {
+            position: absolute;
+            top: 0;
+            left: 70px;
+            background-color: #0e2238;
+            padding: 0;
+            min-width: 15rem;
+            display: none;
+        }
+
+        #sidebar:not(.expand) .sidebar-item:hover .has-dropdown+.sidebar-dropdown {
+            display: block;
+            max-height: 15em;
+            width: 100%;
+            opacity: 1;
+        }
+
+        #sidebar.expand .sidebar-link[data-bs-toggle="collapse"]::after {
+            border: solid;
+            border-width: 0 .075rem .075rem 0;
+            content: "";
+            display: inline-block;
+            padding: 2px;
+            position: absolute;
+            right: 1.5rem;
+            top: 1.4rem;
+            transform: rotate(-135deg);
+            transition: all .2s ease-out;
+        }
+
+        #sidebar.expand .sidebar-link[data-bs-toggle="collapse"].collapsed::after {
+            transform: rotate(45deg);
+            transition: all .2s ease-out;
+        }
+
+
+        /* Default card styles */
+        .card {
+            transition: all 0.3s ease-in-out;
+            border-radius: 10px; /*rounded effect */
+        }
+
+
+
+        /* dark blue color on hover */
+        .card:hover .card-title,
+        .card:hover .card-text {
+            color: white;
+            padding: 5px;
+            
+        }
+
+        /* card styles */
+        .card-body {
+            transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out; 
+            background-color: rgb(36, 14, 231); 
+            color: white;
+        }
+
+        .card {
+            transition: background-color 0.10s ease, color 0.10s ease, box-shadow 0.10s ease, transform 0.10s ease;
+        
+        }
+
+
+
+
+        /*  input-group spans full width on small devices */
+        .input-group {
+            width: 100%;
+            max-width: 500px; 
+            margin-left: 1rem; 
+        }
+
+        /* Ensure icon and input field align correctly */
+        .input-group-text {
+            background-color: #030A76;
+            color: white; 
+            border: none; 
+        }
+
+        /* Style for the search input field */
+        input[type="search"] {
+            border: none; 
+            background: rgba(197, 196, 199, 0.3); 
+            border-radius: 0.25rem; 
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease; 
+        }
+
+        /* Style for the input field when focused */
+        input[type="search"]:focus {
+            outline: none; 
+            border: 2px solid #030A76;
+            box-shadow: 0 4px 6px rgba(36, 14, 231, 0.1), 
+                        0 2px 4px rgba(36, 14, 231, 0.06); 
+            background: rgba(255, 255, 255, 0.5); 
+        }
+
+    </style>
+    
+</head>
+
+<body>
+    <div class="wrapper">
+        
+        <aside id="sidebar">
+            <div class="d-flex">
+                <button class="toggle-btn" type="button">
+                    <i class="lni lni-grid-alt"></i>
+                </button>
+                <div class="sidebar-logo">
+                    <img src="Aurexuslogo.png" alt="Logo" class="img-fluid logo" width="60px" height="60px">
+                    <a href="#">Medusa</a>
+                </div>
+                
+            </div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="add_project.html" class="sidebar-link">
+                        <i class="lni lni-briefcase"></i>
+                        <span>Add Project</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="dbTableCreation.html" class="sidebar-link">
+                        <i class="lni lni-add-files"></i>
+                        <span>Create Table</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="dbTableEdit.html" class="sidebar-link">
+                        <i class="lni lni-pencil-alt"></i>
+                        <span>Edit Table</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="lni lni-popup"></i>
+                        <span>Notification</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="lni lni-cog"></i>
+                        <span>Setting</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="lni lni-exit"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+                
+            </ul>
+        </aside>
+        <div class="main p-3"> 
+            <div class="text-center ">
+                <div class="p-4">
+                    <h1>
+                        Welcome to Edit Table Page!
+                    </h1>
+                </div>
+                
+                    <!-- Table -->
+
+                    <div class="content-wrap">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">
+                                <i class="fas fa-search text-white"></i>
+                            </span>
+                            <input type="search" id="search" class="form-control" placeholder="Search..." />
+                        </div>
+                        
+                        <div class="main">
+                            <div class="container-fluid">
+                                <div class="container-fluid fixed-height-container">
+                                    <div class="table-responsive mt-3">
+                                        <table class="table" >
+                                            <thead class="header">
+                                                <tr>
+                                                    <th class=" text-light" scope="col">Name</th>
+                                                    <th class=" text-light" scope="col">Data Type</th>
+                                                    <th class=" text-light" scope="col">Req.</th>
+                                                    <th class=" text-light" scope="col">Size</th>
+                                                    <th class=" text-light" scope="col">Display Type</th>
+                                                   
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tableBody">
+                                                <tr>
+                                                    <td ondblclick="enableEdit(this)">1</td>
+                                                    <td ondblclick="enableEdit(this)">12</td>
+                                                    <td ondblclick="enableEdit(this)">123</td>
+                                                    <td ondblclick="enableEdit(this)">1234</td>
+                                                    <td ondblclick="enableEdit(this)">12345</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td ondblclick="enableEdit(this)">2</td>
+                                                    <td ondblclick="enableEdit(this)">21</td>
+                                                    <td ondblclick="enableEdit(this)">212</td>
+                                                    <td ondblclick="enableEdit(this)">2123</td>
+                                                    <td ondblclick="enableEdit(this)">21234</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td ondblclick="enableEdit(this)">3</td>
+                                                    <td ondblclick="enableEdit(this)">31</td>
+                                                    <td ondblclick="enableEdit(this)">312</td>
+                                                    <td ondblclick="enableEdit(this)">3123</td>
+                                                    <td ondblclick="enableEdit(this)">31234</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td ondblclick="enableEdit(this)">4</td>
+                                                    <td ondblclick="enableEdit(this)">41</td>
+                                                    <td ondblclick="enableEdit(this)">412</td>
+                                                    <td ondblclick="enableEdit(this)">4123</td>
+                                                    <td ondblclick="enableEdit(this)">41234</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td ondblclick="enableEdit(this)">5</td>
+                                                    <td ondblclick="enableEdit(this)">51</td>
+                                                    <td ondblclick="enableEdit(this)">512</td>
+                                                    <td ondblclick="enableEdit(this)">5123</td>
+                                                    <td ondblclick="enableEdit(this)">51234</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td ondblclick="enableEdit(this)">5</td>
+                                                    <td ondblclick="enableEdit(this)">51</td>
+                                                    <td ondblclick="enableEdit(this)">512</td>
+                                                    <td ondblclick="enableEdit(this)">5123</td>
+                                                    <td ondblclick="enableEdit(this)">51234</td>
+                                                </tr>
+                                                 
+                                                <tr>
+                                                    <td ondblclick="enableEdit(this)">5</td>
+                                                    <td ondblclick="enableEdit(this)">51</td>
+                                                    <td ondblclick="enableEdit(this)">512</td>
+                                                    <td ondblclick="enableEdit(this)">5123</td>
+                                                    <td ondblclick="enableEdit(this)">51234</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div> 
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.2/dist/bootstrap-table.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.2/dist/extensions/sticky-header/bootstrap-table-sticky-header.min.js"></script>
+    <script src="script.js"></script>
+
+   <script>
+
+                const hamBurger = document.querySelector(".toggle-btn");
+
+                hamBurger.addEventListener("click", function () {
+                document.querySelector("#sidebar").classList.toggle("expand");
+                });
+
+                document.addEventListener('DOMContentLoaded', function() {
+                const table = document.querySelector('.table');
+                
+                // Add hover effect
+                table.addEventListener('mouseover', function(event) {
+                    const cell = event.target.closest('td');
+                    if (cell) {
+                        const row = cell.parentElement;
+                        row.classList.add('highlight');
+                    }
+                });
+
+                // Remove hover effect
+                table.addEventListener('mouseout', function(event) {
+                    const cell = event.target.closest('td');
+                    if (cell) {
+                        const row = cell.parentElement;
+                        row.classList.remove('highlight');
+                    }
+                });
+
+                })
+
+                // Enable to edit the column
+
+                function enableEdit(td) {
+                td.contentEditable = true;
+                td.focus();
+
+                // Disable editing when focus is lost
+                td.addEventListener('blur', function() {
+                    td.contentEditable = false;
+                });
+            }
+
+
+         // Search Functionality
+         document.getElementById('search').addEventListener('input', searchValue);
+
+        function searchValue() {
+            let value = document.getElementById('search').value.toLowerCase();
+            let rows = document.querySelectorAll('#tableBody tr');
+
+            rows.forEach(row => {
+                let columns = row.cells;
+                let rowContainsValue = false;
+
+                for (let j = 0; j < columns.length; j++) {
+                    if (columns[j]) {
+                        let columnValue = columns[j].innerText || columns[j].textContent;
+
+                        if (columnValue.toLowerCase().indexOf(value) > -1) {
+                            rowContainsValue = true;
+                            break;
+                        }
+                    }
+                }
+
+                row.style.display = rowContainsValue ? 'table-row' : 'none';
+            });
+        }
+
+
+      
+
+
+         
+
+    </script>
+    
+    
+</body>
+
+</html>

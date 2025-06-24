@@ -1,0 +1,55 @@
+<div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
+    <div class="nano" style="height: 100%;">
+        <div class="nano-content" style="display: flex; flex-direction: column; height: 100%;">
+            <ul style="flex-grow: 1; padding: 0;">
+                <div class="logo" style="text-align: center; padding: 10px 0;">
+                    <img src="{{url_for('static',filename='assets/images/Aurexuslogo.png')}}" width="130px" height="130px">
+                </div>                    
+                
+                <li>
+                    <a href="{{url_for('hello')}}">
+                        <i class="ti-home"></i>{{ translations['dashboard'] }}
+                    </a>
+                </li> 
+
+                <li>
+                    <a href="{{url_for('stage')}}">
+                        <i class="ti-layers-alt"></i> Stage
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{url_for('listdata', chkTest='1', page_no=1)}}">
+                        <i class="ti-menu-alt"></i>{{ translations['test'] }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{url_for('listdata', chkTest='2', page_no=1)}}">
+                        <i class="ti-menu-alt"></i>{{ translations['anomalies'] }}
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="{{url_for('listdata', chkTest='0', page_no=1)}}">
+                        <i class="ti-menu-alt"></i>{{ translations['notices'] }}
+                        <span class="badge badge-sm badge-warning rounded-0" 
+                              style="position: static; font-size: 10px; font-weight: bold;">
+                            {{ allcount }}
+                        </span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{url_for('logout')}}">
+                        <i class="ti-power-off"></i>{{ translations['logout'] }}
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Version at bottom center -->
+            <div style="text-align: center; padding: 10px 0;">
+                <span>Version 3.4</span>
+            </div>
+        </div>
+    </div>
+</div>

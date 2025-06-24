@@ -1,0 +1,251 @@
+    <!-- Side nav bar -->  
+    <div 
+        class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures"
+    >
+        <div 
+            class="nano"
+            style="height: 100%;"
+        >
+            <div 
+                class="nano-content" 
+                style="display: flex; flex-direction: column; height: 100%;"
+            >
+                <ul style="flex-grow: 1; padding: 0;">
+                    <div 
+                        class="logo"
+                        style="text-align: center; padding: 10px 0;"
+                    >
+                        <img 
+                            src="{{url_for('static',filename='assets/images/Aurexuslogo.png')}}" 
+                            width="130px" 
+                            height="130px"
+                        >
+                    </div>                    
+                    
+                    <li>
+                        <a href="{{url_for('hello')}}">
+                            <i class="ti-home"></i>{{ translations['dashboard']}}
+                        </a>
+                    </li> 
+
+					<!-- <li>
+                        <a href="{{url_for('stage')}}">
+                            <i class="ti-layers-alt"></i> Stage
+                        </a>
+                    </li> -->
+
+					<li>
+                        <a href="{{url_for('listdata', chkTest='1', page_no=1)}}">
+                            <i class="ti-menu-alt"></i>{{ translations['test']}}
+                        </a>
+                    </li>
+					<li>
+                        <a href="{{url_for('listdata', chkTest='2', page_no=1)}}">
+                            <i class="ti-menu-alt"></i>{{ translations['anomalies']}}
+                        </a>
+                    </li>
+                    
+					<li>
+                        <a href="{{url_for('listdata', chkTest='0', page_no=1)}}">
+                            <i class="ti-menu-alt"></i>{{ translations['notices']}} 
+                                <span 
+                                    class="badge badge-sm badge-warning rounded-0" 
+                                    style="position:static;font-size:10px;font-weight:bold"
+                                >
+                                    {{allcount}}
+                                </span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{url_for('logout')}}">
+                            <i class="ti-power-off"></i>{{ translations['logout']}}
+                        </a>
+                    </li>
+                </ul>
+                 <div style="text-align: center; padding: 10px 0;">
+                        <span style="color:#a9a9a9;font-size:13px">Medusa V3.5</span>
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+
+    
+
+<!-- /# sidebar -->
+
+
+
+
+
+<!-- Header -->
+    <div 
+        class="header"
+    >
+        <div 
+            class="container-fluid" 
+            style="display: flex;flex-direction: column;"
+        >
+            <div 
+                class="row"
+            >
+                <div 
+                    class="col-lg-12"
+                >
+                    <div 
+                        class="float-left"
+                    >
+                        <div 
+                            class="hamburger sidebar-toggle"
+                        >
+                            <span class="line"></span>
+                            <span class="line"></span>
+                            <span class="line"></span>
+                        </div>
+                    </div>
+                    <div 
+                        class="float-left"
+                    >
+                            <div class="">
+                                <ol class="breadcrumb">
+                                    <li 
+                                        class="breadcrumb-item"
+                                    >
+                                        <a href="#">Notices</a>
+                                    </li>
+                                </ol>
+                            </div>
+                    </div>
+                    <div 
+                        class="float-left"
+                    >
+                        <div 
+                            class=""
+                        >
+                                <ol 
+                                    class="breadcrumb"
+                                >
+                                    <li 
+                                        class="breadcrumb-item"
+                                    >
+                                        <a class='badge badge-warning'>
+                                            <b>{{ translations['project']}} {{session['proj']}}</b>
+                                        </a>
+                                    </li>
+                                </ol>
+                            </div>
+                         
+                    </div>
+                    <div 
+                        class="float-right"
+                    >
+                        <div 
+                            class="header-icon" 
+                            disabled="disabled"
+                        >
+                            <img  
+                                width="90px" 
+                                height="30px" 
+                                src="https://www.aurexus.com/wp-content/uploads/2021/10/1_80x50mm_adobe_illustratorwhite.png">
+                            </img>
+                        </div>
+                        <div 
+                            class="header-icon"
+                        > 
+                            {{langButton | safe }}
+                        </div>                       
+                        
+                        <div 
+                            class="dropdown dib"
+                        >
+                            <div 
+                                class="header-icon" 
+                                data-toggle="dropdown"
+                            >
+								<span 
+                                    id="notif-pill"
+                                    style="position: absolute;
+                                            top: 2px;  
+                                            right:10px;
+                                            background: red;  
+                                            color: white;  
+                                            padding: 5px 3px;  
+                                            border-radius: 54%;
+									        font-size: 10px;  
+                                            min-width: 20px;  
+                                            text-align: center;  
+                                            line-height: 1;  
+                                            font-weight: bold;" 
+                                    class="badge rounded-pill bg-danger"
+                                ></span>
+                                <span class="user-avatar">{{session['name']}}
+                                    <i class="ti-angle-down f-s-10"></i>									
+                                </span>
+                                <div class="drop-down dropdown-profile dropdown-menu dropdown-menu-right" aria-labelledby="notifDropdown">                                    
+                                    <div class="dropdown-content-body" >
+                                        <ul  style="list-style: none; padding-left: 0;">                                            
+                                            <li>
+                                            <a href='#' target='_blank'>
+                                                <i class="ti-file"></i> Documentation</a>
+                                            </li>
+                                            <li>
+                                                <a  onclick="notificationFunction()" href="{{url_for('listdata', chkTest='3', page_no=1)}}"  style="position: relative; display: inline-flex; align-items: center; gap: 5px; z-index: 9999 !important;">
+                                                   											
+                                                        <i class="ti-bell fs-5"></i>
+														New Anomalies  <span id="notif-area" style="font-size: 0.75rem;" class="badge rounded-pill bg-danger"></span>
+                                                    
+                                                </a>
+                                            </li>
+                                            <li>
+                                            <a href='#' onclick="myclickFunction()">
+                                                <i class="ti-power-off"></i> {{ translations['logout']}}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function updateNotifications() {
+            fetch("/notification_count")
+                
+                .then(response => response.text())
+                .then(text => {
+                    //alert(parseInt(text.trim()));
+                    const count = parseInt(text.trim());
+                    const notifpill = document.getElementById("notif-pill");
+                    const notifArea = document.getElementById("notif-area");
+
+                    if (notifArea) {
+                        if (count > 0) {
+                            notifpill.innerHTML = `<strong>${count}</strong>`;
+                            notifArea.innerHTML = `<strong>${count}</strong>`;
+                        } else {
+                            notifArea.innerHTML = `✅ No new notifications.`;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching notification count:", error);
+                });
+        }
+
+        updateNotifications();
+        setInterval(updateNotifications, 10000);
+    });
+	function myclickFunction(){
+        window.location.href="{{url_for('logout')}}";
+    }
+	function notificationFunction(){
+        window.location.href="{{url_for('listdata', chkTest='3', page_no=1)}}";
+    }
+</script>

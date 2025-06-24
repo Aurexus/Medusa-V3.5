@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aurexus Medusa</title>
+
+    <!-- ================= Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
+
+    <!-- Styles -->
+    <link href="{{ url_for('static', filename='assets/css/lib/font-awesome.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/jquery.verySimpleImageViewer.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/lib/themify-icons.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/lib/data-table/buttons.bootstrap.min.css') }}"
+        rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/css/lib/menubar/sidebar.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/lib/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/lib/sweetalert/sweetalert.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/lib/helper.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/style.css') }}" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  
+
+
+    <style>
+        .image_viewer_inner_container {
+            border: 1px solid black !important;
+        }
+
+        #content::-webkit-scrollbar {
+            width: 8px;
+            color: #dcdcdf;
+
+        }
+
+        #content::-webkit-scrollbar-track {
+            background-color: rgb(234 234 239);
+
+        }
+
+        #content::-webkit-scrollbar-thumb {
+            background-color: rgb(184 184 196);
+
+        }
+
+        textarea::-webkit-scrollbar {
+            width: 5px;
+            color: #dcdcdf;
+        }
+
+        textarea::-webkit-scrollbar-track {
+            background-color: rgb(234 234 239);
+        }
+
+        textarea::-webkit-scrollbar-thumb {
+            background-color: rgb(184 184 196);
+        }
+		.badge {
+			border-radius:0px;
+			border:0px;
+		}
+		.star-checkbox {
+		  display: none;
+		}
+
+		.star-label {
+		  cursor: pointer;
+		  font-size: 24px;
+		  /*color: #dedede;*/
+		  transition: color 0.2s;
+		}
+
+		.star-checkbox:checked + .star-label {
+		  color: #e7b63a;
+		}
+
+     #viewerContainer {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      background-color: #f0f0f0;
+    }
+    
+    /* #overlayline {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background-color: rgba(255, 238, 0, 0.527);
+      cursor: ns-resize;
+      z-index: 10;
+      padding: 0;
+    } */
+
+    /* #dragHandle {
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 16px;
+      background-color: #ffcc00;
+      border-radius: 4px;
+      cursor: ns-resize;
+      border: 1px solid #333;
+    } */
+     
+     
+    #overlayline {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(to right, #c90505, #e00b0b);
+      border-radius: 3px;
+      cursor: ns-resize;
+      z-index: 10;
+      transition: background 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+    }
+
+     #dragHandle {
+      /* margin-left: 10px; */
+      background-color: black;
+      border: 1px solid #ccc;
+      padding: 4px 6px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      cursor: ns-resize;
+      position: absolute;
+        left: -20px;
+      
+    }
+
+    #dragHandle i {
+        color:white;
+        font-size: 16px;
+        
+    }
+</style>
+
+
+</head>
+
+<body>
+   
+
+{% include 'logheader.html' %}
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <!--<div class="row">
+                    <a type="button" class="btn btn-labeled btn-primary"
+                        href="listdata?chkTest={{session['chk_test']}}&page_no={{listpage_no}}">
+                        <span class="btn-label"><i class="fa fa-fw fa-home"></i></span> Retourner
+                    </a>
+                </div>-->
+                <!-- /# row -->
+                <section id="main-content">
+                    <div class="row">
+                        <div class="card col-lg-6">
+
+                            <!--<div class="form-group col-md-6-right" > <button type="button" class="btn btn-labeled btn-primary">
+                <span class="btn-label"><i class="glyphicon glyphicon-chevron-left"></i></span>Prev</button>
+            <button type="button" class="btn btn-labeled btn-primary">
+                <span class="btn-label"><i class="glyphicon glyphicon-chevron-right"></i></span>
+                Next</button></div>-->
+                            <div id="content" style="height:600px;overflow-y:scroll;">
+                                <form method="POST" class="form-inline" style="background-color:#e6e7ec;">
+                                    <div class="form-group col-md-12">
+										<a type="button" class="col-md-3 btn btn-primary form-control input-flat col-sm text-white"
+											href="listdata?chkTest={{session['chk_test']}}&page_no={{listpage_no}}">
+											<span class="btn-label"><i class="fa fa-fw fa-home"></i></span> Retourner
+										</a>
+                                        <a href="?list={{list_prev}}"
+                                            class="col-md-4 btn btn-primary form-control input-flat col-sm text-white">&laquo;
+                                            Précédent(e)</a>
+                                        <a href="?list={{list_next}}"
+                                            class="col-md-4 btn btn-primary form-control input-flat col-sm text-white {{disable}}">Suivant(e)
+                                            &raquo;</a>
+										<span class="col-md-1">
+										  <input type='checkbox' id='star1'  data-id='{{ idValue }}' class='star-checkbox' {{checked_attr}}>
+										  <label for='star1' class='star-label'>&#9733;</label>
+										</span>	
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <table class="table table-bordered btn-primary">
+                                            <td class="text-white">Record ID:
+                                                {{ recid }}
+                                            </td>
+                                            <td class="text-white">
+                                                {{ dossier }}
+                                            </td>
+                                            <td class="text-white">
+                                                {{ image }}
+                                            </td>
+                                        </table>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="text-danger"><b>Traitement</b></label>
+                                        <!--<input name="anocode" ng-model="anocode" type="text" class="form-control col-sm-12" placeholder="Ano Code" value='<?php /*echo utf8_encode($anscode);*/?>'>-->
+                                        <select id="traitement" name="traitement" class="form-control col-sm-12"
+                                            style="font-size:12px;">
+                                            <option value="IMPORT" {% if traitement=="IMPORT" %} selected {% endif %}>
+                                                IMPORT</option>
+                                            <option value="DERIVATION" {% if traitement=="DERIVATION" %} selected {%
+                                                endif %}>DERIVATION</option>
+                                            <option value="DERIVATION MEME NOTICE" {% if
+                                                traitement=="DERIVATION MEME NOTICE" %} selected {% endif %}>DERIVATION
+                                                MEME NOTICE</option>
+                                            <option value="DOUBLON" {% if traitement=="DOUBLON" %} selected {% endif %}>
+                                                DOUBLON</option>
+                                            <option value="SAISIE" {% if traitement=="SAISIE" %} selected {% endif %}>
+                                                SAISIE</option>
+                                            <option value="SAISIE_DM" {% if traitement=="SAISIE_DM" %} selected {% endif
+                                                %}>SAISIE_DM</option>
+                                            <option value="SUITE" {% if traitement=="SUITE" %} selected {% endif %}>
+                                                SUITE</option>
+                                            <option value="SECONDAIRE" {% if traitement=="SECONDAIRE" %} selected {%
+                                                endif %}>SECONDAIRE</option>
+                                            <option value="VOIR" {% if traitement=="VOIR" %} selected {% endif %}>VOIR
+                                            </option>
+                                            <option value="NE PAS TRAITER" {% if traitement=="NE PAS TRAITER" %}
+                                                selected {% endif %}>NE PAS TRAITER</option>
+                                            <option value="ENRICHISSEMENT" {% if traitement=="ENRICHISSEMENT" %}
+                                                selected {% endif %}>ENRICHISSEMENT</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="text-danger"><b>Qcote</b></label>
+                                        <input name="qcote" ng-model="qcote" type="text" class="form-control col-sm-12"
+                                            placeholder="QCote" data-toggle="tooltip"
+                                            title="" value='{{ qcote }}'
+                                            style="font-size:12px;">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="text-danger"><b>Ano Code</b></label>
+                                        <!--<input name="anocode" ng-model="anocode" type="text" class="form-control col-sm-12" placeholder="Ano Code" value='<?php /*echo utf8_encode($anscode);*/?>'>-->
+                                        <input name="anocode" ng-model="anocode" type="text"
+                                            class="form-control col-sm-12" placeholder="Ano Code" value='{{ ano }}'
+                                            style="font-size:12px;">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="text-danger"><b>Ano Msg</b></label>
+                                        <input name="anomsg" ng-model="anomsg" type="text"
+                                            class="form-control col-sm-12" placeholder="Ano Msg" value='{{ anscode }}'
+                                            style="font-size:12px;">
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label class="text-danger"><b>TextBrut</b></label>
+                                        <textarea name="txtbrut" ng-model="txtbrut" type="text"
+                                            class="form-control col-sm-12" placeholder="TextBrut"
+                                            style="height:150px; font-size:12px;font-size:12px;">{{ txtBrut }}</textarea>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label class="text-danger"><b>Notice </b></label><a class="btn text-danger" href="{{ site_url }}" target="_blank"><i class="ti-link"></i></a>
+                                        <textarea name="notice" ng-model="notice" class="form-control col-sm-12"
+                                            placeholder="Notice" style="height: 350px;font-size:12px;font-size:12px;"
+                                            value="">{{ readable }}</textarea>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label class="text-danger"><b>Correction</b></label>
+                                        <select id="anocode" name="anocode" class="form-control col-sm-12"
+                                            style="font-size:12px;">
+                                            <option value="_" {% if anocode=="" or anocode=="_" %} selected {% endif %}>
+                                                __</option>
+                                            <option value="Ok" {% if anocode=="Ok" %} selected {% endif %}>Ok</option>
+                                            <option value="OK - ajouté" {% if anocode=="OK - ajouté" %} selected {% endif %}>OK - ajouté</option>
+                                            <option value="A revoir" {% if anocode=="A revoir" %} selected {% endif %}>A
+                                                revoir</option>
+                                            <option value="A revoir, avec modification de la notice" {% if
+                                                anocode=="A revoir, avec modification de la notice" %} selected {% endif
+                                                %}>A revoir, avec modification de la notice</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-12 float-left">
+                                        <label class="text-danger"><b>Commentaire</b></label>
+                                        <textarea id="anscode" name="anscode" ng-model="anscode" class="form-control col-sm-12"
+                                            placeholder="Ano Answer" style="height: 150px;font-size:12px;font-size:12px;"
+                                            value="">{{ anoanswer }}</textarea>
+                                    </div>
+                                    
+                                </form>
+                                <div class="form-group col-md-12">
+                                    <button class="btn btn-primary form-control input-flat col-sm" id="save_record"
+                                        name="recordsave">Sauvegarder</button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="card col-lg-6">
+                            <div class="form-group col-md-12">
+                                <button id="prev-button" class="btn btn-sm btn-primary form-control col-md-2" id="prebtn"><<</button>
+                                <button id="next-button" class="btn btn-sm btn-primary form-control col-md-2">>></button>
+                                <button class="btn btn-sm btn-primary form-control col-md-2" id="reset"><|></button>
+								<button class="btn btn-sm btn-primary form-control col-md-2" id="ocr_do" style="display:none;">OCR</button>
+                                <a class="col-md-2" id="imgsrs">
+                                    {% if proj == "CAEN_2" %}
+                                    {{ image.rstrip('.jpg')[-5:] }}
+                                {% elif proj == "MOBILIS/MOBICAL" %}
+                                    {{ image[:-6][-4:] }}
+                                {% else %}
+                                    {{ image.rstrip('.jpg')[-4:] }}
+                                {% endif %}
+                                </a>
+                                <!-- <input type="checkbox" name="zoomset" class="" id="zoomset"> Correction de la
+                                zone de zoom</input> -->
+
+                                <label id="referenceToggle">
+                                    <input type="checkbox" id="toggleOverlay" />
+                                        Maintain Line Reference
+                                </label>
+                                <span>
+                                    <div id="jquery-script-menu">
+                                        <div class="jquery-script-clear"></div>
+										
+                                    </div>
+									<textarea id="ocr" name="ocr" ng-model="ocr" class="form-control col-sm-12"
+                                            placeholder="ocr" style="height: 150px;font-size:12px;font-size:12px;"
+                                            value="" ></textarea>
+
+                                            <div id="viewerContainer">
+                                                <div id="overlayline">
+                                                        <div id="dragHandle">
+                                                            <i class="fas fa-arrows-alt-v"></i>
+                                                        </div>
+                                                </div>
+                                                <div id="imageViewerContainer" style="width: 100%; height:480px;">
+                                                    <img id="zoom_07" style="object-fit:fill;" src='{{ image_link }}' width="570" height="550" data-zoom='{{ image }}' hidden></img>
+                                                </div>
+                                                <!--<img id="zoom_07" style="object-fit:fill;" src='<?php /*echo $image_link.$image*/?>' width="570" height="550" data-zoom='<?php /*echo $image_link.$image*/?>'></img>-->
+                                                <div id="prefetch_image_container">
+                                                    <div id="loading_indicator" style="display: none;">Loading images...</div>
+                                                    <div id="prefetch_image" ></div>
+                                                </div>
+                                            </div>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- /# column -->
+                    </div>
+                    <!-- /# row -->
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="footer">
+                                <p>
+                                     © Aurexus. - <a href="www.aurexus.com">aurexus.com</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- jquery vendor -->
+
+    <!--<script src="assets/js/lib/jquery.min.js"></script>-->
+    <!-- jquery vendor -->
+    <!-- nano scroller -->
+    <!-- bootstrap -->
+    <!-- ✅ jQuery (load only once) -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- ✅ jQuery UI (for draggable, etc.) -->
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+
+<!-- ✅ verySimpleImageViewer (load AFTER jQuery) -->
+<script src="{{ url_for('static', filename='assets/js/jquery.verySimpleImageViewer.min.js') }}"></script>
+
+<!-- ✅ Other libraries -->
+<script src="{{ url_for('static', filename='assets/js/lib/jquery.nanoscroller.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/js/lib/menubar/sidebar.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/js/lib/preloader/pace.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/js/lib/bootstrap.min.js') }}"></script>
+
+<!-- ✅ Your custom script -->
+<script src="{{ url_for('static', filename='assets/js/scripit.js') }}"></script>
+
+<!-- ✅ SweetAlert -->
+<script src="{{ url_for('static', filename='assets/js/lib/sweetalert/sweetalert.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/js/lib/sweetalert/sweetalert.init.js') }}"></script>
+
+  
+
+
+    <script>
+        function myclickFunction() {
+            window.location.href = "../index.php";
+        }
+    </script>
+    <script>
+		$(document).ready(function() {
+                // Function to pad numbers to maintain leading zeros
+                function pad(str, max) {
+                    str = str.toString();
+                    return str.length < max ? pad("0" + str, max) : str;
+                }
+
+               // Show the loading indicator
+               $('#loading_indicator').show();
+
+                // Variables for image paths
+                const v1 = "{{ img_link }}";
+                const v2 = "{{ image }}";
+                const parts = v2.split('_');
+                const prefix = parts[0]; // Example: "12B6"
+                const baseNum = parseInt(parts[1].split('.')[0]); // Parse base number from v2
+                const lenChar = parts[1].split('.')[0].length; // Get length of numeric part
+
+                // Calculate the next three image paths
+                const nextImages = [1, 2, 3].map(i => {
+                    const paddedNum = pad(baseNum + i, lenChar);
+                    return `${v1}${prefix}_${paddedNum}.jpg`; // Construct the full path
+                });
+
+                // Preload images into the `#prefetch_image` container
+                const imageElements = nextImages.map(src => {
+                    const img = $('<img loading="lazy" width="50px" height="50px">').attr('src', src);
+                    img.on('load', function() {
+                        // Hide the loading indicator once all images are loaded
+                        if ($('#prefetch_image img').length === nextImages.length) {
+                            $('#loading_indicator').hide();
+                        }
+                    });
+                    return img;
+                });
+
+                // Append images to the container
+                $('#prefetch_image').append(imageElements);
+			 $('#ocr').hide();
+             $('#ocr_do').click(function () {
+                 $('#ocr').show().addClass('loading').val('Loading...');
+				var imageSrc = $('#zoom_07').attr('src');
+				
+				 $.ajax({
+                    url: '/analyze_image',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({                        
+                        image: imageSrc
+                    }),
+                    success: function(response) {
+                        var result = response.content.join('\n');
+                        $('#ocr').removeClass('loading').val(result);
+                    },
+                    error: function(xhr, status, error) {
+                        $('#ocr').removeClass('loading').val('Error: ' + xhr.responseText);
+                    }
+                });
+				
+			})
+            var img_link = "{{ image_link }}"
+            
+            if($('#zoomset').is(':checked'))
+            {
+                setzoom=true;
+            }
+            else
+            {
+                setzoom=false;
+            }
+            $("#imageViewerContainer").html('');
+            $("#imageViewerContainer").verySimpleImageViewer({
+                imageSource: img_link,
+                frame: ['100%', '110%'],
+                maxZoom: '900%',
+                zoomFactor: '10%',
+                mouse: true,
+                keyboard: true,
+                toolbar: true,
+                rotateToolbar: false,
+                saveZoomPos: true,
+                callback:function(zoom, panX, panY){
+                localStorage.setItem('imageZoomLevel', zoom);
+                const $img = $imageViewerContainer.find('img');
+                    if ($img.length) {
+                        localStorage.setItem('imageTranslateY', $img.css('transform'));
+                    }
+                }
+            });
+            
+		
+            // Assuming image variable is available in the template context
+            var image = "{{ image }}";  // Example: "1A1-0006.jpg"
+
+            function navigateImage(direction) {
+                var parts = image.split('_');
+                var prefix = parts[0]; // "1A1"            
+                var num = parseInt(parts[1].split('.')[0]); // 6
+                console.log("called")
+                if (direction === 'next') {
+                    num += 1;
+                } else if (direction === 'prev') {
+                    num -= 1;
+                }
+                var imgfolder = "{{ img_link }}"
+                // Ensure num has four digits with leading zeros
+                var newNum = num.toString().padStart((parts[1].split('.')[0]).length, '0');
+                var newImage = prefix + '_' + newNum + '.jpg';
+				
+                // Update the image variable
+                image = newImage;
+                if($('#zoomset').is(':checked'))
+                {
+                    setzoom=true;
+                }
+                else
+                {
+                    setzoom=false;
+                }
+                $("#imageViewerContainer").html('');
+                $("#imageViewerContainer").verySimpleImageViewer({
+                    imageSource: imgfolder+newImage,
+                    frame: ['100%', '110%'],
+                    maxZoom: '900%',
+                    zoomFactor: '10%',
+                    mouse: true,
+                    keyboard: true,
+                    toolbar: true,
+                    rotateToolbar: false,
+                    saveZoomPos: true,
+                    callback:function(zoom, panX, panY){
+                        localStorage.setItem('imageZoomLevel', zoom);
+                        const $img = $imageViewerContainer.find('img');
+                            if($img.length){
+                                localStorage.setItem('imageTranslateY', $img.css('transform'));
+                            }
+                    }
+
+                });
+                // Make the request to the new URL
+                //window.location.href = "/img-find/" + newImage;
+            }
+
+            document.getElementById("next-button").addEventListener("click", function() {
+                navigateImage('next');
+            });
+
+            document.getElementById("prev-button").addEventListener("click", function() {
+                navigateImage('prev');
+            }); 
+//              $(function () {
+//                 const storageKey = 'overlayLineTop';
+
+//                 // Restore position from localStorage
+//                 const savedTop = localStorage.getItem(storageKey);
+//                 if (savedTop) {
+//                 $('#overlayline').css('top', savedTop + 'px');
+//                 }
+
+//                 // Make overlay line draggable vertically
+//                 $('#overlayline').draggable({
+//                     axis: "y",
+//                     containment: "#viewerContainer",
+//                     drag: function (event, ui) {
+//                     // Optional: live update on drag
+//                 },
+//                 stop: function (event, ui) {
+//                     // Save top position to localStorage
+//                     localStorage.setItem(storageKey, ui.position.top);
+//                 }
+//             });
+//   });  
+
+ $(function () {
+    const storageKey = 'overlayLineTop';
+
+    const $checkbox = $('#toggleOverlay');
+    const $overlayLine = $('#overlayline');
+
+    // Restore saved position if available
+    const savedTop = localStorage.getItem(storageKey);
+    if (savedTop !== null) {
+      $checkbox.prop('checked', true);
+      $overlayLine.css('top', savedTop + 'px').show();
+    } else {
+      $checkbox.prop('checked', false);
+      $overlayLine.hide();
+    }
+
+    // Checkbox toggle
+    $checkbox.on('change', function () {
+      if (this.checked) {
+        $overlayLine.show();
+        const currentTop = $overlayLine.position().top;
+        localStorage.setItem(storageKey, currentTop);
+      } else {
+        $overlayLine.hide();
+        localStorage.removeItem(storageKey);
+      }
+    });
+
+    // Draggable vertical line
+    $overlayLine.draggable({
+      axis: "y",
+      containment: "#viewerContainer",
+      drag: function () {
+        // Optional live feedback
+      },
+      stop: function (event, ui) {
+        if ($checkbox.is(':checked')) {
+          localStorage.setItem(storageKey, ui.position.top);
+        }
+      }
+    });
+  });
+  
+   $(".star-checkbox").change(function() {
+				var recordId = $(this).data("id");
+				
+				var isChecked = $(this).is(":checked");
+				
+				// Inject Flask session values (escaped as strings)						
+				
+				$.ajax({
+					url: '/save_bookmark', // Change to your PHP script URL
+					method: 'POST',
+					contentType: 'application/json',
+					data:JSON.stringify({ 						
+						book_id: recordId,
+						checked: isChecked ? 1 : 0
+						
+					}),
+					success: function(response) {
+						console.log("Saved star status:", response);
+					},
+					error: function() {
+						alert("Failed to save star status.");
+					}
+				});
+			})
+  
+  
+  });
+
+
+  
+    </script>
+</body>
+
+</html>
