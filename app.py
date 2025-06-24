@@ -4,13 +4,11 @@ import math
 import os
 import re
 from datetime import datetime
-import csv
 import io
 from io import StringIO
 import pyodbc
 import requests
 import pandas as pd
-import cv2
 #from yolo.yolo_inference import run_yolo_inference
 #from azure.ai.formrecognizer import DocumentAnalysisClient
 #from azure.core.credentials import AzureKeyCredential
@@ -2707,118 +2705,118 @@ def checkyolo():
     return render_template("yolotest.html", image_url=image_url, extracted_text=final_text, db_txt=db_text_final)
 
 
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    if 'file' not in request.files:
-        return 'No file part'
-    file = request.files['file']
-    if file.filename == '':
-        return 'No selected file'
-    if file:
-        image = Image.open(file)
-        image = np.array(image)
+# @app.route('/upload', methods=['POST'])
+# def upload_file():
+    # if 'file' not in request.files:
+        # return 'No file part'
+    # file = request.files['file']
+    # if file.filename == '':
+        # return 'No selected file'
+    # if file:
+        # image = Image.open(file)
+        # image = np.array(image)
 
-        # Run inference on the image
-        results = model(image)
+        # # Run inference on the image
+        # results = model(image)
 
-        # Collect detected objects to ensure no duplicate plotting
-        detected_objects = []
+        # # Collect detected objects to ensure no duplicate plotting
+        # detected_objects = []
 
-        # Iterate through the detected objects
-        for result in results:
-            boxes = result.boxes.xyxy.cpu().numpy()  # Get bounding boxes
-            confidences = result.boxes.conf.cpu().numpy()  # Get confidence scores
-            class_ids = result.boxes.cls.cpu().numpy()  # Get class IDs
+        # # Iterate through the detected objects
+        # for result in results:
+            # boxes = result.boxes.xyxy.cpu().numpy()  # Get bounding boxes
+            # confidences = result.boxes.conf.cpu().numpy()  # Get confidence scores
+            # class_ids = result.boxes.cls.cpu().numpy()  # Get class IDs
 
-            for box, confidence, class_id in zip(boxes, confidences, class_ids):
-                x1, y1, x2, y2 = map(int, box)
-                detected_objects.append((class_id, x1, y1, x2, y2, confidence))
+            # for box, confidence, class_id in zip(boxes, confidences, class_ids):
+                # x1, y1, x2, y2 = map(int, box)
+                # detected_objects.append((class_id, x1, y1, x2, y2, confidence))
                 
-        filtered_texts = {}  # Dictionary for extracted texts
-        extracted_texts = []
+        # filtered_texts = {}  # Dictionary for extracted texts
+        # extracted_texts = []
         
-        # Load dataset from CSV
-        csv_path = "dataset.csv"  
-        df = pd.read_csv(csv_path, dtype=str, encoding='ISO-8859-1')
+        # # Load dataset from CSV
+        # csv_path = "dataset.csv"  
+        # df = pd.read_csv(csv_path, dtype=str, encoding='ISO-8859-1')
 
-        # Process detected objects
-        for class_id, x1, y1, x2, y2, confidence in detected_objects:
-            # Draw bounding box
-            cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 2)
+        # # Process detected objects
+        # for class_id, x1, y1, x2, y2, confidence in detected_objects:
+            # # Draw bounding box
+            # cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 2)
 
-            # Label the bounding box
-            label = f"Class {class_id} ({confidence:.2f})"
-            cv2.putText(image, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+            # # Label the bounding box
+            # label = f"Class {class_id} ({confidence:.2f})"
+            # cv2.putText(image, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
-            # Extract and preprocess ROI for OCR
-            roi = image[y1:y2, x1:x2]
-            gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-            gray_roi = cv2.threshold(gray_roi, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-            gray_roi = cv2.medianBlur(gray_roi, 3)
+            # # Extract and preprocess ROI for OCR
+            # roi = image[y1:y2, x1:x2]
+            # gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+            # gray_roi = cv2.threshold(gray_roi, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+            # gray_roi = cv2.medianBlur(gray_roi, 3)
 
-            # Use EasyOCR for text extraction
-            result = reader.readtext(gray_roi)
-            extracted_text = result[0][-2] if result else "[No text detected]"
+            # # Use EasyOCR for text extraction
+            # result = reader.readtext(gray_roi)
+            # extracted_text = result[0][-2] if result else "[No text detected]"
             
-            # Store extracted text
-            extracted_texts.append(extracted_text)
+            # # Store extracted text
+            # extracted_texts.append(extracted_text)
 
-            # Categorize extracted text
-            if class_id == 0:
-                filtered_texts["NOM"] = extracted_text
-            elif class_id == 1:
-                filtered_texts["PRENOM"] = extracted_text
-            elif class_id == 2:
-                filtered_texts["MATRICULE"] = extracted_text  
+            # # Categorize extracted text
+            # if class_id == 0:
+                # filtered_texts["NOM"] = extracted_text
+            # elif class_id == 1:
+                # filtered_texts["PRENOM"] = extracted_text
+            # elif class_id == 2:
+                # filtered_texts["MATRICULE"] = extracted_text  
 
-            # Annotate image with extracted text
-            cv2.putText(image, extracted_text, (x1, y2 + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            # # Annotate image with extracted text
+            # cv2.putText(image, extracted_text, (x1, y2 + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-        # Handle case where no text is found
-        if not filtered_texts:
-            filtered_texts = {"NOM": "[No text detected]", "PRENOM": "[No text detected]", "MATRICULE": "[No text detected]"}
+        # # Handle case where no text is found
+        # if not filtered_texts:
+            # filtered_texts = {"NOM": "[No text detected]", "PRENOM": "[No text detected]", "MATRICULE": "[No text detected]"}
 
-        # Join extracted texts
-        extracted_txt = "<br>".join([f"<b>{key}</b>: {value}" for key, value in filtered_texts.items()])
-        extracted_encoded = urllib.parse.quote(extracted_txt)  # Encode extracted text
+        # # Join extracted texts
+        # extracted_txt = "<br>".join([f"<b>{key}</b>: {value}" for key, value in filtered_texts.items()])
+        # extracted_encoded = urllib.parse.quote(extracted_txt)  # Encode extracted text
         
-        # Lookup NOM & PRENOM using MATRICULE
-        matched_nom, matched_prenom = "[Not Found]", "[Not Found]"
+        # # Lookup NOM & PRENOM using MATRICULE
+        # matched_nom, matched_prenom = "[Not Found]", "[Not Found]"
 
-        if "MATRICULE" in filtered_texts:
-            matricule = filtered_texts["MATRICULE"].strip()  # Remove extra spaces
+        # if "MATRICULE" in filtered_texts:
+            # matricule = filtered_texts["MATRICULE"].strip()  # Remove extra spaces
 
-            print(f"Extracted Matricule: '{matricule}'")  # Debug print
+            # print(f"Extracted Matricule: '{matricule}'")  # Debug print
 
-            # Convert CSV column to string and strip spaces
-            df["Matricule"] = df["Matricule"].astype(str).str.strip()
+            # # Convert CSV column to string and strip spaces
+            # df["Matricule"] = df["Matricule"].astype(str).str.strip()
             
 
-            # Check if extracted matricule exists in dataset
-            match = df[df["Matricule"] == matricule]
+            # # Check if extracted matricule exists in dataset
+            # match = df[df["Matricule"] == matricule]
 
-            if not match.empty:
+            # if not match.empty:
                 
-                matched_nom = match.iloc[0]["Nom"]
-                print(matched_nom)
-                matched_prenom = match.iloc[0]["Prenom"]
-                print(matched_prenom)
-            else:
-                print("Matricule not found in dataset!")  # Debug print
+                # matched_nom = match.iloc[0]["Nom"]
+                # print(matched_nom)
+                # matched_prenom = match.iloc[0]["Prenom"]
+                # print(matched_prenom)
+            # else:
+                # print("Matricule not found in dataset!")  # Debug print
 
-        # Prepare matched text output
-        db_txt = f"<b>NOM</b>: {matched_nom}<br><b>PRENOM</b>: {matched_prenom}"
+        # # Prepare matched text output
+        # db_txt = f"<b>NOM</b>: {matched_nom}<br><b>PRENOM</b>: {matched_prenom}"
         
 
-        # Convert and save processed image
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image = Image.fromarray(image)
-        output_path = "static/processed_image.jpg"
-        image.save(output_path)
-        print(f"Saved processed image at: {output_path}")
+        # # Convert and save processed image
+        # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        # image = Image.fromarray(image)
+        # output_path = "static/processed_image.jpg"
+        # image.save(output_path)
+        # print(f"Saved processed image at: {output_path}")
 
-        # Redirect with both extracted & matched texts
-        return redirect(url_for('checkyolo', image_url=output_path, extracted_text=extracted_encoded, db_txt=db_txt))
+        # # Redirect with both extracted & matched texts
+        # return redirect(url_for('checkyolo', image_url=output_path, extracted_text=extracted_encoded, db_txt=db_txt))
 
         
     
