@@ -404,7 +404,7 @@ td{
   position: relative;
 }
 .col-md-12.text-center {
-    font-size: 12px; 
+    font-size: 12px; /* or any smaller size you prefer */
   }
 
   td{
@@ -442,21 +442,12 @@ td{
   scrollbar-color: #888 #f1f1f1;
 }
 
-th, td {
-  padding: 2px 4px; /* Minimal padding */
-  line-height: 1;    /* Tight line height */
-  font-size: 14px;   /* Optional: Smaller text for tighter rows */
-  vertical-align: middle; /* Ensures text doesn't stretch cell vertically */
-}
-
-  tr {
-    height: auto; /* Let height adapt to content */
-  }
-
 </style>
 </head>
 <body>
   {% include 'logheader.html' %}
+
+
     <div class="content-wrap ">
         <div class="main">
             <div class="container-fluid p-0 m-0">
@@ -517,7 +508,7 @@ th, td {
 							<!-- Chart -->
 							<div class="card nestable-cart" style="height:32vh;overflow: hidden;">
 								<div class="card-title">
-									<h4>{{ translations['Overall Project Progress']}}</h4>
+									<h4>{{ translations['Anomalies Progress']}}</h4>
 								</div>
 								<div class="justify-content-center padding">
 									<div class="row">
@@ -540,19 +531,20 @@ th, td {
 							</div>
 							<!-- Table -->
 							<div class="card" style="height:53vh;overflow: hidden;">
-                <div class="card-title">
+								
+								<div>
+                                    <div class="card-title">
                                          	<h4>{{ translations['Stage Progress']}}  
 												<a href="#" target="_blank" type="button" class="btn-sm btn-primary btn-flat" title="Link">{{ translations['Report']}}</a>
 											</h4>
                                     </div>
                                     
-                                        <div class="card-body scroll-container" style="height:100%; overflow: auto;">
+                                        <div class="scroll-container" style="height:70%; overflow: auto;">
 											                    {{html_process | safe}}
 									                      </div>
                                     
                                 </div>
-								
-								
+							</div>
 						</div>
 
 
