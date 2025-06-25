@@ -36,7 +36,9 @@
         "ALL":"ALL",
 		"test":"Test",
 		"anomalies":"Anomalies",
-		"no record found":"No records found"
+		"no record found":"No records found",
+		"grid line":"Maintain Grid Line"
+		
     },
     "fr": {
         "hello_world": "Nombre total de notices",
@@ -75,7 +77,8 @@
         "ALL":"TOUT",
         "test":"Test",
 		"anomalies":"Anomalies",
-		"no record found":"Aucun enregistrement trouvé"
+		"no record found":"Aucun enregistrement trouvé",
+		"grid line":"Conserver la référence de ligne"
     }
     
 }
