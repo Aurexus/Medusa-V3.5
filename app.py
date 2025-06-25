@@ -733,9 +733,9 @@ def listdata():
         #     params.append(chk_test)
 
     # Execute SQL query for total records
-    print(sql_query2)
-    print(params)
-    print(addParam)
+    #print(sql_query2)
+    #print(params)
+    #print(addParam)
     cursor.execute(sql_query, params)
     count_result = cursor.fetchone()
     total_records = count_result[0] if count_result else 0
@@ -749,7 +749,7 @@ def listdata():
     second_last = total_no_of_pages - 1
 
     # Modify sql_query2 for pagination
-    sql_query2 += " ORDER BY z001_x0 OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
+    sql_query2 += f" {sort} {sortype} OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
     pagination_params = params + [offset, total_records_per_page]   
     # Execute SQL query for records
     cursor.execute(sql_query2, pagination_params)
