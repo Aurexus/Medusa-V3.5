@@ -522,9 +522,9 @@ def listdata():
     chk_test = request.args.get("chkTest", '0')  # Default to '0' if not provided
     
     # Debugging prints to check current and new values
-    print("test")
-    print("Session chk_test:", session.get('chk_test'))
-    print("Current chk_test:", chk_test)
+    #print("test")
+    #print("Session chk_test:", session.get('chk_test'))
+    #print("Current chk_test:", chk_test)
 
     # Check the page weather current and previous pages are the same
     if chk_test != session.get('chk_test'):
@@ -762,7 +762,7 @@ def listdata():
         )
         if language == "fr":
             html_content += "<thead><tr>"
-            html_content += "<th></th>"
+            html_content += "<th style='width:15px;'></th>"
             html_content += "<th>Dossier</th>"
             html_content += "<th>Image</th>"
             html_content += "<th>Traitement</th>"
