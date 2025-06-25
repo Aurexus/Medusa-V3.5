@@ -37,7 +37,9 @@
 		"test":"Test",
 		"anomalies":"Anomalies",
 		"no record found":"No records found",
-		"grid line":"Maintain Grid Line"
+		"grid line":"Maintain Grid Line",
+		"Previous_form":"Previous",
+        "Next_form":"Next"
 		
     },
     "fr": {
@@ -78,7 +80,9 @@
         "test":"Test",
 		"anomalies":"Anomalies",
 		"no record found":"Aucun enregistrement trouvé",
-		"grid line":"Conserver la référence de ligne"
+		"grid line":"Conserver la référence de ligne",
+		"Previous_form":"Précédent(e)",
+        "Next_form":"Suivant(e)"
     }
     
 }
