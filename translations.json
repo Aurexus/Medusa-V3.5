@@ -40,7 +40,8 @@
 		"grid line":"Maintain Grid Line",
 		"Previous_form":"Previous",
         "Next_form":"Next",
-		"Return":"Back"
+		"Return":"Back",
+		"save":"Save"
 		
     },
     "fr": {
@@ -84,7 +85,8 @@
 		"grid line":"Conserver la référence de ligne",
 		"Previous_form":"Précédent(e)",
         "Next_form":"Suivant(e)",
-		"Return":"Retourner"
+		"Return":"Retourner",
+		"save":"Sauvegarder"
     }
     
 }
