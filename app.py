@@ -819,7 +819,10 @@ def listdata():
             html_content += "</tr>"
         html_content += "</tbody></table>"
     else:
-        html_content += "<p>Aucun enregistrement trouvé</p>"
+        if language == "fr":
+            html_content += "<p>Aucun enregistrement trouvé</p>"
+        else:
+            html_content += "<p>No Record Found!</p>"
 
     # total project notices count
     queryCount = f"select count(*) from {table} where proj=?"
