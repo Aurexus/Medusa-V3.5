@@ -35,7 +35,8 @@
         "Last":"Last ››",
         "ALL":"ALL",
 		"test":"Test",
-		"anomalies":"Anomalies"
+		"anomalies":"Anomalies",
+		"no record found":"No records found"
     },
     "fr": {
         "hello_world": "Nombre total de notices",
@@ -73,7 +74,8 @@
         "Last":"Dernier ››",
         "ALL":"TOUT",
         "test":"Test",
-		"anomalies":"Anomalies"
+		"anomalies":"Anomalies",
+		"no record found":"Aucun enregistrement trouvé"
     }
     
 }
