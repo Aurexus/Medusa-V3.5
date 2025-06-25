@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard</title>
+    <!-- ================= Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
+    <!-- Styles -->
+    <link href="{{url_for('static',filename='assets/css/lib/calendar2/pignose.calendar.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/chartist/chartist.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/font-awesome.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/themify-icons.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/owl.carousel.min.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/owl.theme.default.min.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/weather-icons.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/menubar/sidebar.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/helper.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/style.css')}}" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.1.4/css/dataTables.dataTables.css" />  
+	<link href="{{url_for('static',filename='assets/css/lib/sweetalert/sweetalert.css')}}" rel="stylesheet">
+	<style>
+	
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* Ensures that the table layout is consistent */
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa; /* Header background color */
+    z-index: 2;
+}
+
+thead th, tbody td {
+    padding: 3px;
+    text-align: center;
+    border-bottom: 1px solid #ddd; /* Adds border to table cells */
+	font-size: 13px;
+	width: 12.5%; /* Example width for 8 columns */
+   
+}
+
+tbody {
+    display: block;
+    max-height: 600px; /* Matches container’s max-height */
+    overflow-y: auto; /* Makes tbody scrollable */
+}
+
+tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed; /* Ensures consistent column width */
+}
+
+thead tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed; /* Ensures consistent column width */
+}
+[contenteditable]:hover, [contenteditable]:focus {
+    padding-top: 10px !important;
+    background: #ffffff !important;
+    padding-bottom: 10px !important;
+    border: 1px solid black !important;
+}
+.form-group {
+    margin-bottom: 0px !important;
+	margin-top: 0px !important;
+}
+label{
+	display:inline !important;
+}
+
+	</style>
+
+</head>
+
+<body>
+
+	
+	{% include 'header.html' %}
+	
+
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">                
+                <!-- /# row -->
+                <section id="main-content">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="bootstrap-data-table-panel">
+                                    <div class="row">
+										<div class="col-auto p-0">
+											<a href="addprojects" type="button" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5">
+												<i class="ti-plus"></i>Add Project
+											</a>
+										</div>
+										<!-- <div class="col-auto p-0">
+											<a href="" data-target='#exampleModalCenter' data-toggle="modal" type="button" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5">
+												<i class="ti-search"></i>Search Project
+											</a>
+										</div> -->
+										<div class="col">
+											<div class="input-group">
+												<input id="keyword" name="keyword" type="text" class="col-md-6 shadow border border-primary" placeholder="Search Projects"/>
+												<div id="suggesstion-box"></div>
+												<div class="input-group-append">
+													<span class="input-group-text border border-primary shadow"><i class="ti-search"></i></span>
+												</div>
+												<button id="exportButton" class="btn btn-primary btn-flat">Export to CSV</button>
+											</div>
+										</div>
+										
+									</div>
+
+									<!-- Scrollable Table -->
+                                    <div class="table-container">
+                                        <br/>
+                                        <table id="mytable" class="table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" onclick="sortTable(0)" hidden>ID <i class="fa fa-sort"></i></th>
+                                                    <th scope="col" onclick="sortTable(1)">UPID <i class="fa fa-sort"></i></th>
+                                                    <th scope="col" onclick="sortTable(2)">Project <i class="fa fa-sort"></i></th>
+                                                    <th scope="col" onclick="sortTable(3)">Start Date <i class="fa fa-sort"></i></th>
+                                                    <th scope="col" onclick="sortTable(4)">Client Name <i class="fa fa-sort"></i></th>
+                                                    <th scope="col" onclick="sortTable(5)">Description <i class="fa fa-sort"></i></th>
+													<th scope="col" onclick="sortTable(6)">GEO Location <i class="fa fa-sort"></i></th>  
+													<th scope="col" onclick="sortTable(7)">Link1 <i class="fa fa-sort"></i></th>
+													<th scope="col" onclick="sortTable(8)">Link2 <i class="fa fa-sort"></i></th> 
+													<th scope="col" onclick="sortTable(9)">Link3 <i class="fa fa-sort"></i></th>   		
+                                                    <th scope="col" style="text-align:center;width:100px;" >Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbody">
+                                               {{ html_content | safe }}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /# card -->
+                        </div>
+                        
+                    </div>
+                   <!--  <div class="row">
+                        <div class="col-lg-12">
+                            <div class="footer">
+                                <p>© Aurexus. - <a href="#">aurexus.com</a></p>
+                            </div>
+                        </div>
+                    </div> -->
+                </section>
+            </div>
+        </div>
+    </div>
+	<div class="modal fade" id="exampleModalCenter" tabindex="1" role="dialog">
+	  <div class="modal-dialog modal-dialog-centered" >
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLongTitle">Project Details</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+          <div class="modal-body">
+                <div class="container-fluid">
+                    <form id="editProjectForm" class="row">
+                        <!-- <div class="form-group col-md-12">
+                            <label>ID</label>
+                            <input type="text" id="project-id" class="form-control" readonly>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>UPID</label>
+                            <input type="text" id="project-upid" class="form-control">
+                        </div> -->
+                        <div class="form-group col-md-12">
+                            <label>Project Name</label>
+                            <input type="text" id="project-name" class="form-control">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>Start Date</label>
+                            <input type="text" id="project-start-date" class="form-control">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>Client Name</label>
+                            <input type="text" id="project-client-name" class="form-control">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>Short Description</label>
+                            <input type="text" id="project-short-description" class="form-control">
+                        </div>
+						<div class="form-group col-md-12">
+                            <label>Project Folder</label>
+                            <input type="text" id="project-link" class="form-control">
+                        </div>
+						 <div class="form-group col-md-12">
+                            <label>Tracksheet Link</label>
+                            <input type="text" id="tracksheet-link" class="form-control">
+                        </div>
+						 <div class="form-group col-md-12">
+                            <label>Other Link</label>
+                            <input type="text" id="other-link" class="form-control">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+		</div>
+	  </div>
+	</div>
+
+    <!-- jquery vendor -->
+    <script src="{{url_for('static',filename='assets/js/lib/jquery.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/jquery.nanoscroller.min.js')}}"></script>
+    <!-- nano scroller -->
+    <script src="{{url_for('static',filename='assets/js/lib/menubar/sidebar.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/preloader/pace.min.js')}}"></script>
+    <!-- sidebar -->
+
+    <script src="{{url_for('static',filename='assets/js/lib/bootstrap.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/scripts.js')}}"></script>
+    <!-- bootstrap -->
+
+    <script src="{{url_for('static',filename='assets/js/lib/calendar-2/moment.latest.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/calendar-2/pignose.calendar.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/calendar-2/pignose.init.js')}}"></script>
+
+
+    <script src="{{url_for('static',filename='assets/js/lib/weather/jquery.simpleWeather.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/weather/weather-init.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/circle-progress/circle-progress.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/circle-progress/circle-progress-init.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/chartist/chartist.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/sparklinechart/jquery.sparkline.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/sparklinechart/sparkline.init.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/owl-carousel/owl.carousel.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/owl-carousel/owl.carousel-init.js')}}"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/sweetalert/sweetalert.init.js')}}"></script>
+    <!-- scripit init-->
+    <script src="{{url_for('static',filename='assets/js/dashboard2.js')}}"></script>
+	<script src="https://cdn.datatables.net/2.1.4/js/dataTables.js"></script>
+	<script>
+		$(document).ready(function() {
+		
+            // Export button click event
+            $("#exportButton").click(function() {
+                var keyword = $("input[name='keyword']").val();
+                window.location.href = "/export?keyword=" + keyword;
+            });
+    // Event listener for edit buttons
+    $('.edit-btn').on('click', function() {
+        var id = $(this).data('id');
+        var upid = $(this).data('upid');
+        var projectName = $(this).data('project-name');
+        var startDate = $(this).data('start-date');
+        var clientName = $(this).data('client-name');
+        var shortDescription = $(this).data('short-description');
+        var projectFolder = $(this).data('project-folder');
+        var trackSheet = $(this).data('tracksheet-link');
+        var otherLink = $(this).data('other-link');
+        
+        $('#project-name').val(projectName);
+        $('#project-start-date').val(startDate);
+        $('#project-client-name').val(clientName);
+        $('#project-short-description').val(shortDescription);
+        $('#project-link').val(projectFolder);
+        $('#tracksheet-link').val(trackSheet);
+        $('#other-link').val(otherLink);
+    });
+
+    $('#keyword').on('input', function() {
+        var searchKeyword = $(this).val();
+
+        $.ajax({
+            url: '/search',
+            type: 'GET',
+            data: { keyword: searchKeyword },
+            success: function(response) {
+                $('#tbody').empty().append(response.html_content);
+            },
+            error: function(xhr, status, error) {
+                console.error('Search error:', error);
+            }
+        });
+    });
+	
+	
+
+    $(document).on('focusout', '.edit', function() {
+        if ($(this).hasClass('editMode')) {
+            var id = this.id;
+            var split_id = id.split('_');
+            var field_name = split_id[0];
+            var edit_id = split_id[1];
+			if($(this).text()=='')
+			{
+				 var newValue = '-';
+			}
+			else
+			{
+				 var newValue = $(this).text();
+			}           
+            var oldValue = $(this).data('original-value');
+
+            if (newValue !== oldValue) {
+                $(this).addClass('updatedCell').css({
+                    'background-color': '#c8e6c9',
+                    'transition': 'background-color 1s'
+                });
+
+                $.ajax({
+                    url: '/update',
+                    type: 'POST',
+                    data: { field: field_name, value: newValue, id: edit_id },
+                    success: function(response) {
+                        if (response.success === 1) {
+                            console.log('Save successful');
+                        } else {
+                            console.log('Save failed:', response.success);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Update error:', error);
+                    }
+                });
+
+                if (field_name === '[Project Folder Link]' && newValue!=='-') {
+                    $(this).html('<a href="' + newValue + '" target="_blank" class="badge badge-light border border-primary">Project Link</a>');
+                } else {
+                    $(this).text(newValue);
+                }
+				if (field_name === '[Tracksheet Link]' && newValue!=='-') {
+                    $(this).html('<a href="' + newValue + '" target="_blank" class="badge badge-light border border-primary">Tracksheet Link</a>');
+                } else {
+                    $(this).text(newValue);
+                }
+				if (field_name === '[Other Link]' && newValue!=='-') {
+                    $(this).html('<a href="' + newValue + '" target="_blank" class="badge badge-light border border-primary">Other Link</a>');
+                } else {
+                    $(this).text(newValue);
+                }
+            } else {
+				
+                if (field_name === '[Project Folder Link]' && oldValue !== '-') {
+                    $(this).html('<a href="' + oldValue + '" target="_blank" class="badge badge-light border border-primary">Project Link</a>');
+                }
+				else if (field_name === '[Tracksheet Link]' && oldValue !== '-') {
+                    $(this).html('<a href="' + oldValue + '" target="_blank" class="badge badge-light border border-primary">Tracksheet Link</a>');
+                }
+				else if (field_name === '[Other Link]' && oldValue !== '-') {
+                    $(this).html('<a href="' + oldValue + '" target="_blank" class="badge badge-light border border-primary">Other Link</a>');
+                }
+            }
+
+            $(this).removeAttr('contentEditable').removeClass('editMode');
+        }
+    });
+
+    $(document).on('dblclick', '.edit', function() {
+        var $this = $(this);
+        $this.attr('contentEditable', 'true').focus().addClass('editMode');
+
+        var $link = $this.find('a');
+        var originalValue = $link.attr('href') || $this.text();
+
+        if ($link.length) {
+            $this.text($link.attr('href'));
+        }
+
+        $this.data('original-value', originalValue);
+    });
+	
+	var table = document.getElementById("mytable");
+	var rowCount = table.getElementsByTagName("tbody")[0].rows.length;
+	console.log("Number of rows: " + rowCount);
+	//$("#rowcount").text(rowCount);
+	
+	$(document).on('click', '.delete-btn', function() {
+    var rowId = $(this).data('id'); // Get the row's ID (this should match the DB ID)
+    var $row = $(this).closest('tr'); // Get the closest row to the clicked button
+
+			// Confirmation alert
+			swal({
+				title: "Are you sure?",
+				text: "Once deleted, you will not be able to recover this record!",
+				icon: "warning",
+				buttons: true,
+				dangerMode: true,
+			}).then((willDelete) => {
+				if (willDelete) {
+					console.log(rowId);
+					// Perform AJAX request to delete the row from the database
+					$.ajax({
+						url: '/deleteProject',  // Flask route that will handle deletion
+						type: 'POST',
+						data: { id: rowId },
+						success: function(response) {
+							if (response.success) {
+								// Remove the row from the table on success
+								$row.remove();
+								swal("Poof! The record has been deleted!", {
+									icon: "success",
+								});
+							} else {
+								swal("Error! The record could not be deleted.", {
+									icon: "error",
+								});
+							}
+						},
+						error: function() {
+							swal("Error! Something went wrong.", {
+								icon: "error",
+							});
+						}
+					});
+				}
+			});
+		});
+	
+	
+});
+function sortTable(n) {
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById("mytable");
+    switching = true;
+    // Set the sorting direction to ascending:
+    dir = "asc"; 
+
+    while (switching) {
+        switching = false;
+        rows = table.rows;
+
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+
+            // Determine the type of content to sort
+            var xContent = x.textContent.trim();
+            var yContent = y.textContent.trim();
+            var xValue = isNaN(xContent) ? xContent.toLowerCase() : parseFloat(xContent);
+            var yValue = isNaN(yContent) ? yContent.toLowerCase() : parseFloat(yContent);
+
+            if (dir === "asc") {
+                if (xValue > yValue) {
+                    shouldSwitch = true;
+                    break;
+                }
+            } else if (dir === "desc") {
+                if (xValue < yValue) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount++;
+        } else {
+            if (switchcount === 0 && dir === "asc") {
+                dir = "desc";
+                switching = true;
+            }
+        }
+    }
+}
+	</script>
+</body>
+
+</html>
