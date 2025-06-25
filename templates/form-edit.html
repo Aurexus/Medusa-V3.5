@@ -195,7 +195,6 @@
             color: var(--text-color-medium);
             text-align: left;
             display: block;
-            /* margin-bottom: var(--spacing-md); */
         }
 
         .section-title .icon {
@@ -860,17 +859,17 @@
                                         <div style="display: flex;">
                                             <a class="btn-nav" style="margin-right: 10px;" 
                                                 href="listdata?chkTest={{session['chk_test']}}&page_no={{listpage_no}}">
-                                                <span class="icon">🏠</span> Retourner
+                                                <span class="icon">🏠</span> {{ translations['Return']}}
                                             </a>
 
                                             <a class="btn-nav" style="margin-right: 10px;"
                                                 href="{% if list_prev != 0 %}?list={{ list_prev }}{% else %}#{% endif %}">
-                                                <span class="icon">◀</span> Précédent(e)
+                                                <span class="icon">◀</span> {{ translations['Previous_form']}}
                                             </a>
 
                                             <a class="btn-nav" style="margin-right: 10px;"
                                                 href="{% if list_next >= allNextCount %}#{% else %}?list={{list_next}}{% endif %}">
-                                                Suivant(e)<span class="icon">▶</span>
+                                                {{ translations['Next_form']}}<span class="icon">▶</span>
                                             </a>
 
                                             <a class="btn-nav">
@@ -1035,7 +1034,7 @@
                                     </div>
 
                                     <div class="section">
-                                        <h2 class="section-title">Notice<a class="btn text-danger" href="{{ site_url }}" target="_blank"><i class="ti-link"></i></a></h2>
+                                        <label class="section-title">Notice<a class="btn text-danger" href="{{ site_url }}" target="_blank"><i class="ti-link"></i></a></label>
                                         <div class="form-field full-width">
                                             <textarea 
                                                 name="notice" 
@@ -1048,7 +1047,7 @@
 
 
                                     <div class="section">
-                                        <h2 class="section-title">Correction</h2>
+                                        <label class="section-title">Correction</label>
                                         <div class="form-field full-width">
                                             <select 
                                                 id="anocode" 
@@ -1093,7 +1092,7 @@
                                     </div>
 
                                     <div class="section">
-                                        <h2 class="section-title">Commentaire</h2>
+                                        <label class="section-title">Commentaire</label>
                                         <div class="form-field full-width">
                                             <textarea 
                                                 id="anscode" 
@@ -1106,7 +1105,7 @@
                                     </div>
 
                                     <div style="display:flex;justify-content: center;align-items: center;">
-                                        <button class="btn-save" id="save_record" name="recordsave">Sauvegarder<i class="fa-solid fa-check" style="display:none"></i></button>
+                                        <button class="btn-save" id="save_record" name="recordsave">{{ translations['save']}}<i class="fa-solid fa-check" style="display:none"></i></button>
                                     </div>
                             </div>
 
@@ -1164,7 +1163,7 @@
                                             type="checkbox" 
                                             id="toggleOverlay" 
                                         />
-                                            Conserver la référence de ligne
+                                            {{ translations['grid line']}}
                                 </label>
                             </div>
 
