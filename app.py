@@ -2226,11 +2226,11 @@ def analyze_image():
         return jsonify({"error": str(e)}), 500
 
 
-# Project Management APP Starts Here -------------------------------------------#
+
+# Project Management APP Starts Here (UPID) -------------------------------------------#
 @app.route("/login2")
 def loginProject():
     return render_template("login2.html")
-
 
 @app.route("/projLogin", methods=["POST", "GET"])
 def projLogin():
@@ -2256,7 +2256,6 @@ def projLogin():
                 "login2.html", message="Please Check the Credential's"
             )
     return render_template("login2.html")
-
 
 @app.route("/projects")
 def projects():
@@ -2489,7 +2488,6 @@ def search():
     # Return the HTML content to the client
     return jsonify(html_content=html_content)
 
-
 @app.route("/update", methods=["POST"])
 def update_record():
     # Connect to the database
@@ -2517,7 +2515,6 @@ def update_record():
         # Invalid or missing parameters
         return jsonify(success=0)
 
-
 @app.route("/deleteProject", methods=["POST"])
 def deleteProject():
     project_id = request.form.get("id")
@@ -2535,7 +2532,6 @@ def deleteProject():
         return jsonify({"success": True})
     else:
         return jsonify({"success": False})
-
 
 @app.route("/add_project", methods=['GET', 'POST'])
 @app.route("/add_project/<int:id>", methods=['GET', 'POST'])
@@ -2610,7 +2606,6 @@ def add_project(id=None):
         # Error in insertion
         return jsonify(success=0, message="Failed to add project.")
 
-
 @app.route("/checkExist", methods=["POST"])
 def checkExist():
 
@@ -2626,7 +2621,6 @@ def checkExist():
         return jsonify(success=1)
     else:
         return jsonify(success=0)
-
 
 @app.route("/autocomplete_projects", methods=["GET","POST"])
 def autocomplete_projects():
@@ -2675,7 +2669,6 @@ def autocomplete_projects():
         app.logger.error(f"Unexpected error: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
-
 @app.route("/addprojects", methods=['GET'])
 @app.route("/addprojects/<int:id>", methods=['GET'])
 def addprojects(id=None):
@@ -2694,12 +2687,10 @@ def addprojects(id=None):
     else:
         return render_template("add_project.html", edit = False)
 
-
 @app.route("/dbProjectTable")
 def dbProjectTable():
     return render_template("dbTableCreation.html")
-    
-    
+        
 @app.route("/checkyolo")
 def checkyolo():
     image_url = request.args.get('image_url', '')
@@ -2708,7 +2699,6 @@ def checkyolo():
     final_text=urllib.parse.unquote(extracted_text)
     db_text_final = urllib.parse.unquote(db_txt)
     return render_template("yolotest.html", image_url=image_url, extracted_text=final_text, db_txt=db_text_final)
-
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
