@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aurexus Medusa</title>
+
+    <!-- ================= Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
+
+    <!-- Styles -->
+    <link href="{{ url_for('static', filename='assets/css/lib/font-awesome.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/jquery.verySimpleImageViewer.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/lib/themify-icons.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/lib/data-table/buttons.bootstrap.min.css') }}"
+        rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/css/lib/menubar/sidebar.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/lib/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/lib/sweetalert/sweetalert.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/lib/helper.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/style.css') }}" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <style>
+
+   :root {
+            /* Color Palette */
+            --primary-bg: #f5f7fa; /* Lightest background */
+            --secondary-bg: #ffffff; /* Card/panel background */
+            --border-color: #e0e6ed; /* Subtle borders */
+            --text-color-dark: #2c3e50; /* Primary text */
+            --text-color-medium: #7f8c8d; /* Secondary text, labels */
+            --text-color-light: #bdc3c7; /* Placeholder, subtle info */
+            --accent-red: #e74c3c; /* Action color */
+            --accent-red-hover: #c0392b; /* Darker red on hover */
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05); /* Light shadow for depth */
+            --shadow-medium: 0 8px 20px rgba(0, 0, 0, 0.08); /* Stronger shadow for prominent elements */
+
+            /* Spacing */
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 10px;
+            --spacing-lg: 30px;
+
+            /* Typography */
+            --font-family: 'Inter', sans-serif;
+            --font-size-base: 14px;
+            --font-size-sm: 12px;
+            --font-size-lg: 16px;
+
+            
+            --border-radius-sm: 5px;
+            --border-radius-md: 10px;
+
+            /* Transitions */
+            --transition-speed: 0.2s ease-in-out;
+        }
+
+        .panel {
+            background-color: var(--secondary-bg);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-medium);
+            padding: var(--spacing-md);
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1; 
+        }
+
+        .left-panel {
+            flex-basis: 50%; 
+            max-width: 50%;
+            min-width: 450px; 
+        }
+
+        .right-panel {
+            flex-basis: 50%; 
+            max-width: 50%;
+            min-width: 450px; 
+            justify-content: space-between; 
+        }
+
+        /* --- Section Styles within Panels --- */
+        .section {
+            margin-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: var(--spacing-md);
+            width:100%;
+        }
+        .section:last-of-type {
+            border-bottom: none; 
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--text-color-dark);
+            /* margin-bottom: var(--spacing-md); */
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        .section-title .icon {
+            font-size: 1.2em; 
+        }
+
+        /* --- Top Navigation Bar (Left Panel) --- */
+         .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-xs);
+            padding-bottom: var(--spacing-xs);
+            /* border-bottom: 1px solid var(--border-color); */
+            
+        }
+
+        .btn-nav {
+            background-color: var(--secondary-bg);
+            color: var(--text-color-dark);
+            border: 1px solid var(--border-color);
+            /* padding: 10px 15px; */
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            font-size: var(--font-size-base);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            transition: background-color var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+
+        .btn-nav:hover {
+            background-color: var(--primary-bg);
+            border-color: var(--accent-red);
+            box-shadow: 0 0 0 3px rgba(var(--accent-red), 0.1);
+        }
+
+        .btn-nav .icon {
+            font-size: 1em; 
+        }
+
+        /* --- Form Grid Layout --- */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr; 
+            gap: var(--spacing-sm) var(--spacing-md); 
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+
+        .form-field.full-width {
+            grid-column: 1 / -1; 
+        }
+
+        .form-field label {
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            color: var(--text-color-medium);
+        }
+
+        .form-field input[type="text"],
+        .form-field select,
+        .form-field textarea {
+            width: 100%;
+            padding: 10px var(--spacing-sm);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            font-family: var(--font-family);
+            font-size: var(--font-size-sm);
+            color: var(--text-color-dark);
+            background-color: var(--primary-bg); /* Slightly darker input background */
+            transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+            box-sizing: border-box; /* Include padding and border in element's total width and height */
+        }
+
+        .form-field input[type="text"]:focus,
+        .form-field select:focus,
+        .form-field textarea:focus {
+            border-color: var(--accent-red);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(var(--accent-red), 0.15);
+            background-color: var(--secondary-bg); /* White on focus */
+        }
+
+        .form-field textarea {
+            min-height: 100px;
+            resize: vertical; 
+        }
+
+        /* --- Specific styles for TextBrut section --- */
+        .text-brut-content {
+            /* white-space: pre-wrap;  */
+            font-family: 'Consolas', 'Monaco', monospace; 
+            font-size: var(--font-size-sm);
+            background-color: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            padding: var(--spacing-sm);
+            max-height: 200px; /* Limit height if needed */
+            overflow-y: auto; /* Scroll if content overflows */
+            color: var(--text-color-dark);
+        }
+
+        /* --- Specific styles for Notice section --- */
+        .notice-content {
+            font-family: 'Consolas', 'Monaco', monospace; /* Monospaced font */
+            font-size: var(--font-size-sm);
+            line-height: 1.4;
+            background-color: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            padding: var(--spacing-sm);
+            max-height: 150px;
+            overflow-y: auto;
+            color: var(--text-color-dark);
+        }
+        .notice-content span {
+            display: block; /* Each line on its own */
+            white-space: pre-wrap;
+        }
+        .notice-content a {
+            color: var(--accent-red);
+            text-decoration: none;
+            transition: color var(--transition-speed);
+        }
+        .notice-content a:hover {
+            text-decoration: underline;
+            color: var(--accent-red-hover);
+        }
+        .notice-content a .icon {
+            font-size: 0.9em; /* Smaller icon for link */
+            margin-left: 5px;
+        }
+
+        /* --- Right Panel Controls (Image Viewer Header/Footer) --- */
+        .viewer-header, .viewer-footer {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-sm) 0;
+            gap: var(--spacing-sm);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: var(--spacing-md);
+        }
+        .viewer-footer {
+            border-top: 1px solid var(--border-color);
+            border-bottom: none;
+            margin-top: var(--spacing-md);
+            margin-bottom: 0;
+            padding-top: var(--spacing-md);
+        }
+
+        .viewer-header .nav-buttons {
+            display: flex;
+            gap: var(--spacing-xs);
+        }
+
+        .viewer-header .btn-icon {
+            background-color: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 1.1em;
+            color: var(--text-color-medium);
+            transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+        .viewer-header .btn-icon:hover {
+            background-color: var(--accent-red);
+            border-color: var(--accent-red);
+            color: white;
+            box-shadow: 0 2px 8px rgba(var(--accent-red), 0.2);
+        }
+
+        .viewer-header .title-text {
+            flex-grow: 1; /* Pushes other elements away */
+            text-align: center;
+            font-size: var(--font-size-base);
+            font-weight: 500;
+            color: var(--text-color-dark);
+        }
+
+        /* Custom Checkbox (similar to previous solution) */
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            font-size: var(--font-size-sm);
+            color: var(--text-color-medium);
+        }
+
+        .custom-checkbox input[type="checkbox"] {
+            opacity: 0;
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+        }
+
+        .custom-checkbox .checkmark {
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-right: 8px;
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+            transition: all var(--transition-speed);
+            background-color: var(--primary-bg);
+        }
+
+        .custom-checkbox input[type="checkbox"]:checked + .checkmark {
+            background-color: var(--accent-red);
+            border-color: var(--accent-red);
+        }
+
+        .custom-checkbox input[type="checkbox"]:checked + .checkmark::after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 1px;
+            width: 4px;
+            height: 9px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        /* Image Placeholder Area */
+        .image-viewer-placeholder {
+            flex-grow: 1; /* Takes available space */
+            background-color: var(--primary-bg);
+            border: 1px dashed var(--border-color);
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color-light);
+            font-size: var(--font-size-lg);
+            min-height: 250px; /* Minimum height for visual balance */
+        }
+
+        /* Thumbnails Area */
+        .viewer-footer .thumbnails {
+            display: flex;
+            gap: var(--spacing-sm);
+            overflow-x: auto; /* Allow horizontal scrolling if many thumbs */
+            padding-bottom: var(--spacing-xs); /* Padding for scrollbar */
+        }
+        .viewer-footer .thumbnail-item {
+            width: 80px; 
+            height: 60px; 
+            border: 2px solid transparent;
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            flex-shrink: 0; 
+            cursor: pointer;
+            transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+            background-color: var(--primary-bg); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color-light);
+            font-size: var(--font-size-sm);
+        }
+        .viewer-footer .thumbnail-item.active {
+            border-color: var(--accent-red);
+            box-shadow: 0 0 0 3px rgba(var(--accent-red), 0.2);
+        }
+        .viewer-footer .thumbnail-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .icon {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+
+        /* save btn */
+         .btn-save {
+            background-color: #5271FF;
+            color: white;
+            border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            font-size: var(--font-size-base);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            transition: background-color var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed);
+            text-align: center;
+        }
+
+        .btn-save .icon {
+            font-size: 1em; 
+            color: green;
+        }
+
+         @media (max-width: 1800px) {
+            .nav-buttons{
+                font-size: 12px;
+            }
+        }
+
+
+        /* Right panel */
+
+
+     #viewerContainer {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      background-color: #f0f0f0;
+    }
+    
+    #overlayline {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(to right, #c90505, #e00b0b);
+      border-radius: 3px;
+      cursor: ns-resize;
+      z-index: 10;
+      transition: background 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+    }
+
+     #dragHandle {
+      /* margin-left: 10px; */
+      background-color: black;
+      border: 1px solid #ccc;
+      padding: 4px 6px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      cursor: ns-resize;
+      position: absolute;
+        left: -20px;
+      
+    }
+
+    #dragHandle i {
+        color:white;
+        font-size: 16px;
+        
+    }
+</style>
+
+
+</head>
+
+<body>
+   
+
+{% include 'logheader.html' %}
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <section id="main-content">
+                    <div class="row">
+                        <div class="card col-lg-6">
+                            <div id="content" style="height:100%;overflow-y:scroll;">
+                                <form method="POST" class="form-inline" style="display: flex;flex-direction: column;">
+                                    <div class="nav-buttons" style="display: flex; justify-content: space-between;">
+                                        <div style="display: flex;">
+                                            <button class="btn-nav" style="margin-right: 10px;"><span class="icon">🏠</span> Retourner</button>
+                                            <button class="btn-nav" style="margin-right: 10px;"><span class="icon">◀</span> Précédent(e)</button>
+                                            <button class="btn-nav" style="margin-right: 10px;">Suivant(e)<span class="icon">▶</span></button>
+                                            <button class="btn-nav"><span class="icon">⭐</span></button>
+                                        </div>
+                                        <div style="display: flex; justify-content: center; align-items: center;background: #5271FF;color:white;padding: 5px;">
+                                            <span style="margin-right: 10px;"><strong>Record ID: </strong>{{ recid }}</span>
+                                            <span style="margin-right: 10px;">{{ dossier }}</span>
+                                            <span style="padding:10px">{{ image }}</span>
+                                            
+                                        </div>
+                                    </div>
+
+                                    <div class="section">
+                                        <div class="form-grid">
+                                            <div class="form-field">
+                                                <label for="traitementSelect">ENRICHISSEMENT</label>
+                                                <select id="traitementSelect">
+                                                    <option value="ENRICHISSEMENT">ENRICHISSEMENT</option>
+                                                    <option value="OPTION_B">OPTION_B</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-field">
+                                                <label for="qcote">Qcote</label>
+                                                <input type="text" id="qcote" value="222766">
+                                            </div>
+                                            <div class="form-field">
+                                                <label for="qcote">Ano Code</label>
+                                                <input type="text" id="qcote" value="222766">
+                                            </div>
+                                            <div class="form-field">
+                                                <label for="qcote">Ano Msg</label>
+                                                <input type="text" id="qcote" value="222766">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="section">
+                                        <h2 class="section-title">TextBrut</h2>
+                                        <div class="form-field full-width">
+                                            <div class="text-brut-content">
+                                                SEP: <br>
+                                                DIM: 21 cm <br>
+                                                COT: 222766 <br>
+                                                CB: 0066194239 <br><br>
+                                                TIT: THE GODS ARRIVE <br>
+                                                AUT: BY EDITH WHARTON <br>
+                                                EDI: D. APPLETON AND COMPANY NEW YORK, LONDON
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="section">
+                                        <h2 class="section-title">Notice <span class="icon">🔗</span></h2>
+                                        <div class="form-field full-width">
+                                            <div class="notice-content">
+                                                <span>01718camd 2200517 450</span>
+                                                <span>001: 20B0120B01_00183_a1</span>
+                                                <span>003 <a href="#">http://www.sudoc.fr/(04906)2409 </a></span>
+                                                <span>005 20210208154444.000</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="section">
+                                        <h2 class="section-title">Correction</h2>
+                                        <div class="form-field full-width">
+                                            <select>
+                                                    <option>--</option>
+                                                    <option>OK</option>
+                                                    <option>OK-ajoute</option>
+                                                    <option>A revoir</option>
+                                                    <option>A revoir, avec modification de le notice</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="section">
+                                        <h2 class="section-title">Commentaire</h2>
+                                        <div class="form-field full-width">
+                                            <div class="notice-content">
+                                                <span>6XX : ajouter 1 a 3 points d'acces sujet</span>
+                                                <br>
+                                                <span>unicaen 15/04/2025</span>
+                                                <span>date ok</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="display:flex;justify-content: center;align-items: center;">
+                                        <button class="btn-save">Sauvegarder<i class="fa-solid fa-check" style="display:none"></i></button>
+                                    </div>
+                            </div>
+
+                        </div>
+                        <div class="card col-lg-6" >
+                            <div class="viewer-header">
+                                <div class="nav-buttons">
+                                    <button class="btn-icon"><i class="fa-solid fa-angles-left"></i></button>
+                                    <button class="btn-icon"><i class="fa-solid fa-angles-right"></i></button>
+                                    <button class="btn-icon"><i class="fas fa-code"></i></button>
+                                </div>
+                                <div class="title-text">0012</div>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" id="maintainLineReference" checked />
+                                    <span class="checkmark"></span>
+                                    Maintain Line Reference
+                                </label>
+                            </div>
+
+                            <div class="image-viewer-placeholder">
+                                Image Viewer Placeholder
+                            </div>
+
+                            <div class="viewer-footer">
+                                <div class="thumbnails">
+                                    <div class="thumbnail-item active">1</div>
+                                    <div class="thumbnail-item">2</div>
+                                    <div class="thumbnail-item">3</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- /# column -->
+                    </div>
+                    
+                    
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- jquery vendor -->
+
+    <!--<script src="assets/js/lib/jquery.min.js"></script>-->
+    <!-- jquery vendor -->
+    <!-- nano scroller -->
+    <!-- bootstrap -->
+    <!-- ✅ jQuery (load only once) -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- ✅ jQuery UI (for draggable, etc.) -->
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+
+<!-- ✅ verySimpleImageViewer (load AFTER jQuery) -->
+<script src="{{ url_for('static', filename='assets/js/jquery.verySimpleImageViewer.min.js') }}"></script>
+
+<!-- ✅ Other libraries -->
+<script src="{{ url_for('static', filename='assets/js/lib/jquery.nanoscroller.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/js/lib/menubar/sidebar.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/js/lib/preloader/pace.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/js/lib/bootstrap.min.js') }}"></script>
+
+<!-- ✅ Your custom script -->
+<script src="{{ url_for('static', filename='assets/js/scripit.js') }}"></script>
+
+<!-- ✅ SweetAlert -->
+<script src="{{ url_for('static', filename='assets/js/lib/sweetalert/sweetalert.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/js/lib/sweetalert/sweetalert.init.js') }}"></script>
+
+  
+
+
+    <script>
+        function myclickFunction() {
+            window.location.href = "../index.php";
+        }
+    </script>
+    <script>
+		$(document).ready(function() {
+                // Function to pad numbers to maintain leading zeros
+                function pad(str, max) {
+                    str = str.toString();
+                    return str.length < max ? pad("0" + str, max) : str;
+                }
+
+               // Show the loading indicator
+               $('#loading_indicator').show();
+
+                // Variables for image paths
+                const v1 = "{{ img_link }}";
+                const v2 = "{{ image }}";
+                const parts = v2.split('_');
+                const prefix = parts[0]; // Example: "12B6"
+                const baseNum = parseInt(parts[1].split('.')[0]); // Parse base number from v2
+                const lenChar = parts[1].split('.')[0].length; // Get length of numeric part
+
+                // Calculate the next three image paths
+                const nextImages = [1, 2, 3].map(i => {
+                    const paddedNum = pad(baseNum + i, lenChar);
+                    return `${v1}${prefix}_${paddedNum}.jpg`; // Construct the full path
+                });
+
+                // Preload images into the `#prefetch_image` container
+                const imageElements = nextImages.map(src => {
+                    const img = $('<img loading="lazy" width="50px" height="50px">').attr('src', src);
+                    img.on('load', function() {
+                        // Hide the loading indicator once all images are loaded
+                        if ($('#prefetch_image img').length === nextImages.length) {
+                            $('#loading_indicator').hide();
+                        }
+                    });
+                    return img;
+                });
+
+                // Append images to the container
+                $('#prefetch_image').append(imageElements);
+			 $('#ocr').hide();
+             $('#ocr_do').click(function () {
+                 $('#ocr').show().addClass('loading').val('Loading...');
+				var imageSrc = $('#zoom_07').attr('src');
+				
+				 $.ajax({
+                    url: '/analyze_image',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({                        
+                        image: imageSrc
+                    }),
+                    success: function(response) {
+                        var result = response.content.join('\n');
+                        $('#ocr').removeClass('loading').val(result);
+                    },
+                    error: function(xhr, status, error) {
+                        $('#ocr').removeClass('loading').val('Error: ' + xhr.responseText);
+                    }
+                });
+				
+			})
+            var img_link = "{{ image_link }}"
+            
+            if($('#zoomset').is(':checked'))
+            {
+                setzoom=true;
+            }
+            else
+            {
+                setzoom=false;
+            }
+            $("#imageViewerContainer").html('');
+            $("#imageViewerContainer").verySimpleImageViewer({
+                imageSource: img_link,
+                frame: ['100%', '110%'],
+                maxZoom: '900%',
+                zoomFactor: '10%',
+                mouse: true,
+                keyboard: true,
+                toolbar: true,
+                rotateToolbar: false,
+                saveZoomPos: true,
+                callback:function(zoom, panX, panY){
+                localStorage.setItem('imageZoomLevel', zoom);
+                const $img = $imageViewerContainer.find('img');
+                    if ($img.length) {
+                        localStorage.setItem('imageTranslateY', $img.css('transform'));
+                    }
+                }
+            });
+            
+		
+            // Assuming image variable is available in the template context
+            var image = "{{ image }}";  // Example: "1A1-0006.jpg"
+
+            function navigateImage(direction) {
+                var parts = image.split('_');
+                var prefix = parts[0]; // "1A1"            
+                var num = parseInt(parts[1].split('.')[0]); // 6
+                console.log("called")
+                if (direction === 'next') {
+                    num += 1;
+                } else if (direction === 'prev') {
+                    num -= 1;
+                }
+                var imgfolder = "{{ img_link }}"
+                // Ensure num has four digits with leading zeros
+                var newNum = num.toString().padStart((parts[1].split('.')[0]).length, '0');
+                var newImage = prefix + '_' + newNum + '.jpg';
+				
+                // Update the image variable
+                image = newImage;
+                if($('#zoomset').is(':checked'))
+                {
+                    setzoom=true;
+                }
+                else
+                {
+                    setzoom=false;
+                }
+                $("#imageViewerContainer").html('');
+                $("#imageViewerContainer").verySimpleImageViewer({
+                    imageSource: imgfolder+newImage,
+                    frame: ['100%', '110%'],
+                    maxZoom: '900%',
+                    zoomFactor: '10%',
+                    mouse: true,
+                    keyboard: true,
+                    toolbar: true,
+                    rotateToolbar: false,
+                    saveZoomPos: true,
+                    callback:function(zoom, panX, panY){
+                        localStorage.setItem('imageZoomLevel', zoom);
+                        const $img = $imageViewerContainer.find('img');
+                            if($img.length){
+                                localStorage.setItem('imageTranslateY', $img.css('transform'));
+                            }
+                    }
+                });
+                
+            }
+
+            document.getElementById("next-button").addEventListener("click", function() {
+                navigateImage('next');
+            });
+
+            document.getElementById("prev-button").addEventListener("click", function() {
+                navigateImage('prev');
+            }); 
+ 
+
+ $(function () {
+    const storageKey = 'overlayLineTop';
+
+    const $checkbox = $('#toggleOverlay');
+    const $overlayLine = $('#overlayline');
+
+    // Restore saved position if available
+    const savedTop = localStorage.getItem(storageKey);
+    if (savedTop !== null) {
+      $checkbox.prop('checked', true);
+      $overlayLine.css('top', savedTop + 'px').show();
+    } else {
+      $checkbox.prop('checked', false);
+      $overlayLine.hide();
+    }
+
+    // Checkbox toggle
+    $checkbox.on('change', function () {
+      if (this.checked) {
+        $overlayLine.show();
+        const currentTop = $overlayLine.position().top;
+        localStorage.setItem(storageKey, currentTop);
+      } else {
+        $overlayLine.hide();
+        localStorage.removeItem(storageKey);
+      }
+    });
+
+    // Draggable vertical line
+    $overlayLine.draggable({
+      axis: "y",
+      containment: "#viewerContainer",
+      drag: function () {
+        // Optional live feedback
+      },
+      stop: function (event, ui) {
+        if ($checkbox.is(':checked')) {
+          localStorage.setItem(storageKey, ui.position.top);
+        }
+      }
+    });
+  });
+  });
+
+    
+ 
+    </script>
+</body>
+
+</html>
