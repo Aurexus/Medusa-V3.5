@@ -513,7 +513,7 @@ def ajax_traitement():
     data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
     return jsonify(data)
     
-    
+        
 # List of notices with pagination and filer form
 @app.route("/listdata", methods=["GET", "POST"])
 def listdata():
@@ -548,7 +548,7 @@ def listdata():
         addParam = " AND Ano_med_send ='1' AND notified=0 AND ano_anscode is NULL"     
     else: 
         addParam = ""
-    print(addParam)
+   
     proj_type = session.get("projtype")
     proj = session.get("proj", "")
 
@@ -597,25 +597,30 @@ def listdata():
     query1 += " GROUP BY lot"
     cursor.execute(query1, proj)
     rows = cursor.fetchall()
+    selected_dossier = session.get("selected_dossier")
     for row in rows:
-        html_content_fil += f'<option value="{row[0]}">{row[0]}</option>'
+        selected_attr = ' selected' if row[0] == selected_dossier else ''
+        html_content_fil += f'<option value="{row[0]}" {selected_attr}>{row[0]}</option>'
 
     cursor.execute(
         f"""SELECT traitement FROM {table} where proj=? {addParam} group by traitement""",
         proj
     )
     rows = cursor.fetchall()
+    selected_traitement = session.get("selected_traitement")
     for row in rows:
-        process += f'<option value="{row[0]}">{row[0]}</option>'
+        selected_attr = ' selected' if row[0] == selected_traitement else ''
+        process += f'<option value="{row[0]}" {selected_attr}>{row[0]}</option>'
 
     cursor.execute(
         f"SELECT {field} FROM {table} where proj=? and datalength({field})>0 {addParam} group by {field}",
         proj
     )
     rows = cursor.fetchall()
-
+    selected_type = session.get("selected_type")
     for row in rows:
-        anotype += f'<option value="{row[0]}">{row[0]}</option>'
+        selected_attr = ' selected' if row[0] == selected_type else ''
+        anotype += f'<option value="{row[0]}" {selected_attr}>{row[0]}</option>'
 
     html_content = ""
     page_no = int(request.args.get("page_no", 1))  # Get current page number
@@ -629,6 +634,16 @@ def listdata():
         session.pop("sql_query2", None)
         session.pop("total_records",None)
         # Retrieve form data
+        
+        #store session Values
+        session["selected_dossier"] = request.form["dossier"]
+        session["selected_traitement"] = request.form["traitement"]
+        session["selected_type"] = request.form["type"]
+        session["selected_anscode"] = request.form["anscode"]
+        session["keycol"] = request.form["keycol"]
+        session["sort"] = request.form["sort"]
+        session["searchword"] = request.form["searchword"]
+        session["sortype"] = request.form["sortype"]
         
         dossier = request.form["dossier"]
         traitement = request.form["traitement"]
@@ -713,7 +728,6 @@ def listdata():
         sort = session.get("sort", "order by z001_x0")
         sortype = session.get("sortype", "ASC")
         bookmark_filter = session.get("bookmark_filter", "ALL")
-        print(sort)
         sql_query = session.get(
             "sql_query", f"SELECT COUNT(*) FROM {table} WHERE Proj = ?  {addParam}"
         )
@@ -733,7 +747,7 @@ def listdata():
         #     params.append(chk_test)
 
     # Execute SQL query for total records
-    #print(sql_query2)
+    print(session.get("sql_query2",""))
     #print(params)
     #print(addParam)
     cursor.execute(sql_query, params)
@@ -751,6 +765,7 @@ def listdata():
     # Modify sql_query2 for pagination
     sql_query2 += f" {sort} {sortype} OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
     pagination_params = params + [offset, total_records_per_page]   
+    print(sql_query2,pagination_params)
     # Execute SQL query for records
     cursor.execute(sql_query2, pagination_params)
     recordsPrint = cursor.fetchall()
