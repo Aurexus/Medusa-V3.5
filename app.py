@@ -535,6 +535,16 @@ def listdata():
         # Remove the 'chk_test' key f
         # rom the session
         session.pop('chk_test', None)
+        
+        #store session Values
+        session.pop("selected_dossier", None)
+        session.pop("selected_traitement", None)
+        session.pop("selected_type", None)
+        session.pop("selected_anscode", None)
+        session.pop("keycol", None)
+        session.pop("sort", None)
+        session.pop("searchword", None)
+        session.pop("sortype", None)
 
     # Optionally update the session with the new value of 'chk_test'
     session['chk_test'] = chk_test
@@ -595,32 +605,7 @@ def listdata():
     if chk_test == "1":
         query1 += addParam
     query1 += " GROUP BY lot"
-    cursor.execute(query1, proj)
-    rows = cursor.fetchall()
-    selected_dossier = session.get("selected_dossier")
-    for row in rows:
-        selected_attr = ' selected' if row[0] == selected_dossier else ''
-        html_content_fil += f'<option value="{row[0]}" {selected_attr}>{row[0]}</option>'
-
-    cursor.execute(
-        f"""SELECT traitement FROM {table} where proj=? {addParam} group by traitement""",
-        proj
-    )
-    rows = cursor.fetchall()
-    selected_traitement = session.get("selected_traitement")
-    for row in rows:
-        selected_attr = ' selected' if row[0] == selected_traitement else ''
-        process += f'<option value="{row[0]}" {selected_attr}>{row[0]}</option>'
-
-    cursor.execute(
-        f"SELECT {field} FROM {table} where proj=? and datalength({field})>0 {addParam} group by {field}",
-        proj
-    )
-    rows = cursor.fetchall()
-    selected_type = session.get("selected_type")
-    for row in rows:
-        selected_attr = ' selected' if row[0] == selected_type else ''
-        anotype += f'<option value="{row[0]}" {selected_attr}>{row[0]}</option>'
+    
 
     html_content = ""
     page_no = int(request.args.get("page_no", 1))  # Get current page number
@@ -745,7 +730,32 @@ def listdata():
         params = session.get("params", [proj])
         # if chk_test == '1':
         #     params.append(chk_test)
+    cursor.execute(query1, proj)
+    rows = cursor.fetchall()
+    selected_dossier = session.get("selected_dossier")
+    for row in rows:
+        selected_attr = ' selected' if row[0] == selected_dossier else ''
+        html_content_fil += f'<option value="{row[0]}" {selected_attr}>{row[0]}</option>'
 
+    cursor.execute(
+        f"""SELECT traitement FROM {table} where proj=? {addParam} group by traitement""",
+        proj
+    )
+    rows = cursor.fetchall()
+    selected_traitement = session.get("selected_traitement")
+    for row in rows:
+        selected_attr = ' selected' if row[0] == selected_traitement else ''
+        process += f'<option value="{row[0]}" {selected_attr}>{row[0]}</option>'
+
+    cursor.execute(
+        f"SELECT {field} FROM {table} where proj=? and datalength({field})>0 {addParam} group by {field}",
+        proj
+    )
+    rows = cursor.fetchall()
+    selected_type = session.get("selected_type")
+    for row in rows:
+        selected_attr = ' selected' if row[0] == selected_type else ''
+        anotype += f'<option value="{row[0]}" {selected_attr}>{row[0]}</option>'
     # Execute SQL query for total records
     print(session.get("sql_query2",""))
     #print(params)
