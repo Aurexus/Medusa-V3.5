@@ -41,7 +41,9 @@
 		"Previous_form":"Previous",
         "Next_form":"Next",
 		"Return":"Back",
-		"save":"Save"
+		"save":"Save",
+		"No Folders Found":"Aucun dossier trouvé.",
+		"No Images Found" :"No Images found"
 		
     },
     "fr": {
@@ -86,7 +88,9 @@
 		"Previous_form":"Précédent(e)",
         "Next_form":"Suivant(e)",
 		"Return":"Retourner",
-		"save":"Sauvegarder"
+		"save":"Sauvegarder",
+		"No Folders Found":"Aucun dossier trouvé.",
+		"No Images Found" :"Aucune image trouvée."
     }
     
 }
