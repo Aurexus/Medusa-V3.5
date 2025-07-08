@@ -558,7 +558,12 @@
             font-size: 16px;
             
         }
-
+		#imageViewerContainer img{
+		  z-index:-2 !important;
+		}
+		img.jqvsiv_toolbarButton{
+		  transform: none !important;
+		}
         @media (max-width: 1800px) {
             .nav-buttons{
                 font-size: 8px;
@@ -1306,6 +1311,36 @@
 				  }
 				}
 			  });
+			  
+			  	  	// Reset rotation
+			currentRotation = 0;
+				// ⏳ Inject rotate button after viewer renders
+			setTimeout(() => {
+				const $toolbar = $viewer.find('.jqvsiv_toolbar');
+				const $img = $viewer.find('.jqvsiv_main_image_content img'); // Target image inside wrapper
+
+				if ($toolbar.length && !$toolbar.find('#rotateBtn').length) {
+					const rotateBtn = $(`
+						<button id="rotateBtn" class="vsiv-btn btn btn-sm btn-warning" title="Rotate" style="margin-left: 0px;width:25px;height:25px;padding:0px;">
+							<i class="fa fa-repeat"></i>
+						</button>
+					`);
+
+					$toolbar.append(rotateBtn);
+
+					rotateBtn.on('click', function () {
+						currentRotation = (currentRotation + 90) % 360;
+						const $img = $viewer.find('img');
+						if ($img.length) {
+							$img.css({
+								'transform': `rotate(${currentRotation}deg)`,
+								'transform-origin': 'center center',
+								'transition': 'transform 0.3s ease-in-out'
+							});
+						}
+					});
+				}
+			 }, 100); // delay ensures toolbar is rendered
 			}
 
 			function preloadThumbnails(imageList, active) {
