@@ -45,8 +45,8 @@
 		"No Folders Found":"Aucun dossier trouvé.",
 		"No Images Found" :"No Images found",
 		"Stagewise Progress" : "Stage Progress",
-		"out of" : "out of"
-		
+		"out of" : "out of",
+		"flagged" : "Flagged"
     },
     "fr": {
         "projectQuantity": "Nombre total de notices",
@@ -94,7 +94,8 @@
 		"No Folders Found":"Aucun dossier trouvé.",
 		"No Images Found" :"Aucune image trouvée.",
 		"Stagewise Progress" : "Progression des étapes",
-		"out of" : "sur"
+		"out of" : "sur",
+		"flagged" : "Marqué"
     }
     
 }
