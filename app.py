@@ -263,9 +263,11 @@ def home():
         if row:
             session["name"] = name
             cursor.execute(
-                """select b.project,a.proj_type,a.Email from User_table a
+                """select b.project,a.proj_type,a.Email,c.Client_report from User_table a
                 inner join _unimarc_users_attrib b
-                on a.Username=b.usr_name
+				on a.Username=b.usr_name
+				inner join Report_links c                
+				on b.project=c.Proj
                 where a.Username=?""",
                 (name),
             )
@@ -275,11 +277,13 @@ def home():
                 session["proj"] = row[0]
                 session["projtype"] = row[1]
                 session["email"] = row[2]
+                session["reportLink"]= row[3]
             else:
                 # Handle the case where no row is found, if necessary
                 session["proj"] = None
                 session["projtype"] = None
                 session["email"] = None
+                session["reportLink"]= None
             session["lang"] = language
             return hello()
         else:
