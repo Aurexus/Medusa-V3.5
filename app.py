@@ -797,6 +797,7 @@ def listdata():
         if language == "fr":
             html_content += "<thead><tr>"
             html_content += "<th style='width:15px;'></th>"
+            html_content += "<th>Lots</th>"
             html_content += "<th>Dossier</th>"
             html_content += "<th>Image</th>"
             html_content += "<th>Traitement</th>"
@@ -810,6 +811,7 @@ def listdata():
         else:
             html_content += "<thead><tr>"
             html_content += "<th></th>"
+            html_content += "<th>Lots</th>"
             html_content += "<th>Folder</th>"
             html_content += "<th>Image</th>"
             html_content += "<th>Process</th>"
@@ -835,6 +837,7 @@ def listdata():
             </td>
             """
             for column_name in [
+                "Lot",
                 "Folder",
                 "z001_x0",
                 "traitement",
