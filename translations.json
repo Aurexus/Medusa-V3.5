@@ -95,7 +95,15 @@
 		"No Images Found" :"Aucune image trouvée.",
 		"Stagewise Progress" : "Progression des étapes",
 		"out of" : "sur",
-		"flagged" : "Marqué"
+		"flagged" : "Marqué",
+		"Scanning" : "Prises de vue",
+		"ScanningQC" : "Prises de vue QC",
+		"OCR" : "Océrisation de images",
+		"OCRQC" : "Océrisation de images QC",
+		"Derivation" : "Dérivations/Créations",
+		"DerivationQC" : "Dérivations/Créations QC",
+		"Encode" : "Encodage",
+		"Delivery" : "Livraison"
     }
     
 }
