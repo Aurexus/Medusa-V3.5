@@ -604,7 +604,7 @@ th, td {
 															<h3>Prises de vue</h3>
 															<p>{% if reportallCount >= reportallCount %}
 															<i class="fa fa-check-circle text text-success"></i>
-															{% endif %} <b>Fini: {{reportallCount | safe}} out of {{reportallCount | safe}}</b></p>
+															{% endif %} <b>Fini: {{reportallCount | safe}} {{ translations['out of']}} {{reportallCount | safe}}</b></p>
 														</div>
 													</div>
 													<div class="timeline-step">
@@ -612,7 +612,7 @@ th, td {
 															<h3>Prises de vue QC</h3>
 															<p>{% if ScannQcCount >= reportallCount %}
 															<i class="fa fa-check-circle text text-success"></i>
-															{% endif %} <b>Fini: {{ScannQcCount | safe}} out of {{reportallCount | safe}}</b></p>													
+															{% endif %} <b>Fini: {{ScannQcCount | safe}} {{ translations['out of']}} {{reportallCount | safe}}</b></p>													
 														</div>
 													</div>
 													<div class="timeline-step">
@@ -620,7 +620,7 @@ th, td {
 															<h3>Océrisation de images</h3>
 															<p>{% if ocrQcCount >= reportallCount %}
 															<i class="fa fa-check-circle text text-success"></i>
-															{% endif %} <b>Fini: {{ocrQcCount | safe}} out of {{reportallCount | safe}}</b></p>
+															{% endif %} <b>Fini: {{ocrQcCount | safe}} {{ translations['out of']}} {{reportallCount | safe}}</b></p>
 														</div>
 													</div>
 													<div class="timeline-step">
@@ -628,7 +628,7 @@ th, td {
 															<h3>Océrisation de images QC</h3>
 															<p>{% if ocrQcCount >= reportallCount %}
 															<i class="fa fa-check-circle text text-success"></i>
-															{% endif %} <b>Fini: {{ocrQcCount | safe}} out of {{reportallCount | safe}}</b></p>
+															{% endif %} <b>Fini: {{ocrQcCount | safe}} {{ translations['out of']}} {{reportallCount | safe}}</b></p>
 														</div>
 													</div>
 													<div class="timeline-step">
@@ -636,7 +636,7 @@ th, td {
 															<h3>Dérivations/Créations</h3>
 															<p>{% if processedCount >= all_count %}
 															<i class="fa fa-check-circle text text-success"></i>
-															{% endif %} <b>Fini: {{processedCount | safe}} out of {{all_count | safe}}</b></p>
+															{% endif %} <b>Fini: {{processedCount | safe}} {{ translations['out of']}} {{all_count | safe}}</b></p>
 														</div>
 													</div>
 													<div class="timeline-step">
@@ -644,7 +644,7 @@ th, td {
 															<h3>Dérivations/Créations QC</h3>
 															<p>{% if QcCountDone >= all_count %}
 															<i class="fa fa-check-circle text text-success"></i>
-															{% endif %} <b>Fini: {{QcCountDone | safe}} out of {{all_count | safe}}</b></p>
+															{% endif %} <b>Fini: {{QcCountDone | safe}} {{ translations['out of']}} {{all_count | safe}}</b></p>
 														</div>
 													</div>
 													<div class="timeline-step">
@@ -652,7 +652,7 @@ th, td {
 															<h3>Audit</h3>
 															<p>{% if 0 >= all_count %}
 															<i class="fa fa-check-circle text text-success"></i>
-															{% endif %} <b>Fini: 0 out of {{all_count | safe}}</b></p>
+															{% endif %} <b>Fini: 0 {{ translations['out of']}} {{all_count | safe}}</b></p>
 														</div>
 													</div>
 													<div class="timeline-step">
@@ -660,7 +660,7 @@ th, td {
 															<h3>Encodage</h3>
 															<p>{% if 0 >= all_count %}
 															<i class="fa fa-check-circle text text-success"></i>
-															{% endif %} <b>Fini: 0 out of {{all_count | safe}}</b></p>
+															{% endif %} <b>Fini: 0 {{ translations['out of']}} {{all_count | safe}}</b></p>
 														</div>
 													</div>
 													<div class="timeline-step ">
@@ -668,7 +668,7 @@ th, td {
 															<h3>Livraison</h3>
 															<p>{% if 0 >= all_count %}
 															<i class="fa fa-check-circle text text-success"></i>
-															{% endif %} <b>Fini: 0 out of {{all_count | safe}}</b></p>
+															{% endif %} <b>Fini: 0 {{ translations['out of']}} {{all_count | safe}}</b></p>
 														</div>
 													</div>
 												</div>
