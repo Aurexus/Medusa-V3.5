@@ -678,9 +678,13 @@ def listdata():
             sql_query2 += f" AND {field} = ?"
             params.append(types)
         if anscode != "ALL":
-            sql_query += " AND Ano_AnsCode = ?"
-            sql_query2 += " AND Ano_AnsCode = ?"
-            params.append(anscode)
+            if anscode == "Todo":
+                sql_query += " AND (Ano_AnsCode IS NULL OR Ano_AnsCode = '')"
+                sql_query2 += " AND (Ano_AnsCode IS NULL OR Ano_AnsCode = '')"
+            else:
+                sql_query += " AND Ano_AnsCode = ?"
+                sql_query2 += " AND Ano_AnsCode = ?"
+                params.append(anscode)
         if bookmark_filter  != "ALL":
             bookmark_condition = "= 1" if bookmark_filter == "1" else "= 0"
           # For sql_query (no alias 'a')
