@@ -601,7 +601,7 @@ th, td {
 												<div class="side__titles">
 													<div class="timeline-step">
 														<div class="title__name">
-															<h3>Prises de vue</h3>
+															<h3>{{ translations['Scanning']}}</h3>
 															<p>{% if reportallCount >= reportallCount %}
 															<i class="fa fa-check-circle text text-success"></i>
 															{% endif %} <b>Fini: {{reportallCount | safe}} {{ translations['out of']}} {{reportallCount | safe}}</b></p>
@@ -609,7 +609,7 @@ th, td {
 													</div>
 													<div class="timeline-step">
 														<div class="title__name">
-															<h3>Prises de vue QC</h3>
+															<h3>{{ translations['ScanningQC']}}</h3>
 															<p>{% if ScannQcCount >= reportallCount %}
 															<i class="fa fa-check-circle text text-success"></i>
 															{% endif %} <b>Fini: {{ScannQcCount | safe}} {{ translations['out of']}} {{reportallCount | safe}}</b></p>													
@@ -617,7 +617,7 @@ th, td {
 													</div>
 													<div class="timeline-step">
 														<div class="title__name">
-															<h3>Océrisation de images</h3>
+															<h3>{{ translations['OCR']}}</h3>
 															<p>{% if ocrQcCount >= reportallCount %}
 															<i class="fa fa-check-circle text text-success"></i>
 															{% endif %} <b>Fini: {{ocrQcCount | safe}} {{ translations['out of']}} {{reportallCount | safe}}</b></p>
@@ -625,7 +625,7 @@ th, td {
 													</div>
 													<div class="timeline-step">
 														<div class="title__name">
-															<h3>Océrisation de images QC</h3>
+															<h3>{{ translations['OCRQC']}}</h3>
 															<p>{% if ocrQcCount >= reportallCount %}
 															<i class="fa fa-check-circle text text-success"></i>
 															{% endif %} <b>Fini: {{ocrQcCount | safe}} {{ translations['out of']}} {{reportallCount | safe}}</b></p>
@@ -633,7 +633,7 @@ th, td {
 													</div>
 													<div class="timeline-step">
 														<div class="title__name">
-															<h3>Dérivations/Créations</h3>
+															<h3>{{ translations['Derivation']}}</h3>
 															<p>{% if processedCount >= all_count %}
 															<i class="fa fa-check-circle text text-success"></i>
 															{% endif %} <b>Fini: {{processedCount | safe}} {{ translations['out of']}} {{all_count | safe}}</b></p>
@@ -641,7 +641,7 @@ th, td {
 													</div>
 													<div class="timeline-step">
 														<div class="title__name">
-															<h3>Dérivations/Créations QC</h3>
+															<h3>{{ translations['DerivationQC']}}</h3>
 															<p>{% if QcCountDone >= all_count %}
 															<i class="fa fa-check-circle text text-success"></i>
 															{% endif %} <b>Fini: {{QcCountDone | safe}} {{ translations['out of']}} {{all_count | safe}}</b></p>
@@ -657,7 +657,7 @@ th, td {
 													</div>
 													<div class="timeline-step">
 														<div class="title__name">
-															<h3>Encodage</h3>
+															<h3>{{ translations['Encode']}}</h3>
 															<p>{% if 0 >= all_count %}
 															<i class="fa fa-check-circle text text-success"></i>
 															{% endif %} <b>Fini: 0 {{ translations['out of']}} {{all_count | safe}}</b></p>
@@ -665,7 +665,7 @@ th, td {
 													</div>
 													<div class="timeline-step ">
 														<div class="title__name last-step">
-															<h3>Livraison</h3>
+															<h3>{{ translations['Delivery']}}</h3>
 															<p>{% if 0 >= all_count %}
 															<i class="fa fa-check-circle text text-success"></i>
 															{% endif %} <b>Fini: 0 {{ translations['out of']}} {{all_count | safe}}</b></p>
