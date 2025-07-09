@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AUREXUS</title>
+    <!-- ================= Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
+    <!-- Styles -->
+    <link href="{{url_for('static',filename='assets/css/lib/calendar2/pignose.calendar.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/chartist/chartist.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/font-awesome.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/themify-icons.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/owl.carousel.min.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/owl.theme.default.min.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/weather-icons.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/menubar/sidebar.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/helper.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/style.css')}}" rel="stylesheet">
+    <style>
+        .scrollable {
+            overflow-y: auto;
+            max-height: 100%;
+        }
+
+        .content-wrap {
+            height: 90vh !important;
+        }
+
+        @media (max-width: 991px) {
+            .row.h-100 > div {
+            height: auto !important;
+            }
+
+            .scrollable {
+            max-height: none !important;
+            }
+        }
+		.active{
+			background-color:#8080802b !important;
+		}
+		.right-panel {
+		  height: calc(100vh - 100px); /* Adjust depending on your header/nav height */
+		  display: flex;
+		  flex-direction: column;
+		  padding: 0;
+		  margin: 0;
+		}
+
+		.image-viewer-placeholder {
+		  flex: 1;
+		  display: flex;
+		  flex-direction: column;
+		}
+
+		#viewerContainer {
+		  flex: 1;
+		  display: flex;
+		  flex-direction: column;
+		  height: 100%;
+		}
+
+		#imageViewerContainer {
+		  flex: 1;
+		  width: 100%;
+		  height: 100%;
+		  overflow: hidden;
+		  position: relative;
+		}
+		#imageViewerContainer img{
+		  z-index:-2 !important;
+		}
+		.active-thumbnail {
+					  border: 2px solid red !important;
+					  animation: blink-border 1s step-start infinite;
+				}
+				.thumbnail-image {
+					  border: 2px solid #ffffff;
+					  box-shadow: 0 0 5px #686868 !important;
+					  border-radius: 4px !important;
+				}
+				#prefetch_image_container{
+					  display: flex;
+					  justify-content: center;   /* Center horizontally */
+					  align-items: center;       /* Center vertically if needed */
+					  gap: 10px;                 /* Optional: spacing between thumbnails */
+					  flex-wrap: wrap; 
+				}
+		.table::-webkit-scrollbar {
+			width: 4px !important; /* default is ~16px */
+		}
+		img.jqvsiv_toolbarButton{
+			transform: none !important;
+		}
+	
+    </style>
+
+</head>
+
+<body>
+
+	{% include 'logheader.html' %}
+    <div class="content-wrap vh-100 d-flex flex-column">
+        <div class="main flex-grow-1">
+            <div class="container-fluid h-100">
+			{% if error %}
+					<br/>
+					<div class="alert alert-danger" role="alert">
+						{{ error }}
+					</div>
+				{% endif %}
+            <div class="row">
+				
+                <!-- Left Column (1/5 width) -->
+                <div class="col-lg-3 col-md-12 h-100">				
+                <div class="card h-100 overflow-hidden">
+                    <div class="card-body p-1 scrollable">
+                    <h6 class="mb-3">📁 Folders ({{ folders | length }} Directories)</h6>
+                    <!-- Folder content here -->
+                    <div class="table-responsive" style="max-height: 700px; overflow-y: auto;">
+						<table class="table table-hover table-sm">
+							<thead>
+								<tr>
+									<th style="text-align:left ;">{{translations['Folders']}}</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								{% if folders %}
+									{% for folder in folders %}
+									<tr class="{% if folder == selected_folder %}active{% endif %}">
+										<td style="text-align:left ;">📁 
+											<a href="{{ url_for('imageGallery', folder=folder) }}"
+											   style="color: #770000;">
+												{{ folder }}
+											</a>
+										</td>
+										<td>
+											<a target="_blank" href="{{ url_for('download_folder', folder=selected_folder) }}" class="btn btn-sm btn-light">
+												<i class="fa fa-download"></i>
+											</a>
+										</td>
+									</tr>
+									{% endfor %}
+								{% else %}
+									<tr><td colspan="2"><em>{{translations['No Folders Found']}}</em></td></tr>
+								{% endif %}
+						</tbody>
+						</table>
+					</div>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Middle Column (1/5 width) -->
+                <div class="col-lg-3 col-md-12 h-100">
+                <div class="card h-100 overflow-hidden">
+                    <div class="card-body p-2 scrollable">
+                    <h6 class="mb-3">🖼️ Images ({{ images | length }} Items)</h6>
+                    <!-- Image list here -->
+                    <div class="table-responsive" style="max-height: 700px; overflow-y: auto;">
+						<table class="table table-hover table-sm">
+							<thead>
+								<tr>
+									<th style="text-align:left ;">IMAGES</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								{% if images %}
+									{% for image in images %}
+									<tr class="image-row" data-image="{{ image }}" style="cursor: pointer;">
+										<td style="text-align:left ;color: #770000;">
+											
+										 🖼️ {{ image }}
+											
+										</td>
+										<td>
+											<a target="_blank" href="{{ url_for('download_image', folder=selected_folder, filename=selected_image) }}" class="btn btn-sm btn-light">
+												<i class="fa fa-download"></i>
+											</a>
+										</td>
+									</tr>
+									{% endfor %}
+								{% else %}
+									<tr><td colspan="2"><em>{{translations['No Images Found']}}</em></td></tr>
+								{% endif %}
+							</tbody>
+						</table>
+					</div>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Right Column (3/5 width) -->
+                <div class="col-lg-6 ">
+						<div class="card right-panel" >
+								<div class="viewer-header">									
+									<!-- <button id="rotateBtn" class="btn btn-sm btn-primary">🔄 Rotate</button> -->
+									<!-- <label 
+										id="referenceToggle"
+										class="maintain-line"
+									>
+											<input 
+												type="checkbox" 
+												id="toggleOverlay" 
+											/>
+											
+									</label> -->
+								</div>
+
+								<div class="image-viewer-placeholder">
+									<div id="jquery-script-menu">
+										<div class="jquery-script-clear"></div>	
+									</div>								  
+									<div id="viewerContainer">
+										<div id="overlayline">
+											<div id="dragHandle">
+												<i class="fas fa-arrows-alt-v"></i>
+											</div>
+										</div>
+										
+										<div id="imageViewerContainer" 	style="width: 100%; height:100%;"></div>
+									</div>
+								</div>
+								<div id="prefetch_image_container" class="viewer-footer" >
+								  <div id="loading_indicator" style="display: none;">Loading images...</div>
+								  <div id="prefetch_image" class="thumbnails"></div>
+								</div>
+						</div>
+                </div>
+
+            </div>
+            <div class="row">
+                        <div class="col-lg-12">
+                            <div class="footer">
+                                <p>© Aurexus. - <a href="#">aurexus.com</a></p>
+                            </div>
+                        </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- jquery vendor -->
+    <script src="{{url_for('static',filename='assets/js/lib/jquery.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/jquery.nanoscroller.min.js')}}"></script>
+    <!-- nano scroller -->
+    <script src="{{url_for('static',filename='assets/js/lib/menubar/sidebar.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/preloader/pace.min.js')}}"></script>
+    <!-- sidebar -->
+
+    <script src="{{url_for('static',filename='assets/js/lib/bootstrap.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/scripts.js')}}"></script>
+    <!-- bootstrap -->
+	<!-- ✅ verySimpleImageViewer (load AFTER jQuery) -->
+	<script src="{{ url_for('static', filename='assets/js/jquery.verySimpleImageViewer.min.js') }}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/calendar-2/moment.latest.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/calendar-2/pignose.calendar.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/calendar-2/pignose.init.js')}}"></script>
+
+
+    <script src="{{url_for('static',filename='assets/js/lib/weather/jquery.simpleWeather.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/weather/weather-init.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/circle-progress/circle-progress.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/circle-progress/circle-progress-init.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/chartist/chartist.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/sparklinechart/jquery.sparkline.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/sparklinechart/sparkline.init.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/owl-carousel/owl.carousel.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/owl-carousel/owl.carousel-init.js')}}"></script>
+    <!-- scripit init-->
+    <script src="{{url_for('static',filename='assets/js/dashboard2.js')}}"></script>
+	
+	<!-- Get suggestions -->
+    <script>
+        function getSuggestions(button) {
+            const row = button.closest('tr');
+            const userInput = row.querySelector('.userInput').value;
+
+            fetch('/get_suggestions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_input: userInput
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const suggestionsDiv = row.querySelector('.suggestions');
+                suggestionsDiv.innerHTML = `Filtered Suggestions: ${data.suggestions.join(', ')}`;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+		$(document).ready(function () {
+			$('.image-row').click(function () {
+				const imageName = $(this).data('image');
+				updateThumbnails(imageName);  // Your existing function
+			});
+		});
+		const folder = "{{ selected_folder }}";
+		let currentImage = "{{ selected_image or '' }}";
+		function getImageUrl(imageName) {
+			const proj = "{{ session.get('proj', '') }}";
+			const folder = "{{ selected_folder }}";
+			return `https://aurexus.net/auximages/${proj}/${folder}/${imageName}`;
+		}
+
+		function loadMainImage(imageName) {
+			currentImage = imageName;
+			const imgLink = getImageUrl(imageName);
+			const $viewer = $('#imageViewerContainer').html(''); // Clear existing content
+
+			$viewer.verySimpleImageViewer({
+				imageSource: imgLink,
+				frame: ['100%', '100%'],
+				maxZoom: '900%',
+				zoomFactor: '10%',
+				mouse: true,
+				keyboard: true,
+				toolbar: true,
+				saveZoomPos: true,
+				callback(zoom, panX, panY) {
+					localStorage.setItem('imageZoomLevel', zoom);
+					const $img = $viewer.find('img');
+					if ($img.length) {
+						localStorage.setItem('imageTranslateY', $img.css('transform'));
+					}
+				}
+			});
+
+			// Reset rotation
+			currentRotation = 0;
+				// ⏳ Inject rotate button after viewer renders
+			setTimeout(() => {
+				const $toolbar = $viewer.find('.jqvsiv_toolbar');
+				const $img = $viewer.find('.jqvsiv_main_image_content img'); // Target image inside wrapper
+
+				if ($toolbar.length && !$toolbar.find('#rotateBtn').length) {
+					const rotateBtn = $(`
+						<button id="rotateBtn" class="vsiv-btn btn btn-sm btn-warning" title="Rotate" style="margin-left: 0px;width:25px;height:25px;padding:0px;">
+							<i class="fa fa-repeat"></i>
+						</button>
+					`);
+
+					$toolbar.append(rotateBtn);
+
+					rotateBtn.on('click', function () {
+						currentRotation = (currentRotation + 90) % 360;
+						const $img = $viewer.find('img');
+						if ($img.length) {
+							$img.css({
+								'transform': `rotate(${currentRotation}deg)`,
+								'transform-origin': 'center center',
+								'transition': 'transform 0.3s ease-in-out'
+							});
+						}
+					});
+				}
+			}, 100); // delay ensures toolbar is rendered
+		}
+
+		let currentRotation = 0;
+
+		//$('#rotateBtn').click(function () {
+			//currentRotation = (currentRotation + 90) % 360;
+			//const $img = $('#imageViewerContainer img');
+			//if ($img.length) {
+				//$img.css('transform', `rotate(${currentRotation}deg)`);
+			//}
+		//});
+
+
+		function preloadThumbnails(imageList, active) {
+			const $thumb = $('#prefetch_image').empty();
+			$('#loading_indicator').show();
+
+			imageList.forEach(src => {
+				const img = $('<img loading="lazy" width="50" height="50">')
+					.attr('src', getImageUrl(src))
+					.addClass('thumbnail-image')
+					.toggleClass('active-thumbnail', src === active)
+					.on('load', () => {
+						if ($('#prefetch_image img').length === imageList.length) {
+							$('#loading_indicator').hide();
+						}
+					})
+					.on('click', () => {
+						if (src !== currentImage) {
+							updateThumbnails(src);
+						}
+					});
+				$thumb.append(img);
+			});
+		}
+
+		function updateThumbnails(activeImage) {
+			$.getJSON(`/api/images/${folder}/${activeImage}`)
+				.done(images => {
+					fullImageList = images;
+					loadMainImage(activeImage);
+					preloadThumbnails(images, activeImage);
+				})
+				.fail(err => console.error('Failed to load image context', err));
+		}
+
+		// Initial load
+		$(function () {
+			if (currentImage) {
+				updateThumbnails(currentImage);
+			}
+		});
+    </script>
+</body>
+
+</html>

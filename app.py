@@ -2930,23 +2930,198 @@ def logout2():
 import zoom_client  # This represents a zoom-compatible Python client
 
 
+#import zoom_client  # This represents a zoom-compatible Python client
 
 
-@app.route('/z3950_query')
-def z3950_query():
+
+
+#@app.route('/z3950_query')
+#def z3950_query():
+#    try:
+#        response = requests.get("https://catalogue.bnf.fr/api/SRU", params={
+#            "version": "1.2",
+#            "operation": "searchRetrieve",
+#            "query": 'title all "esmeralda"'
+#        })
+
+#        if response.ok:
+#            return response.text
+#        else:
+#            return f"SRU request failed: {response.status_code}"
+#    except Exception as e:
+#        return f"Error: {e}"
+
+
+
+
+def get_ftps_connection():
+    ftps = FTP_TLS()
+    ftps.set_debuglevel(2)
+    ftps.connect(FTP_HOST, 21, timeout=300)  # Standard FTP port
+    ftps.auth()  # Explicit TLS
+    ftps.prot_p()  # Switch to secure data connection
+    ftps.login(FTP_USER, FTP_PASS)
+    ftps.set_pasv(True)  # Optional: Use passive mode
+    return ftps
+  
+
+def list_folders():
+    ftps = get_ftps_connection()
+    ftp_root_dir = "/" + session.get("proj", "") + "/"
+    ftps.cwd(ftp_root_dir)
+
+    folders = []
+    ftps.retrlines('LIST', lambda x: folders.append(x.split()[-1]) if x.startswith('d') else None)
+    ftps.quit()
+    return folders
+
+def natural_sort_key(s):
+    return [int(text) if text.isdigit() else text.lower()
+            for text in re.split('([0-9]+)', s)]
+
+def list_images(folder):
+    ftps = get_ftps_connection()
+    ftp_root_dir = "/" + session.get("proj", "") + "/"  # Define again here
+    ftps.cwd(ftp_root_dir + folder)
+    files = ftps.nlst()
+    ftps.quit()
+    
+    image_files = [f for f in files if f.lower().endswith(('.jpg', '.jpeg', '.png', '.gif'))]
+    return sorted(image_files, key=natural_sort_key)
+
+@app.route('/imageGallery')
+def imageGallery():
+    proj_type = session.get("projtype")
+    proj = session.get("proj", "")
+    if proj_type == "unimarc":
+        field = "u990_b"
+        field2 = "u990_c"
+        table = "dbo._unimarc"
+    else:
+        field = "z990_b"
+        field2 = "z990_c"
+        table = "dbo._intermarc"    
+    # Connect safely to the database
     try:
-        response = requests.get("https://catalogue.bnf.fr/api/SRU", params={
-            "version": "1.2",
-            "operation": "searchRetrieve",
-            "query": 'title all "esmeralda"'
-        })
+        cnxn = pyodbc.connect(conn_str)
+        cursor = cnxn.cursor()
+        queryCount = f"SELECT COUNT(*) FROM {table} WHERE proj=?"
+        cursor.execute(queryCount, (proj,))
+        countNotices = cursor.fetchone()
+        AllCount = countNotices[0] if countNotices else 0
+        cursor.close()
+        cnxn.close()
+    except Exception as db_err:
+        print("⚠️ DB error:", db_err)
+        AllCount = 0  # fallback if DB fails
+    language = request.args.get("lang", session["lang"])
+    # Language Handling
+    if language not in app.config["LANGUAGES"]:
+        language = app.config["DEFAULT_LANGUAGE"]
+        session["lang"] = language
+    else:
+        session["lang"] = language
+    # Generate URLs for flag images
+    en_flag_url = url_for('static', filename='assets/images/us_flag.png')
+    fr_flag_url = url_for('static', filename='assets/images/fr_flag.png')
+    if language == "fr":
+        langButton = f"""<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             <img class="form-control-sm" src="{fr_flag_url}">French
+                            </button>
+                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="?lang=en"><img class="form-control-sm" src="{en_flag_url}">English</a>
+                             </div>"""
+    else:
+        langButton = f"""<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             <img class="form-control-sm" src="{en_flag_url}">English
+                            </button>
+                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="?lang=fr"><img class="form-control-sm" src="{fr_flag_url}">French</a>
+                             </div>"""
+    
+    ftp_root_dir = "/" + session.get("proj", "") + "/"  # Define here again
+    try:
+        folders = list_folders()
+        selected_folder = request.args.get('folder', folders[0] if folders else None)
+        images = list_images(selected_folder) if selected_folder else []
+        selected_image = request.args.get('image', images[0] if images else None)
 
-        if response.ok:
-            return response.text
-        else:
-            return f"SRU request failed: {response.status_code}"
+        image_url = None
+        if selected_folder and selected_image:
+            image_url = f"ftp://{FTP_USER}:{FTP_PASS}@{FTP_HOST}{ftp_root_dir}{selected_folder}/{selected_image}"
+
+        return render_template('imageGallery.html',
+                               folders=folders,
+                               selected_folder=selected_folder,
+                               images=images,
+                               selected_image=selected_image,
+                               image_url=image_url,
+                               translations=translations[language],
+                               lang=language,
+                               langButton=langButton,
+                               allcount=AllCount)
     except Exception as e:
-        return f"Error: {e}"
+        error_message = "⚠️ Could not connect to Image server or retrieve data."
+        print("Server error:", e)  # Optional: log the actual error
+        return render_template("imageGallery.html", 
+                               folders=[], 
+                               selected_folder=None,
+                               images=[], 
+                               selected_image=None,
+                               image_url=None,
+                               error=error_message,                               
+                               translations=translations[language],
+                               lang=language,
+                               langButton=langButton,
+                               allcount=AllCount)
+@app.route('/api/images/<folder>/<image>')
+def api_images(folder, image):
+    images = list_images(folder)
+    return jsonify(images)
+    
+@app.route('/download/image/<folder>/<filename>')
+def download_image(folder, filename):
+    try:
+        ftp = get_ftps_connection()
+        ftp_root_dir = "/" + session.get("proj", "") + "/"
+        ftp.cwd(ftp_root_dir + folder)
+
+        image_stream = BytesIO()
+        ftp.retrbinary(f"RETR {filename}", image_stream.write)
+        ftp.quit()
+        image_stream.seek(0)
+
+        return send_file(image_stream, download_name=filename, as_attachment=True)
+    except Exception as e:
+        print("Download image error:", e)
+        return "Error downloading image", 500
+
+@app.route('/download/folder/<folder>')
+def download_folder(folder):
+    try:
+        ftp = get_ftps_connection()
+        ftp_root_dir = "/" + session.get("proj", "") + "/"
+        ftp.cwd(ftp_root_dir + folder)
+
+        files = ftp.nlst()
+        image_files = [f for f in files if f.lower().endswith(('.jpg', '.jpeg', '.png', '.gif'))]
+
+        zip_stream = BytesIO()
+        with zipfile.ZipFile(zip_stream, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for filename in image_files:
+                file_stream = BytesIO()
+                ftp.retrbinary(f"RETR {filename}", file_stream.write)
+                file_stream.seek(0)
+                zipf.writestr(filename, file_stream.read())
+
+        ftp.quit()
+        zip_stream.seek(0)
+
+        zip_name = f"{folder}.zip"
+        return send_file(zip_stream, download_name=zip_name, as_attachment=True)
+    except Exception as e:
+        print("Download folder error:", e)
+        return "Error downloading folder", 500        
 
 
 if __name__ == "__main__":
