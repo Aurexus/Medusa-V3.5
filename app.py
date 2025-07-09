@@ -1052,9 +1052,13 @@ def stage():
             sql_query2 += " AND u990_b = ?"
             params.append(types)
         if anscode != "ALL":
-            sql_query += " AND Ano_AnsCode = ?"
-            sql_query2 += " AND Ano_AnsCode = ?"
-            params.append(anscode)
+            if anscode == "TODO":
+                sql_query += " AND (Ano_AnsCode IS NULL OR Ano_AnsCode = '')"
+                sql_query2 += " AND (Ano_AnsCode IS NULL OR Ano_AnsCode = '')"
+            else:
+                sql_query += " AND Ano_AnsCode = ?"
+                sql_query2 += " AND Ano_AnsCode = ?"
+                params.append(anscode)
         if searchword:
             sql_query += f" AND {keycol} COLLATE Latin1_General_CI_AI LIKE ?"
             sql_query2 += f" AND {keycol} COLLATE Latin1_General_CI_AI LIKE ?"
