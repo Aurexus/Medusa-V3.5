@@ -3,7 +3,7 @@
         "dashboard":" Dashboard",
         "notices":" Notices",
         "logout":" Logout",
-        "hello_world": "Project Quantity",
+        "projectQuantity": "Project Quantity",
         "home":"Home",
         "project":"PROJECT",
         "Overall Project Progress":"Overall Project Progress",
@@ -49,7 +49,7 @@
 		
     },
     "fr": {
-        "hello_world": "Nombre total de notices",
+        "projectQuantity": "Nombre total de notices",
         "dashboard":" Tableau de bord",
         "notices":" Notices",
         "logout":" Déconnexion",        
