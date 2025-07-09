@@ -285,7 +285,8 @@ def home():
                 session["email"] = None
                 session["reportLink"]= None
             session["lang"] = language
-            return hello()
+            # ✅ Redirect to your homepage view
+            return redirect(url_for("hello"))
         else:
             return render_template(
                 "login.html", message="Please Check the Credential's"
