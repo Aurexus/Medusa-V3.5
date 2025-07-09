@@ -43,7 +43,8 @@
 		"Return":"Back",
 		"save":"Save",
 		"No Folders Found":"Aucun dossier trouvé.",
-		"No Images Found" :"No Images found"
+		"No Images Found" :"No Images found",
+		"Stage Progress" : "Stage Progress"
 		
     },
     "fr": {
@@ -90,7 +91,8 @@
 		"Return":"Retourner",
 		"save":"Sauvegarder",
 		"No Folders Found":"Aucun dossier trouvé.",
-		"No Images Found" :"Aucune image trouvée."
+		"No Images Found" :"Aucune image trouvée.",
+		"Stage Progress" : "Progression des étapes"
     }
     
 }
