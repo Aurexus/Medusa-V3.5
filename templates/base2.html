@@ -145,7 +145,7 @@
                                         <select id="anscode" name="anscode" class="form-control col-sm-12 p-1">
 											{% set selected_anscode = session.get('selected_anscode', 'ALL') %}
 											<option value="ALL" {% if selected_anscode == 'ALL' %}selected{% endif %}>{{ translations['ALL'] }}</option>
-											<option value="Todo" {% if selected_anscode == 'Todo' %}selected{% endif %}>TODO</option>
+											<option value="Todo" {% if selected_anscode == 'Todo' %}selected{% endif %}>{{ translations['To Do']}}</option>
 											<option value="Ok" {% if selected_anscode == 'Ok' %}selected{% endif %}>OK</option>
 											<option value="corrigé" {% if selected_anscode == 'corrigé' %}selected{% endif %}>Corrigé</option>
 											<option value="OK - ajouté" {% if selected_anscode == 'OK - ajouté' %}selected{% endif %}>OK - ajouté</option>
