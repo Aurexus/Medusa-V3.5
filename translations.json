@@ -46,7 +46,15 @@
 		"No Images Found" :"No Images found",
 		"Stagewise Progress" : "Stage Progress",
 		"out of" : "out of",
-		"flagged" : "Flagged"
+		"flagged" : "Flagged",
+		"Scanning" : "Scanning",
+		"ScanningQC" : "Scanning QC",
+		"OCR" : "OCR for Images",
+		"OCRQC" : "OCR QC for Images",
+		"Derivation" : "Derivations/Creations",
+		"DerivationQC" : "Derivations/Creations QC",
+		"Encode" : "Encoding",
+		"Delivery" : "Delivery"
     },
     "fr": {
         "projectQuantity": "Nombre total de notices",
