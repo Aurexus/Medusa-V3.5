@@ -2121,24 +2121,24 @@ def get_image_prestageList(folder, image):
         
         
 #CSV Download      
+# CSV Download      
 @app.route('/download_csv', methods=['GET'])
 def download_csv():
     chkTestVlaue = session.get("chk_test")
     if chkTestVlaue == "1":
         addParam = " AND chkTest='1'"
-    elif chkTestVlaue == "2": 
-        addParam = " AND Ano_med_send ='1'"  
-    else: 
-        addParam=""
+    elif chkTestVlaue == "2":
+        addParam = " AND Ano_med_send ='1'"
+    else:
+        addParam = ""
 
     cnxn = pyodbc.connect(conn_str)
     cursor = cnxn.cursor()
     proj_type = session.get("projtype")
-    proj = session.get("proj", "")   
-    proj_type = session.get("projtype")
-    proj = session.get("proj", "")    
+    proj = session.get("proj", "")
     sort = session.get("sort", "order by z001_x0")
     sortype = session.get("sortype", "ASC")
+
     if proj_type == "unimarc":
         field = "u990_b"
         field2 = "u990_c"
@@ -2147,46 +2147,39 @@ def download_csv():
         field = "z990_b"
         field2 = "z990_c"
         table = "dbo._intermarc"
-   
-    # Retrieve session-like data
-   
-    sql_query = session.get('sql_query').replace("SELECT COUNT(*)",f"""SELECT ROW_NUMBER() OVER ({sort} {sortype}) AS ID,
-                                                ID AS RID, Lot, CONCAT(folder, '.') AS folder, z001_x0, traitement, qcote, 
-                                                Deriv_Id,{field}, {field2}, notice_readable, Ano_AnsCode, Ano_Answer""")
-    
-    print(sql_query)
-    
+
+    # Replace COUNT query with full select
+    sql_query = session.get('sql_query').replace("SELECT COUNT(*)", f"""SELECT ROW_NUMBER() OVER ({sort} {sortype}) AS ID,
+                                                    ID AS RID, Lot, CONCAT(folder, '.') AS folder, z001_x0, traitement, qcote, 
+                                                    Deriv_Id, {field}, {field2}, notice_readable, Ano_AnsCode, Ano_Answer""")
     params = session.get("params", [proj])
-    print(params)
-   
     cursor.execute(sql_query, params)
-    rows = cursor.fetchall()
 
-    # CSV generation
-    output = io.StringIO()
-    writer = csv.writer(output, delimiter=',')
+    def generate():
+        # Add UTF-8 BOM
+        yield '\ufeff'
+        writer = csv.writer(io.StringIO(), delimiter=',')
+        header = ["ID", "RID", "Lot", "Dossier", "Image", "Traitement", "Cote", "Deriv_Id", "AnoCode", "AnoMsg", "Notice", "AnoAnswerCode", "AnoAnswer"]
+        yield ','.join(header) + '\n'
 
-    # Add BOM for UTF-8 encoding
-    output.write('\ufeff')
+        while True:
+            rows = cursor.fetchmany(10000)
+            if not rows:
+                break
+            for row in rows:
+                buffer = io.StringIO()
+                writer = csv.writer(buffer)
+                writer.writerow(row)
+                yield buffer.getvalue()
 
-    # CSV header
-    heading = ["ID", "RID", "Lot", "Dossier", "Image", "Traitement", "Cote", "Deriv_Id", "AnoCode", "AnoMsg", "Notice", "AnoAnswerCode", "AnoAnswer"]
-    writer.writerow(heading)
-
-    # CSV rows
-    for row in rows:
-        writer.writerow(row)
-
-    output.seek(0)
-
-    # Set response headers
     return Response(
-        output,
+        stream_with_context(generate()),
         mimetype='text/csv',
         headers={
             'Content-Disposition': f'attachment; filename=AUREXUS_EXPORT_{proj}.csv'
         }
     )
+
 
 # Serve HTML file for CSV upload
 @app.route('/upload')
