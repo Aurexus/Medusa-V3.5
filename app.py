@@ -2138,7 +2138,8 @@ def get_image_prestageList(folder, image):
         
         
 #CSV Download      
-# CSV Download      
+     
+    
 @app.route('/download_csv', methods=['GET'])
 def download_csv():
     chkTestVlaue = session.get("chk_test")
@@ -2155,6 +2156,7 @@ def download_csv():
     proj = session.get("proj", "")
     sort = session.get("sort", "order by z001_x0")
     sortype = session.get("sortype", "ASC")
+    
 
     if proj_type == "unimarc":
         field = "u990_b"
@@ -2164,11 +2166,17 @@ def download_csv():
         field = "z990_b"
         field2 = "z990_c"
         table = "dbo._intermarc"
+    sql_query = session.get(
+            "sql_query", f"SELECT COUNT(*) FROM {table} WHERE Proj = ?  {addParam}"
+        )
+   
+    if not sql_query:
+        return "Filter session not found. Please apply filters before downloading CSV.", 400
 
-    # Replace COUNT query with full select
-    sql_query = session.get('sql_query').replace("SELECT COUNT(*)", f"""SELECT ROW_NUMBER() OVER ({sort} {sortype}) AS ID,
-                                                    ID AS RID, Lot, CONCAT(folder, '.') AS folder, z001_x0, traitement, qcote, 
-                                                    Deriv_Id, {field}, {field2}, notice_readable, Ano_AnsCode, Ano_Answer""")
+    # Replace COUNT with full query
+    sql_query = sql_query.replace("SELECT COUNT(*)", f"""SELECT ROW_NUMBER() OVER ({sort} {sortype}) AS ID,
+                                                        ID AS RID, Lot, CONCAT(folder, '.') AS folder, z001_x0, traitement, qcote, 
+                                                        Deriv_Id, {field}, {field2}, notice_readable, Ano_AnsCode, Ano_Answer""")
     params = session.get("params", [proj])
     cursor.execute(sql_query, params)
 
