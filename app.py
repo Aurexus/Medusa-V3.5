@@ -1,12 +1,11 @@
 # an object of WSGI application
-import os
 import json
 import math
-import csv
-import io
+import os
 import re
 from datetime import datetime
-#import csv
+import csv
+import io
 from io import StringIO
 import pyodbc
 import requests
@@ -42,8 +41,9 @@ import urllib.parse  # Import URL encoding library
 # reader = easyocr.Reader(['fr'])  # Specify the language, e.g., 'fr' for French
 from flask_mail import Mail, Message
 from flask_apscheduler import APScheduler
-
-
+from ftplib import FTP_TLS
+import zipfile
+from io import BytesIO
 # class Config:
     # SCHEDULER_API_ENABLED = True
 
@@ -88,6 +88,11 @@ scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.start()
 
+
+# FTP INFO for FTP Image Viewer
+FTP_HOST = '74.208.220.192'
+FTP_USER = 'auxnetimg'
+FTP_PASS = 'Keb0~j05ANwfnfhh'
 
 # Initialize the Form Recognizer client
 #document_analysis_client = DocumentAnalysisClient(
