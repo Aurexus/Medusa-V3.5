@@ -2138,7 +2138,6 @@ def get_image_prestageList(folder, image):
         
         
 #CSV Download      
-     
     
 @app.route('/download_csv', methods=['GET'])
 def download_csv():
@@ -2204,7 +2203,6 @@ def download_csv():
             'Content-Disposition': f'attachment; filename=AUREXUS_EXPORT_{proj}.csv'
         }
     )
-
 
 # Serve HTML file for CSV upload
 @app.route('/upload')
