@@ -615,7 +615,24 @@ def listdata():
     html_content = ""
     page_no = int(request.args.get("page_no", 1))  # Get current page number
     session["listpage_no"] = page_no
-
+    if request.method == "POST" and "clear" in request.form:
+    # Clear filter-related session keys
+        session.pop("sort", None)
+        session.pop("sortype", None)
+        session.pop("params", None)
+        session.pop("sql_query", None)
+        session.pop("sql_query2", None)
+        session.pop("total_records", None)
+          #store session Values
+        session.pop("selected_dossier", None)
+        session.pop("selected_traitement", None)
+        session.pop("selected_type", None)
+        session.pop("selected_anscode", None)
+        session.pop("keycol", None)
+        
+        session.pop("searchword", None)
+        
+        
     if request.method == "POST" and "filters" in request.form:
         session.pop("sort", None)
         session.pop("sortype", None)
