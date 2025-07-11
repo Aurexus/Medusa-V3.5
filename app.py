@@ -6,7 +6,6 @@ import io
 import re
 from datetime import datetime
 #import csv
-import io
 from io import StringIO
 import pyodbc
 import requests
