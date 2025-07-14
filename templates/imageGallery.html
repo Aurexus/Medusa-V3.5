@@ -401,7 +401,16 @@
 					})
 					.on('click', () => {
 						if (src !== currentImage) {
+							$('.thumbnail-image').removeClass('active-thumbnail');
+
+							// Highlight this one manually (optional since preload runs)
+							img.addClass('active-thumbnail');
+							
 							updateThumbnails(src);
+							
+							// Also update row highlight
+							$('.image-row').removeClass('table-active');
+							$(`.image-row[data-image="${src}"]`).addClass('table-active');
 						}
 					});
 				$thumb.append(img);
