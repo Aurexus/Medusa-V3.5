@@ -2108,6 +2108,52 @@ def edit_form():
         cursor.close()
         cnxn.close()
 
+#Save Response 
+@app.route('/save_data', methods=['POST'])
+def save_data():
+    try:
+        value = request.json.get('value')  # raw SQL query
+        rec_id = request.json.get('Id')    # ID to use in the update
+
+        projtype = session.get("projtype", "")
+        projlist = session.get("proj", "")        
+        
+        if projtype == "unimarc":
+            field = "u990_b"
+            field2 = "u990_c"
+            table = "dbo._unimarc"
+        else:
+            field = "z990_b"
+            field2 = "z990_c"
+            table = "dbo._intermarc"
+        
+        # Connect to database
+        cnxn = pyodbc.connect(conn_str)
+        cursor = cnxn.cursor()
+
+        # Run incoming query (already constructed on frontend)
+        if value:
+            cursor.execute(value)
+
+        # Clean and update the answer field 
+        #query = f"""UPDATE {table} SET Ano_AnsCode = ?, Ano_Answer = ? WHERE ID = ?"""
+        #cursor.execute(query, (anocode, anscode, ID))
+
+        cnxn.commit()
+        cursor.close()
+        cnxn.close()
+
+        return jsonify({'status': 1, 'message': 'Successfully Saved.'})
+    
+    except Exception as e:
+        print("❌ Update Error:", e)
+        return jsonify({'status': 0, 'message': 'Form submission failed, please try again.', 'error': str(e)})
+
+
+
+
+
+
 #Image Prestagging, Next Previous Images Views
 @app.route('/api/images/<folder>/<image>')
 def get_image_prestageList(folder, image):
