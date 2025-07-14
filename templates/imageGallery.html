@@ -180,14 +180,14 @@
 							<tbody>
 								{% if images %}
 									{% for image in images %}
-									<tr class="image-row" data-image="{{ image }}" style="cursor: pointer;">
+									<tr class="image-row {% if image == selected_image %}table-active{% endif %}" data-image="{{ image }}" style="cursor: pointer;">
 										<td style="text-align:left ;color: #770000;">
 											
 										 🖼️ {{ image }}
 											
 										</td>
 										<td>
-											<a target="_blank" href="{{ url_for('download_image', folder=selected_folder, filename=selected_image) }}" class="btn btn-sm btn-light">
+											<a target="_blank" href="{{ url_for('download_image', folder=selected_folder, filename=image) }}" class="btn btn-sm btn-light">
 												<i class="fa fa-download"></i>
 											</a>
 										</td>
@@ -309,6 +309,10 @@
 		$(document).ready(function () {
 			$('.image-row').click(function () {
 				const imageName = $(this).data('image');
+				// Remove highlight from all rows
+				$('.image-row').removeClass('table-active');
+				// Highlight current row
+				$(this).addClass('table-active');
 				updateThumbnails(imageName);  // Your existing function
 			});
 		});
