@@ -1109,7 +1109,7 @@
                                                 type="text">{{ anoanswer }}</textarea>
                                         </div>
                                     </div>
-
+									</form>
                                     <div style="display:flex;justify-content: center;align-items: center;">
                                         <button class="btn-save" id="save_record" name="recordsave">{{ translations['save']}}<i class="fa-solid fa-check" style="display:none"></i></button>
                                     </div>
@@ -1455,7 +1455,56 @@
 		  
 		});			
 
-    
+		$('#save_record').click(function() {
+			const ID = {{ idValue | tojson }};  // Jinja-safe rendering
+			let anocode = $("#anocode").val();
+			let anscode = $('#anscode').val();
+			const proj_type = "{{ proj_type }}";
+
+			anscode = anscode.replace(/(['])/g,"''");
+			//anscode = anscode.replace(/([$&+,:;=?@#|"<>.^*()%!-])/g, '\\$1');
+
+			if ((anocode === "A revoir, avec modification de la notice" && anscode === "") ||
+				(anocode === "A revoir" && anscode === "")) {
+				swal({
+					title: "Veuillez ajouter un commentaire!",
+					icon: "error"
+				});
+			} else {
+				const keyword = `UPDATE dbo._${proj_type} SET Ano_AnsCode='${anocode}', Ano_Answer='${anscode}' WHERE ID='${ID}'`;
+
+				swal({
+					title: "<img src='{{ url_for('static', filename='assets/images/Loading spinner.gif') }}' width='100px'>",
+					text: "Chargement...",
+					showCancelButton: false,
+					showConfirmButton: false,
+					html: true,
+					customClass: 'swal-wide'
+				});
+
+				$.ajax({
+					url: "{{ url_for('save_data') }}",
+					method: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify({ value: keyword, Id: ID }),
+					success: function(resp) {
+						if (resp.status === 1) {
+							swal({
+								title: "Enregistré avec succès!",
+								icon: "success",
+								button: "Ok"
+							});
+						} else {
+							swal({
+								title: "Échec de la mise à jour!",
+								text: resp.error || "Erreur inconnue",
+								icon: "error"
+							});
+						}
+					}
+				});
+			}
+		});
  
     </script>
 </body>
