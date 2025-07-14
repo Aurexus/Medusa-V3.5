@@ -2094,6 +2094,7 @@ def edit_form():
                 disable=disabled,
                 checked_attr=checked_attr,
                 allNextCount=allNextCount,
+                proj_type=proj_type,
             )
         else:
             # Handle case where no row is found
