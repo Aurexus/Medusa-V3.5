@@ -845,7 +845,16 @@
             }
 			
         }
-       
+        #prefetch_image img:hover {
+		  transform: scale(1.05);
+		  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+		}
+		#imageViewerContainer img{
+			 z-index:-2 !important;
+		}
+		img.jqvsiv_toolbarButton{
+			ransform: none !important;
+		}  
     </style>
 
 
@@ -1034,6 +1043,7 @@
                                                 name="txtbrut" 
                                                 ng-model="txtbrut" 
                                                 type="text"
+												rows="10"
                                                 placeholder="TextBrut">{{txtBrut }}</textarea>
                                         </div>
                                     </div>
@@ -1046,6 +1056,7 @@
                                                 ng-model="notice" 
                                                 class="notice-content"
                                                 placeholder="Notice" 
+												rows="12"
                                                 type="text">{{ readable }}</textarea>
                                         </div>
                                     </div>
