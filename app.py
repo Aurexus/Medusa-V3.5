@@ -25,7 +25,8 @@ from flask import (
     session,
     url_for,
     send_file,
-    stream_with_context
+    stream_with_context,
+    after_this_request
 )
 
 # from flask_session import Session
@@ -3193,6 +3194,8 @@ def download_image(folder, filename):
 
 @app.route('/download/folder/<path:folder>')
 def download_folder(folder):
+    tmp_path = None  # Declare here so it's accessible in finally
+
     try:
         ftp = get_ftps_connection()
         ftp_root_dir = "/" + session.get("proj", "") + "/"
@@ -3201,21 +3204,34 @@ def download_folder(folder):
         files = ftp.nlst()
         image_files = [f for f in files if f.lower().endswith(('.jpg', '.jpeg', '.png', '.gif'))]
 
-        with tempfile.NamedTemporaryFile(suffix=".zip", delete=False) as tmp_zip:
-            with zipfile.ZipFile(tmp_zip, 'w', zipfile.ZIP_DEFLATED) as zipf:
-                for filename in image_files:
-                    file_stream = BytesIO()
-                    ftp.retrbinary(f"RETR {filename}", file_stream.write)
-                    file_stream.seek(0)
-                    zipf.writestr(filename, file_stream.read())
+        # Create temp file manually
+        tmp_fd, tmp_path = tempfile.mkstemp(suffix=".zip")
+        os.close(tmp_fd)
 
-            ftp.quit()
-            tmp_zip.seek(0)
-            return send_file(tmp_zip.name, download_name=f"{folder}.zip", as_attachment=True)
+        with zipfile.ZipFile(tmp_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for filename in image_files:
+                file_stream = BytesIO()
+                ftp.retrbinary(f"RETR {filename}", file_stream.write)
+                file_stream.seek(0)
+                zipf.writestr(filename, file_stream.read())
+
+        ftp.quit()
+
+        @after_this_request
+        def remove_file(response):
+            try:
+                if tmp_path and os.path.exists(tmp_path):
+                    os.remove(tmp_path)
+            except Exception as cleanup_err:
+                print("⚠️ Failed to delete temp file:", cleanup_err)
+            return response
+
+        return send_file(tmp_path, download_name=f"{folder}.zip", as_attachment=True)
 
     except Exception as e:
         print("Download folder error:", e)
         return "Error downloading folder", 500
+
      
 
 
