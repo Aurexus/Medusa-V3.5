@@ -4529,3 +4529,8 @@ h6.h1 {
     display: inline-block !important;
   }
 }
+@media (min-width: 320px) and (max-width: 679px) {
+    .sidebar {
+top:0px
+    }
+}
