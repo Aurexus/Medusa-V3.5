@@ -100,10 +100,17 @@
 		.table::-webkit-scrollbar {
 			width: 4px !important; /* default is ~16px */
 		}
-		img.jqvsiv_toolbarButton{
-			transform: none !important;
+		
+		#prefetch_image img:hover {
+		  transform: scale(1.05);
+		  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 		}
-	
+		#imageViewerContainer img{
+		  z-index:-2 !important;
+		}
+		img.jqvsiv_toolbarButton{
+		  transform: none !important;
+		}
     </style>
 
 </head>
@@ -147,7 +154,7 @@
 											</a>
 										</td>
 										<td>
-											<a target="_blank" href="{{ url_for('download_folder', folder=selected_folder) }}" class="btn btn-sm btn-light">
+											<a target="_blank" href="{{ url_for('download_folder', folder=folder) }}" class="btn btn-sm btn-light">
 												<i class="fa fa-download"></i>
 											</a>
 										</td>
@@ -173,7 +180,7 @@
 						<table class="table table-hover table-sm">
 							<thead>
 								<tr>
-									<th style="text-align:left ;">IMAGES</th>
+									<th style="text-align:left ;">Images</th>
 									<th></th>
 								</tr>
 							</thead>

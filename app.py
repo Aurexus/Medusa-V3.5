@@ -44,6 +44,7 @@ from flask_apscheduler import APScheduler
 from ftplib import FTP_TLS
 import zipfile
 from io import BytesIO
+import tempfile
 # class Config:
     # SCHEDULER_API_ENABLED = True
 
@@ -2151,10 +2152,6 @@ def save_data():
         return jsonify({'status': 0, 'message': 'Form submission failed, please try again.', 'error': str(e)})
 
 
-
-
-
-
 #Image Prestagging, Next Previous Images Views
 @app.route('/api/images/<folder>/<image>')
 def get_image_prestageList(folder, image):
@@ -3044,9 +3041,23 @@ def list_folders():
     ftps.cwd(ftp_root_dir)
 
     folders = []
-    ftps.retrlines('LIST', lambda x: folders.append(x.split()[-1]) if x.startswith('d') else None)
+
+    try:
+        # fallback: LIST preserves visual order from FTP
+        def parse_folder(line):
+            parts = line.split(maxsplit=8)
+            if len(parts) >= 9 and parts[0].startswith("d"):
+                folders.append(parts[8])  # This preserves folder name with spaces
+
+        ftps.retrlines('LIST', parse_folder)
+
+    except Exception as e:
+        print("⚠️ LIST parsing failed:", e)
+
     ftps.quit()
+    print("📁 Available folders (original LIST order):", folders)
     return folders
+
 
 def natural_sort_key(s):
     return [int(text) if text.isdigit() else text.lower()
@@ -3055,11 +3066,12 @@ def natural_sort_key(s):
 def list_images(folder):
     ftps = get_ftps_connection()
     ftp_root_dir = "/" + session.get("proj", "") + "/"  # Define again here
-    ftps.cwd(ftp_root_dir + folder)
+    full_path = f"{ftp_root_dir}{folder}"
+    ftps.cwd(full_path)
     files = ftps.nlst()
     ftps.quit()
     
-    image_files = [f for f in files if f.lower().endswith(('.jpg', '.jpeg', '.png', '.gif'))]
+    image_files = [f for f in files if f.lower().endswith(('.jpg', '.jpeg','.png', '.gif', '.tif', '.tiff'))]
     return sorted(image_files, key=natural_sort_key)
 
 @app.route('/imageGallery')
@@ -3147,12 +3159,20 @@ def imageGallery():
                                lang=language,
                                langButton=langButton,
                                allcount=AllCount)
-@app.route('/api/images/<folder>/<image>')
+@app.route('/api/images/<path:folder>/<image>')
 def api_images(folder, image):
     images = list_images(folder)
-    return jsonify(images)
+    if image in images:
+        index = images.index(image)
+        start = max(index - 5, 0)
+        end = min(index + 6, len(images))
+        visible_images = images[start:end]
+    else:
+        visible_images = images[:10]  # fallback
+
+    return jsonify(visible_images)
     
-@app.route('/download/image/<folder>/<filename>')
+@app.route('/download/image/<path:folder>/<filename>')
 def download_image(folder, filename):
     try:
         ftp = get_ftps_connection()
@@ -3169,7 +3189,9 @@ def download_image(folder, filename):
         print("Download image error:", e)
         return "Error downloading image", 500
 
-@app.route('/download/folder/<folder>')
+
+
+@app.route('/download/folder/<path:folder>')
 def download_folder(folder):
     try:
         ftp = get_ftps_connection()
@@ -3179,22 +3201,22 @@ def download_folder(folder):
         files = ftp.nlst()
         image_files = [f for f in files if f.lower().endswith(('.jpg', '.jpeg', '.png', '.gif'))]
 
-        zip_stream = BytesIO()
-        with zipfile.ZipFile(zip_stream, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            for filename in image_files:
-                file_stream = BytesIO()
-                ftp.retrbinary(f"RETR {filename}", file_stream.write)
-                file_stream.seek(0)
-                zipf.writestr(filename, file_stream.read())
+        with tempfile.NamedTemporaryFile(suffix=".zip", delete=False) as tmp_zip:
+            with zipfile.ZipFile(tmp_zip, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                for filename in image_files:
+                    file_stream = BytesIO()
+                    ftp.retrbinary(f"RETR {filename}", file_stream.write)
+                    file_stream.seek(0)
+                    zipf.writestr(filename, file_stream.read())
 
-        ftp.quit()
-        zip_stream.seek(0)
+            ftp.quit()
+            tmp_zip.seek(0)
+            return send_file(tmp_zip.name, download_name=f"{folder}.zip", as_attachment=True)
 
-        zip_name = f"{folder}.zip"
-        return send_file(zip_stream, download_name=zip_name, as_attachment=True)
     except Exception as e:
         print("Download folder error:", e)
-        return "Error downloading folder", 500        
+        return "Error downloading folder", 500
+     
 
 
 if __name__ == "__main__":
