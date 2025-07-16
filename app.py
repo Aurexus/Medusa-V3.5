@@ -3199,33 +3199,35 @@ def download_folder(folder):
         ftp_root_dir = "/" + session.get("proj", "") + "/"
         folder_path = ftp_root_dir + folder
 
-        ftp_conn = get_ftps_connection()
-        ftp_conn.cwd(folder_path)
-        files = ftp_conn.nlst()
+        # First connect once to list files
+        ftp = get_ftps_connection()
+        ftp.cwd(folder_path)
+        files = ftp.nlst()
+        ftp.quit()
+
         image_files = [f for f in files if f.lower().endswith(('.jpg', '.jpeg', '.png', '.gif'))]
 
         zs = zipstream.ZipFile(mode='w', compression=zipstream.ZIP_DEFLATED)
 
         for fname in image_files:
-            def file_generator(fname=fname):
-                # Create a new FTP connection inside the generator
+            def file_stream(fname=fname):
                 ftp = get_ftps_connection()
                 ftp.cwd(folder_path)
-                buffer = io.BytesIO()
-                ftp.retrbinary(f"RETR {fname}", buffer.write)
+                buf = io.BytesIO()
+                ftp.retrbinary(f"RETR {fname}", buf.write)
                 ftp.quit()
-                buffer.seek(0)
-                yield from buffer
+                buf.seek(0)
+                yield from buf
 
-            zs.write_iter(fname, file_generator())
+            zs.write_iter(fname, file_stream())
 
-        response = Response(zs, mimetype='application/zip')
-        response.headers['Content-Disposition'] = f'attachment; filename="{folder}.zip"'
-        return response
+        return Response(zs, mimetype='application/zip', headers={
+            'Content-Disposition': f'attachment; filename="{folder}.zip"'
+        })
 
     except Exception as e:
-        print("Download folder error:", e)
-        return "Error downloading folder", 500
+        print("❌ Error during download:", e)
+        return "Error during download", 500
 
      
 
