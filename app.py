@@ -46,6 +46,7 @@ from ftplib import FTP_TLS
 import zipfile
 from io import BytesIO
 import tempfile
+import zipstream  # pip install zipstream-new
 # class Config:
     # SCHEDULER_API_ENABLED = True
 
@@ -3194,39 +3195,33 @@ def download_image(folder, filename):
 
 @app.route('/download/folder/<path:folder>')
 def download_folder(folder):
-    tmp_path = None  # Declare here so it's accessible in finally
-
     try:
-        ftp = get_ftps_connection()
         ftp_root_dir = "/" + session.get("proj", "") + "/"
-        ftp.cwd(ftp_root_dir + folder)
+        folder_path = ftp_root_dir + folder
 
-        files = ftp.nlst()
+        ftp_conn = get_ftps_connection()
+        ftp_conn.cwd(folder_path)
+        files = ftp_conn.nlst()
         image_files = [f for f in files if f.lower().endswith(('.jpg', '.jpeg', '.png', '.gif'))]
 
-        # Create temp file manually
-        tmp_fd, tmp_path = tempfile.mkstemp(suffix=".zip")
-        os.close(tmp_fd)
+        zs = zipstream.ZipFile(mode='w', compression=zipstream.ZIP_DEFLATED)
 
-        with zipfile.ZipFile(tmp_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            for filename in image_files:
-                file_stream = BytesIO()
-                ftp.retrbinary(f"RETR {filename}", file_stream.write)
-                file_stream.seek(0)
-                zipf.writestr(filename, file_stream.read())
+        for fname in image_files:
+            def file_generator(fname=fname):
+                # Create a new FTP connection inside the generator
+                ftp = get_ftps_connection()
+                ftp.cwd(folder_path)
+                buffer = io.BytesIO()
+                ftp.retrbinary(f"RETR {fname}", buffer.write)
+                ftp.quit()
+                buffer.seek(0)
+                yield from buffer
 
-        ftp.quit()
+            zs.write_iter(fname, file_generator())
 
-        @after_this_request
-        def remove_file(response):
-            try:
-                if tmp_path and os.path.exists(tmp_path):
-                    os.remove(tmp_path)
-            except Exception as cleanup_err:
-                print("⚠️ Failed to delete temp file:", cleanup_err)
-            return response
-
-        return send_file(tmp_path, download_name=f"{folder}.zip", as_attachment=True)
+        response = Response(zs, mimetype='application/zip')
+        response.headers['Content-Disposition'] = f'attachment; filename="{folder}.zip"'
+        return response
 
     except Exception as e:
         print("Download folder error:", e)
