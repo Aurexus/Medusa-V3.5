@@ -124,6 +124,22 @@
 		.active{
             background-color:#8080802b !important;
         } 
+		.star-checkbox input {
+    display: none; /* hide default checkbox */
+}
+
+.star-checkbox .star {
+    font-size: 20px;
+    color: gray;        /* default */
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.star-checkbox input:checked + .star {
+    color: gold;        /* when checked */
+    transform: scale(1.2);
+}
+
     </style>
 
 </head>
@@ -143,7 +159,7 @@
             <div class="row">
 				
                 <!-- Left Column (1/5 width) -->
-                <div class="col-lg-3 col-md-12 h-100">				
+                <div class="col-lg-3 col-md-12 h-100 p-1">				
                 <div class="card h-100 overflow-hidden">
                     <div class="card-body p-1 scrollable">
                     <h6 class="mb-3">📁 {{translations['Folders']}} ({{ folders | length }} {{translations['Folders']}})</h6>
@@ -184,7 +200,7 @@
                 </div>
 
                 <!-- Middle Column (1/5 width) -->
-                <div class="col-lg-3 col-md-12 h-100">
+                <div class="col-lg-3 col-md-12 h-100 p-1">
                 <div class="card h-100 overflow-hidden">
                     <div class="card-body p-2 scrollable">
                     <h6 class="mb-3">🖼️ Images ({{ images | length }} Fichiers)</h6>
@@ -210,6 +226,14 @@
 											<a target="_blank" href="{{ url_for('download_image', folder=selected_folder, filename=image) }}" class="btn btn-sm btn-light">
 												<i class="fa fa-download"></i>
 											</a>
+											
+											{% set is_bookmarked = (selected_folder, image) in bookmark_set %}
+<label class="star-checkbox">
+    <input type="checkbox"
+           onchange="toggleBookmarkCheckbox('{{ selected_folder }}', '{{ image }}', this)"
+           {% if is_bookmarked %}checked{% endif %}>
+    <span class="star">&#9733;</span>
+</label>
 										</td>
 									</tr>
 									{% endfor %}
@@ -357,6 +381,7 @@
 				mouse: true,
 				keyboard: true,
 				toolbar: true,
+				rotateToolbar: false,
 				saveZoomPos: true,
 				callback(zoom, panX, panY) {
 					localStorage.setItem('imageZoomLevel', zoom);
@@ -458,7 +483,19 @@
 			}
 		});
 		
-		
+function toggleBookmarkCheckbox(folder, image, checkbox) {
+    let url = checkbox.checked ? '/api/bookmark' : '/api/bookmark/delete';
+    fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folder: folder, image: image })
+    })
+    .then(res => res.json())
+    .then(resp => {
+        alert(resp.message || resp.error);
+        loadBookmarks();
+    });
+}
 
     </script>
 </body>
