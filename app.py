@@ -3080,6 +3080,7 @@ def list_images(folder):
 def imageGallery():
     proj_type = session.get("projtype")
     proj = session.get("proj", "")
+    
     if proj_type == "unimarc":
         field = "u990_b"
         field2 = "u990_c"
@@ -3111,6 +3112,9 @@ def imageGallery():
     # Generate URLs for flag images
     en_flag_url = url_for('static', filename='assets/images/us_flag.png')
     fr_flag_url = url_for('static', filename='assets/images/fr_flag.png')
+    
+    
+    
     if language == "fr":
         langButton = f"""<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                              <img class="form-control-sm" src="{fr_flag_url}">French
@@ -3127,6 +3131,19 @@ def imageGallery():
                              </div>"""
     
     ftp_root_dir = "/" + session.get("proj", "") + "/"  # Define here again
+    user_id = session.get("name")
+    bookmarks = []
+    if user_id:
+        try:
+            cnxn = pyodbc.connect(conn_str)
+            cursor = cnxn.cursor()
+            cursor.execute("SELECT folder, image FROM dbo.ImageBookmarks WHERE user_id=?", (user_id,))
+            bookmarks = [(row[0], row[1]) for row in cursor.fetchall()]
+            bookmark_set = {(f, i) for f, i in bookmarks}   # a true set of tuples
+            cursor.close()
+            cnxn.close()
+        except:
+            pass
     try:
         folders = list_folders()
         selected_folder = request.args.get('folder', folders[0] if folders else None)
@@ -3146,7 +3163,9 @@ def imageGallery():
                                translations=translations[language],
                                lang=language,
                                langButton=langButton,
-                               allcount=AllCount)
+                               allcount=AllCount,
+                               bookmarks=bookmarks,
+                               bookmark_set=bookmark_set)
     except Exception as e:
         error_message = "⚠️ Could not connect to Image server or retrieve data."
         print("Server error:", e)  # Optional: log the actual error
@@ -3160,7 +3179,10 @@ def imageGallery():
                                translations=translations[language],
                                lang=language,
                                langButton=langButton,
-                               allcount=AllCount)
+                               allcount=AllCount,
+                               bookmarks=bookmarks,
+                               bookmark_set=bookmark_set)
+
 @app.route('/api/images/<path:folder>/<image>')
 def api_images(folder, image):
     images = list_images(folder)
@@ -3229,6 +3251,90 @@ def download_folder(folder):
         print("❌ Error during download:", e)
         return "Error during download", 500
 
+@app.route('/api/bookmark', methods=['POST'])
+def add_bookmark():
+    if "name" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+
+    user_id = session["name"]
+    folder = request.json.get("folder")
+    image = request.json.get("image")
+
+    if not folder or not image:
+        return jsonify({"error": "Missing data"}), 400
+
+    try:
+        cnxn = pyodbc.connect(conn_str)
+        cursor = cnxn.cursor()
+
+        # Check if already exists
+        cursor.execute("""
+            SELECT COUNT(*) FROM dbo.ImageBookmarks
+            WHERE user_id=? AND folder=? AND image=?
+        """, (user_id, folder, image))
+        exists = cursor.fetchone()[0]
+
+        if not exists:
+            cursor.execute("""
+                INSERT INTO dbo.ImageBookmarks (user_id, folder, image) 
+                VALUES (?, ?, ?)
+            """, (user_id, folder, image))
+            cnxn.commit()
+            msg = "Ajouté aux favoris avec succès"
+        else:
+            msg = "Déjà ajouté aux favoris"
+
+        cursor.close()
+        cnxn.close()
+        return jsonify({"message": msg})
+
+    except Exception as e:
+        print("DB error:", e)
+        return jsonify({"error": "Database error"}), 500
+
+
+@app.route('/api/bookmarks', methods=['GET'])
+def get_bookmarks():
+    if "name" not in session:
+        return jsonify([])
+
+    user_id = session["name"]
+
+    try:
+        cnxn = pyodbc.connect(conn_str)
+        cursor = cnxn.cursor()
+        cursor.execute("SELECT folder, image FROM dbo.ImageBookmarks WHERE user_id=?", (user_id,))
+        bookmarks = [{"folder": row[0], "image": row[1]} for row in cursor.fetchall()]
+        cursor.close()
+        cnxn.close()
+        return jsonify(bookmarks)
+    except Exception as e:
+        print("DB error:", e)
+        return jsonify([])
+
+
+@app.route('/api/bookmark/delete', methods=['POST'])
+def delete_bookmark():
+    if "name" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+
+    user_id = session["name"]
+    folder = request.json.get("folder")
+    image = request.json.get("image")
+
+    try:
+        cnxn = pyodbc.connect(conn_str)
+        cursor = cnxn.cursor()
+        cursor.execute("""
+            DELETE FROM dbo.ImageBookmarks WHERE user_id=? AND folder=? AND image=?
+        """, (user_id, folder, image))
+        cnxn.commit()
+        cursor.close()
+        cnxn.close()
+        return jsonify({"message": "Favori supprimé"})
+    except Exception as e:
+        print("DB error:", e)
+        return jsonify({"error": "Database error"}), 500
      
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000,debug=True)
