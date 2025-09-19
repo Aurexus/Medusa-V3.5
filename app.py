@@ -96,7 +96,7 @@ scheduler.start()
 FTP_HOST = '74.208.220.192'
 FTP_USER = 'auxnetimg'
 FTP_PASS = 'Keb0~j05ANwfnfhh'
-
+BASE_IMAGE_URL = "https://aurexus.net/auximages/"
 # Initialize the Form Recognizer client
 #document_analysis_client = DocumentAnalysisClient(
     #endpoint=endpoint, credential=AzureKeyCredential(api_key)
@@ -3335,7 +3335,180 @@ def delete_bookmark():
     except Exception as e:
         print("DB error:", e)
         return jsonify({"error": "Database error"}), 500
-     
+
+
+def get_folders_from_db(proj):
+    cnxn = pyodbc.connect(conn_str)
+    cursor = cnxn.cursor()
+    cursor.execute("""
+        SELECT DISTINCT Folder 
+        FROM [dbo].[_ImageScan]
+        WHERE Proj=?
+        ORDER BY Folder
+    """, (proj,))
+    folders = [row[0] for row in cursor.fetchall()]
+    cursor.close()
+    cnxn.close()
+    return folders
+
+
+def get_images_from_db(proj, folder):
+    cnxn = pyodbc.connect(conn_str)
+    cursor = cnxn.cursor()
+    cursor.execute("""
+        SELECT Image 
+        FROM [dbo].[_ImageScan]
+        WHERE Proj=? AND Folder=?
+        ORDER BY Image
+    """, (proj, folder))
+    images = [row[0] for row in cursor.fetchall()]
+    cursor.close()
+    cnxn.close()
+    return images
+    
+@app.route('/imageGalleryDetails')
+def imageGalleryDetails():
+    proj = session.get("proj", "")
+    language = request.args.get("lang", session["lang"])
+    # Language Handling
+    if language not in app.config["LANGUAGES"]:
+        language = app.config["DEFAULT_LANGUAGE"]
+        session["lang"] = language
+    else:
+        session["lang"] = language
+    # Generate URLs for flag images
+    en_flag_url = url_for('static', filename='assets/images/us_flag.png')
+    fr_flag_url = url_for('static', filename='assets/images/fr_flag.png')
+    
+    user_id = session.get("name")
+    bookmarks = []
+    if user_id:
+        try:
+            cnxn = pyodbc.connect(conn_str)
+            cursor = cnxn.cursor()
+            cursor.execute("SELECT folder, image FROM dbo.ImageBookmarks WHERE user_id=?", (user_id,))
+            bookmarks = [(row[0], row[1]) for row in cursor.fetchall()]
+            bookmark_set = {(f, i) for f, i in bookmarks}   # a true set of tuples
+            cursor.close()
+            cnxn.close()
+        except:
+            pass
+    
+    if language == "fr":
+        langButton = f"""<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             <img class="form-control-sm" src="{fr_flag_url}">French
+                            </button>
+                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="?lang=en"><img class="form-control-sm" src="{en_flag_url}">English</a>
+                             </div>"""
+    else:
+        langButton = f"""<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             <img class="form-control-sm" src="{en_flag_url}">English
+                            </button>
+                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="?lang=fr"><img class="form-control-sm" src="{fr_flag_url}">French</a>
+                             </div>"""
+    
+    try:
+        folders = get_folders_from_db(proj)
+        selected_folder = request.args.get('folder', folders[0] if folders else None)
+        images = get_images_from_db(proj, selected_folder) if selected_folder else []
+        selected_image = request.args.get('image', images[0] if images else None)
+
+        # Build the URL directly to the hosted image
+        image_url = None
+        if selected_folder and selected_image:
+            image_url = f"{BASE_IMAGE_URL}/{proj}/{selected_folder}/{selected_image}"
+
+        return render_template("imageGalleryDetails.html",
+                               folders=folders,
+                               selected_folder=selected_folder,
+                               images=images,
+                               selected_image=selected_image,
+                               image_url=image_url,
+                               translations=translations[session["lang"]],
+                               lang=session["lang"],
+                               langButton=langButton,
+                               allcount=0,  # add your notice count if needed
+                               bookmarks=bookmarks,
+                               bookmark_set=bookmark_set)
+    except Exception as e:
+        print("⚠️ Could not retrieve data:", e)
+        return render_template("imageGalleryDetails.html", folders=[], images=[], selected_image=None,image_url=image_url,
+                               translations=translations[session["lang"]],
+                               lang=session["lang"],
+                               langButton=langButton,
+                               allcount=0,  # add your notice count if needed
+                               bookmarks=[],
+                               bookmark_set=set())
+
+@app.route('/call/images/<folder>/<active_image>')
+def call_images(folder, active_image):
+    proj = session.get("proj", "")
+    filter_type = request.args.get("filter", "all")
+
+    try:
+        if filter_type == "bookmarks" and "name" in session:
+            user_id = session["name"]
+            cnxn = pyodbc.connect(conn_str)
+            cursor = cnxn.cursor()
+            cursor.execute("""
+                SELECT image FROM dbo.ImageBookmarks
+                WHERE user_id=? AND folder=?
+                ORDER BY image
+            """, (user_id, folder))
+            images = [row[0] for row in cursor.fetchall()]
+            cursor.close()
+            cnxn.close()
+        else:
+            images = get_images_from_db(proj, folder)  # all images
+
+        if not images:
+            return jsonify([])
+
+        if active_image not in images:
+            return jsonify(images[:8])
+
+        idx = images.index(active_image)
+        start = max(0, idx - 4)
+        end = min(len(images), idx + 5)
+
+        window = images[start:end]
+        return jsonify(window)
+
+    except Exception as e:
+        print("⚠️ DB error in /call/images:", e)
+        return jsonify([])
+
+
+@app.route('/api/folders')
+def api_folders():
+    proj = session.get("proj", "")
+    filter_type = request.args.get("filter", "all")
+
+    try:
+        if filter_type == "bookmarks" and "name" in session:
+            user_id = session["name"]
+            cnxn = pyodbc.connect(conn_str)
+            cursor = cnxn.cursor()
+            cursor.execute("""
+                SELECT DISTINCT folder 
+                FROM dbo.ImageBookmarks 
+                WHERE user_id=?
+                ORDER BY folder
+            """, (user_id,))
+            folders = [row[0] for row in cursor.fetchall()]
+            cursor.close()
+            cnxn.close()
+        else:
+            folders = get_folders_from_db(proj)
+
+        return jsonify(folders)
+
+    except Exception as e:
+        print("⚠️ DB error in /api/folders:", e)
+        return jsonify([])
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000,debug=True)
     # app.run()
