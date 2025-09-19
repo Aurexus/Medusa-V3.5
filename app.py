@@ -3368,9 +3368,31 @@ def get_images_from_db(proj, folder):
     
 @app.route('/imageGalleryDetails')
 def imageGalleryDetails():
+    proj_type = session.get("projtype")
     proj = session.get("proj", "")
     language = request.args.get("lang", session["lang"])
     # Language Handling
+    if proj_type == "unimarc":
+        field = "u990_b"
+        field2 = "u990_c"
+        table = "dbo._unimarc"
+    else:
+        field = "z990_b"
+        field2 = "z990_c"
+        table = "dbo._intermarc"    
+    # Connect safely to the database
+    try:
+        cnxn = pyodbc.connect(conn_str)
+        cursor = cnxn.cursor()
+        queryCount = f"SELECT COUNT(*) FROM {table} WHERE proj=?"
+        cursor.execute(queryCount, (proj,))
+        countNotices = cursor.fetchone()
+        AllCount = countNotices[0] if countNotices else 0
+        cursor.close()
+        cnxn.close()
+    except Exception as db_err:
+        print("⚠️ DB error:", db_err)
+        AllCount = 0  # fallback if DB fails    
     if language not in app.config["LANGUAGES"]:
         language = app.config["DEFAULT_LANGUAGE"]
         session["lang"] = language
@@ -3429,7 +3451,7 @@ def imageGalleryDetails():
                                translations=translations[session["lang"]],
                                lang=session["lang"],
                                langButton=langButton,
-                               allcount=0,  # add your notice count if needed
+                               allcount=AllCount,  # add your notice count if needed
                                bookmarks=bookmarks,
                                bookmark_set=bookmark_set)
     except Exception as e:
@@ -3438,7 +3460,7 @@ def imageGalleryDetails():
                                translations=translations[session["lang"]],
                                lang=session["lang"],
                                langButton=langButton,
-                               allcount=0,  # add your notice count if needed
+                               allcount=AllCount,  # add your notice count if needed
                                bookmarks=[],
                                bookmark_set=set())
 
