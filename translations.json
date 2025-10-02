@@ -56,7 +56,8 @@
 		"Encode" : "Encoding",
 		"Delivery" : "Delivery",
 		"azsort" : "A-Z Sort",
-		"zasort" : "Z-A Sort"
+		"zasort" : "Z-A Sort",
+		"Fichiers" : "Files"
     },
     "fr": {
         "projectQuantity": "Nombre total de notices",
@@ -115,7 +116,8 @@
 		"Encode" : "Encodage",
 		"Delivery" : "Livraison",
 		"azsort" : "Trier de A à Z",
-		"zasort" : "Trier de Z à A"
+		"zasort" : "Trier de Z à A",
+		"Fichiers" : "Fichiers"
     }
     
 }
