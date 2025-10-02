@@ -54,7 +54,9 @@
 		"Derivation" : "Derivations/Creations",
 		"DerivationQC" : "Derivations/Creations QC",
 		"Encode" : "Encoding",
-		"Delivery" : "Delivery"
+		"Delivery" : "Delivery",
+		"azsort" : "A-Z Sort",
+		"zasort" : "Z-A Sort"
     },
     "fr": {
         "projectQuantity": "Nombre total de notices",
@@ -106,12 +108,14 @@
 		"flagged" : "Marqué",
 		"Scanning" : "Prises de vue",
 		"ScanningQC" : "Prises de vue QC",
-		"OCR" : "Océrisation de images",
-		"OCRQC" : "Océrisation de images QC",
+		"OCR" : "Océrisation des images",
+		"OCRQC" : "CQ de l'océrisation des images",
 		"Derivation" : "Dérivations/Créations",
 		"DerivationQC" : "Dérivations/Créations QC",
 		"Encode" : "Encodage",
-		"Delivery" : "Livraison"
+		"Delivery" : "Livraison",
+		"azsort" : "Trier de A à Z",
+		"zasort" : "Trier de Z à A"
     }
     
 }
