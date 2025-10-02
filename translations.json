@@ -57,7 +57,10 @@
 		"Delivery" : "Delivery",
 		"azsort" : "A-Z Sort",
 		"zasort" : "Z-A Sort",
-		"Fichiers" : "Files"
+		"Fichiers" : "Files",
+		"Favoirs" : "Favorites",
+		"Toutes": "All",
+		"Loading images" : "Loading images"
     },
     "fr": {
         "projectQuantity": "Nombre total de notices",
@@ -117,7 +120,10 @@
 		"Delivery" : "Livraison",
 		"azsort" : "Trier de A à Z",
 		"zasort" : "Trier de Z à A",
-		"Fichiers" : "Fichiers"
+		"Fichiers" : "Fichiers",
+		"Favoirs" : "Favoirs",
+		"Toutes": "Toutes",
+		"Loading images" : "Chargement des images"
     }
     
 }
