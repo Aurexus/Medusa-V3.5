@@ -170,8 +170,8 @@
                                         <label><b>{{ translations['Sort Type']}} <i class="fa fa-sort-amount-desc" style="color:#c61c01;"></i></b></label>
                                         <select id="sortype" name="sortype" class="form-control col-sm-12 p-1">
 											{% set selected_sortype = session.get('sortype', 'ASC') %}
-											<option value="ASC" {% if selected_sortype == 'ASC' %}selected{% endif %}>A-Z SORT</option>
-											<option value="DESC" {% if selected_sortype == 'DESC' %}selected{% endif %}>Z-A SORT</option>
+											<option value="ASC" {% if selected_sortype == 'ASC' %}selected{% endif %}>{{ translations['azsort']}}</option>
+											<option value="DESC" {% if selected_sortype == 'DESC' %}selected{% endif %}>{{ translations['zasort']}}</option>
 										</select>
                                     </div>
                                     <div class="form-group col-md-6">																								
