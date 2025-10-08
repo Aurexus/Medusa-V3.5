@@ -26,7 +26,7 @@ from flask import (
 conn_str = "Driver={ODBC Driver 17 for SQL Server};Server=tcp:aurexdb.database.windows.net;Database=AUREXDB1;Uid=db_su;Pwd={=!Aurexus21!=};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
 cnxn = pyodbc.connect(conn_str)
 cursor = cnxn.cursor()
-champagne_bp = Blueprint('champagne', __name__, url_prefix='/champagne')
+champagne_bp = Blueprint('imageapp', __name__, url_prefix='/imageapp')
 
 # Load the Translation files
 def load_translations():
@@ -38,7 +38,7 @@ def load_translations():
 # Assign Translation JSON
 translations = load_translations()
 @image_app.route('/')
-def champagne_home():
+def image_home():
     #return "Welcome to Champagne App!"
     #return render_template("champagne_OCR.html")
     return render_template("champlogin.html")
