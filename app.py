@@ -30,6 +30,7 @@ from flask import (
 )
 
 # from flask_session import Session
+
 from fuzzywuzzy import process
 #from ultralytics import YOLO
 #import pytesseract
@@ -47,6 +48,7 @@ import zipfile
 from io import BytesIO
 import tempfile
 import zipstream  # pip install zipstream-new
+from Imageapp.routes import image_app
 # class Config:
     # SCHEDULER_API_ENABLED = True
 
