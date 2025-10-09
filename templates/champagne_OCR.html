@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AUREXUS</title>
+    <!-- ================= Favicon ================== -->
+   
+    <link href="{{url_for('static',filename='assets/css/lib/calendar2/pignose.calendar.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/chartist/chartist.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/font-awesome.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/themify-icons.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/owl.carousel.min.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/owl.theme.default.min.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/weather-icons.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/menubar/sidebar.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/helper.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/style.css')}}" rel="stylesheet">
+    <style>
+        .scrollable {
+            overflow-y: auto;
+            max-height: 100%;
+        }
+
+        .content-wrap {
+            height: 90vh !important;
+        }
+
+        @media (max-width: 991px) {
+            .row.h-100 > div {
+            height: auto !important;
+            }
+
+            .scrollable {
+            max-height: none !important;
+            }
+        }
+		.active{
+			background-color:#8080802b !important;
+		}
+		.right-panel {
+		  height: calc(100vh - 100px); /* Adjust depending on your header/nav height */
+		  display: flex;
+		  flex-direction: column;
+		  padding: 0;
+		  margin: 0;
+		}
+
+		.image-viewer-placeholder {
+		  flex: 1;
+		  display: flex;
+		  flex-direction: column;
+		}
+
+		#viewerContainer {
+		  flex: 1;
+		  display: flex;
+		  flex-direction: column;
+		  height: 100%;
+		}
+
+		#imageViewerContainer {
+		  flex: 1;
+		  width: 100%;
+		  height: 100%;
+		  overflow: hidden;
+		  position: relative;
+		}
+		#imageViewerContainer img{
+		  z-index:-2 !important;
+		}
+		.active-thumbnail {
+					  border: 2px solid red !important;
+					  animation: blink-border 1s step-start infinite;
+				}
+				.thumbnail-image {
+					  border: 2px solid #ffffff;
+					  box-shadow: 0 0 5px #686868 !important;
+					  border-radius: 4px !important;
+				}
+				#prefetch_image_container{
+					  display: flex;
+					  justify-content: center;   /* Center horizontally */
+					  align-items: center;       /* Center vertically if needed */
+					  gap: 10px;                 /* Optional: spacing between thumbnails */
+					  flex-wrap: wrap; 
+				}
+		.table::-webkit-scrollbar {
+			width: 4px !important; /* default is ~16px */
+		}
+		
+		#prefetch_image img:hover {
+		  transform: scale(1.05);
+		  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+		}
+		#imageViewerContainer img{
+		  z-index:-2 !important;
+		}
+		img.jqvsiv_toolbarButton{
+		  transform: none !important;
+		}
+		.jqvsiv_toolbar {
+        z-index: 9999 !important;  
+        pointer-events: auto !important;
+        position: absolute !important;
+        }
+ 
+        .jqvsiv_toolbarButton {
+        z-index: 10000 !important;
+        pointer-events: auto;
+        }
+		.active{
+            background-color:#8080802b !important;
+        } 
+		#ocrCanvas {
+			position: relative;
+			width: 920px; /* scale width here */
+			height: 600px; /* scale height here */
+			background-color: #fefefe;
+			border: 1px solid #ccc;
+		}
+		.canvasWordBox {
+			/*position: absolute;*/
+			font-size: 12px;
+			font-family: monospace;
+			background-color: rgba(255, 255, 200, 0.4);
+			/*border: 1px dotted #aaa;*/
+			padding: 1px;
+			white-space: nowrap;
+			font-color:black;
+		}
+		.highlight {
+			border: 2px solid yellow !important;
+			background-color: rgba(255, 255, 0, 0.3) !important;
+		}
+		.image_viewer_inner_container
+		{
+			overflow:unset !important;
+		}
+    </style>
+
+</head>
+
+<body>
+
+	{% include 'logheader2.html' %}
+    <div class="content-wrap vh-100 d-flex flex-column">
+        <div class="main flex-grow-1">
+            <div class="container-fluid h-100">
+			{% if error %}
+					<br/>
+					<div class="alert alert-danger" role="alert">
+						{{ error }}
+					</div>
+				{% endif %}
+            <div class="row">
+				
+                <!-- Left Column (1/5 width) -->
+                <div class="col-lg-6 col-md-12 h-100">				
+					<div id="ocrCanvas"></div>
+                </div>
+
+                <!-- Right Column (3/5 width) -->
+                <div class="col-lg-6 ">
+						<div class="card right-panel" >
+								<div class="viewer-header">									
+									<!-- <button id="rotateBtn" class="btn btn-sm btn-primary">🔄 Rotate</button> -->
+									<!-- <label 
+										id="referenceToggle"
+										class="maintain-line"
+									>
+											<input 
+												type="checkbox" 
+												id="toggleOverlay" 
+											/>
+											
+									</label> -->
+								</div>
+
+								<div class="image-viewer-placeholder">
+									<div id="jquery-script-menu">
+										<div class="jquery-script-clear"></div>	
+									</div>								  
+									<div id="viewerContainer">
+										<div id="overlayline">
+											<div id="dragHandle">
+												<i class="fas fa-arrows-alt-v"></i>
+											</div>
+										</div>
+										
+  <div id="imageViewerContainer" style="width: 100%; height: 100%; position: relative;"></div>
+  <div id="overlayContainer" ></div>
+
+
+									</div>
+								</div>
+								<div id="prefetch_image_container" class="viewer-footer" >
+								  <div id="loading_indicator" style="display: none;">Loading images...</div>
+								  <div id="prefetch_image" class="thumbnails"></div>
+								</div>
+						</div>
+                </div>
+
+            </div>
+            <div class="row">
+                        <div class="col-lg-12">
+                            <div class="footer">
+                                <p>© Aurexus. - <a href="#">aurexus.com</a></p>
+                            </div>
+                        </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jquery vendor -->
+    <script src="{{url_for('static',filename='assets/js/lib/jquery.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/jquery.nanoscroller.min.js')}}"></script>
+    <!-- nano scroller -->
+    <script src="{{url_for('static',filename='assets/js/lib/menubar/sidebar.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/preloader/pace.min.js')}}"></script>
+    <!-- sidebar -->
+
+    <script src="{{url_for('static',filename='assets/js/lib/bootstrap.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/scripts.js')}}"></script>
+    <!-- bootstrap -->
+	<!-- ✅ verySimpleImageViewer (load AFTER jQuery) -->
+	<script src="{{ url_for('static', filename='assets/js/jquery.verySimpleImageViewer.min.js') }}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/calendar-2/moment.latest.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/calendar-2/pignose.calendar.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/calendar-2/pignose.init.js')}}"></script>
+
+
+    <script src="{{url_for('static',filename='assets/js/lib/weather/jquery.simpleWeather.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/weather/weather-init.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/circle-progress/circle-progress.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/circle-progress/circle-progress-init.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/chartist/chartist.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/sparklinechart/jquery.sparkline.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/sparklinechart/sparkline.init.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/owl-carousel/owl.carousel.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/owl-carousel/owl.carousel-init.js')}}"></script>
+    <!-- scripit init-->
+    <script src="{{url_for('static',filename='assets/js/dashboard2.js')}}"></script>
+	
+	<!-- Get suggestions -->
+<script>
+let currentImage = '';
+let overlayData = null;
+let imageEl = null;
+let panX = 0;
+let panY = 0;
+let zoom = 1;
+let lastTransform = '';
+
+let lastImageTransform = '';
+
+
+
+function startTransformSync() {
+  let last = { transform: '', width: 0, height: 0, left: 0, top: 0 };
+
+  function sync() {
+    const $img = $('#imageViewerContainer img');
+    const $overlay = $('#overlayContainer');
+
+    if ($img.length && $overlay.length) {
+      const transform = $img.css('transform');
+      const width = $img.width();
+      const height = $img.height();
+      const left = parseFloat($img.css('left')) || 0;
+      const top = parseFloat($img.css('top')) || 0;
+
+      // If any visual changes happened (transform or size/position)
+      const changed =
+        transform !== last.transform ||
+        width !== last.width ||
+        height !== last.height ||
+        left !== last.left ||
+        top !== last.top;
+
+      if (changed) {
+        // Sync overlay container
+        $overlay.css({
+          transform,
+          transformOrigin: '0 0',
+          left: `${left}px`,
+          top: `${top}px`,
+          width: `${width}px`,
+          height: `${height}px`
+        });
+
+        // Also redraw overlays using new width/height
+        drawOverlay();
+
+        // Cache
+        last = { transform, width, height, left, top };
+      }
+    }
+
+    requestAnimationFrame(sync);
+  }
+
+  requestAnimationFrame(sync);
+}
+
+function loadMainImage(imagePath, jsonPath) {
+  const $viewer = $('#imageViewerContainer').html('');
+
+  const $overlay = $('<div id="overlayContainer"></div>').css({
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    pointerEvents: 'none',
+    zIndex: 99
+  });
+  $viewer.append($overlay);
+
+  $viewer.verySimpleImageViewer({
+    imageSource: imagePath,
+    frame: ['100%', '100%'],
+    maxZoom: '900%',
+    zoomFactor: '10%',
+    mouse: true,
+    keyboard: true,
+    toolbar: true,
+    rotateToolbar: false,
+    saveZoomPos: true,
+    //callback: () => {
+      //startTransformSync(); // ✅ Keep overlay in sync
+    //}
+  });
+	const onLoad = () => {
+ fetch(jsonPath)
+  .then(res => res.json())
+  .then(json => {
+    overlayData = json;
+    drawOverlay();
+    trackImageTransformSync();  // ✅ this keeps it always synced
+  });
+
+  setupDrag();
+};
+  setTimeout(() => {
+    const $img = $('#imageViewerContainer img');
+    if ($img.length) {
+      imageEl = $img[0];
+
+      const onLoad = () => {
+        fetch(jsonPath)
+          .then(res => res.json())
+          .then(json => {
+            overlayData = json;
+            drawOverlay();
+            applyTransform(); // ✅ align on first load
+          });
+
+        setupDrag(); // 🟢 optional: enable manual pan
+      };
+
+      if (imageEl.complete) {
+        onLoad();
+      } else {
+        $img.on('load', onLoad);
+      }
+    }
+  }, 300);
+}
+
+
+function applyTransform() {
+  const $img = $('#imageViewerContainer img');
+
+  if (!$img.length) return;
+
+  const left = parseFloat($img.css('left')) || 0;
+  const top = parseFloat($img.css('top')) || 0;
+  const renderedWidth = $img.width();
+  const naturalWidth = imageEl?.naturalWidth || renderedWidth;
+
+  zoom = renderedWidth / naturalWidth;
+
+  // Move overlay to match image position
+  $('#overlayContainer').css({
+    left: `${left}px`,
+    top: `${top}px`,
+    width: `${renderedWidth}px`,
+    height: `${$img.height()}px`
+  });
+
+  // 🔄 Update overlay boxes to match current zoom
+  drawOverlay();
+}
+
+function setupDrag() {
+  let isDragging = false;
+  let dragStart = { x: 0, y: 0 };
+
+  const viewer = document.getElementById('imageViewerContainer');
+
+  viewer.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    dragStart = { x: e.clientX, y: e.clientY };
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+
+    const dx = e.clientX - dragStart.x;
+    const dy = e.clientY - dragStart.y;
+
+    panX += dx;
+    panY += dy;
+    dragStart = { x: e.clientX, y: e.clientY };
+
+    const container = document.getElementById('imageViewerContainer');
+    const clamped = clampPan(
+      panX, panY, zoom,
+      container.clientWidth,
+      container.clientHeight,
+      imageEl.naturalWidth,
+      imageEl.naturalHeight
+    );
+    panX = clamped.x;
+    panY = clamped.y;
+
+    applyTransform();
+  });
+
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+  });
+}
+
+function clampPan(panX, panY, zoom, containerWidth, containerHeight, imageWidth, imageHeight) {
+  const zoomedWidth = imageWidth * zoom;
+  const zoomedHeight = imageHeight * zoom;
+
+  const minX = containerWidth - zoomedWidth;
+  const minY = containerHeight - zoomedHeight;
+
+  return {
+    x: Math.min(0, Math.max(minX, panX)),
+    y: Math.min(0, Math.max(minY, panY))
+  };
+}
+
+function drawOverlay() {
+  const overlay = document.getElementById('overlayContainer');
+  if (!imageEl || !overlayData || !overlay) return;
+
+  // Remove previous overlays
+  overlay.innerHTML = '';
+
+  const renderedWidth = imageEl.offsetWidth;
+  const renderedHeight = imageEl.offsetHeight;
+
+  overlayData.blocks.forEach(block => {
+    block.lines.forEach(line => {
+      line.words.forEach(word => {
+        const [[x0, y0], [x1, y1]] = word.geometry;
+        const confidence = word.confidence || 0;
+        const color = confidence < 0.7 ? 'red' : 'green';
+        const bgColor = confidence < 0.7 ? 'rgba(255,0,0,0.05)' : 'rgba(0,255,0,0.05)';
+
+        const left = x0 * renderedWidth;
+        const top = y0 * renderedHeight;
+        const width = (x1 - x0) * renderedWidth;
+        const height = (y1 - y0) * renderedHeight;
+
+        const div = document.createElement('div');
+        div.className = 'wordBox';
+		div.dataset.key = word.id || `${x0}-${y0}-${x1}-${y1}`;
+        Object.assign(div.style, {
+          position: 'absolute',
+          left: `${left}px`,
+          top: `${top}px`,
+          width: `${width}px`,
+          height: `${height}px`,
+          //border: `1px dashed ${color}`,
+          //backgroundColor: bgColor,
+          //fontSize: '12px',
+          color: 'transparent',
+          zIndex: 100
+        });
+
+        div.title = `${word.value} (Conf: ${confidence.toFixed(2)})`;
+        div.textContent = word.value;
+        overlay.appendChild(div);
+
+      });
+    });
+  });
+}
+
+
+
+// Load JSON dynamically (replace path to match yours)
+fetch('{{ url_for('static', filename='json/ocr_filtered1_new.json') }}') // 👈 Replace path if needed
+  .then(res => res.json())
+  .then(data => {
+    const canvas = document.getElementById('ocrCanvas');
+    const canvasWidth = canvas.clientWidth;
+    const canvasHeight = canvas.clientHeight;
+
+    data.blocks.forEach(block => {
+      block.lines.forEach(line => {
+        line.words.forEach(word => {
+          const [[x0, y0], [x1, y1]] = word.geometry;
+          const left = x0 * canvasWidth;
+          const top = y0 * canvasHeight;
+          const width = (x1 - x0) * canvasWidth;
+          const height = (y1 - y0) * canvasHeight;
+
+          const confidence = word.confidence || 0;
+          const borderColor = confidence < 0.7 ? 'red' : 'rgba(255,0,0,0.1)';
+          //const backgroundColor = confidence < 0.7 ? 'rgba(255,0,0,0.1)' : 'rgba(0,255,0,0.1)';
+
+          const div = document.createElement('div');
+          div.className = 'canvasWordBox';
+		  div.dataset.key = word.id || `${x0}-${y0}-${x1}-${y1}`;
+		  div.addEventListener('click', () => {
+			  // Remove old highlight
+			  document.querySelectorAll('#overlayContainer .highlight').forEach(el => {
+				el.classList.remove('highlight');
+			  });
+
+			  // Highlight the matching overlay word
+			  const selector = `#overlayContainer [data-key="${div.dataset.key}"]`;
+			  const target = document.querySelector(selector);
+			  if (target) {
+				target.classList.add('highlight');
+				const container = document.getElementById('imageViewerContainer');
+				const overlayBox = target.getBoundingClientRect();
+				const containerBox = container.getBoundingClientRect();
+
+				const scrollX = overlayBox.left - containerBox.left - container.clientWidth / 2 + overlayBox.width / 2;
+				const scrollY = overlayBox.top - containerBox.top - container.clientHeight / 2 + overlayBox.height / 2;
+
+				container.scrollBy({
+				  top: scrollY,
+				  left: scrollX,
+				  behavior: 'smooth'
+				});
+			  }
+		  });
+
+          div.style.position = 'absolute';
+          div.style.left = `${left}px`;
+          div.style.top = `${top}px`;
+          div.style.width = `${width}px`;
+          div.style.height = `${height}px`;
+          div.style.border = `1px solid ${borderColor}`;
+          //div.style.backgroundColor = backgroundColor;
+          //div.style.padding = '2px';
+          div.style.fontSize = '12px';
+		  div.style.color = 'black';
+          //div.style.whiteSpace = 'nowrap';
+          //div.style.overflow = 'hidden';
+          div.style.zIndex = 10;
+          div.contentEditable = true;
+		  div.innerText = word.value;
+
+          // Optional tooltip
+          div.title = `${word.value} (Confidence: ${confidence.toFixed(2)})`;
+		
+          canvas.appendChild(div);
+        });
+      });
+    });
+  });
+  
+loadMainImage("/static/images/IMG_4871_1982_8.JPG", "/static/json/ocr_filtered1_new.json");
+
+</script>
+
+</body>
+
+</html>
+

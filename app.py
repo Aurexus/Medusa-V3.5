@@ -30,7 +30,7 @@ from flask import (
 )
 
 # from flask_session import Session
-
+from imageapp.routes import image_bp
 from fuzzywuzzy import process
 #from ultralytics import YOLO
 #import pytesseract
@@ -48,7 +48,7 @@ import zipfile
 from io import BytesIO
 import tempfile
 import zipstream  # pip install zipstream-new
-from Imageapp.routes import image_app
+
 # class Config:
     # SCHEDULER_API_ENABLED = True
 
@@ -75,7 +75,7 @@ RESULT_FOLDER = 'static/results'
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(RESULT_FOLDER, exist_ok=True)
-
+app.register_blueprint(image_bp)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config.from_object("config.Config")
 app.secret_key = "aurexus@106"
