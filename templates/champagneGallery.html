@@ -141,7 +141,7 @@
             <div class="row">
 				
                 <!-- Left Column (1/5 width) -->
-                <div class="col-lg-3 col-md-12 h-100 p-1" >				
+                <div class="col-lg-2 col-md-12 h-100 p-1" >				
                 <div class="card h-100 overflow-hidden">
                     <div class="card-body p-1 scrollable">
                     <h6 class="mb-3">📁 {{translations['Folders']}} ({{ folders | length }} {{translations['Folders']}})</h6>
@@ -151,7 +151,7 @@
 							<thead>
 								<tr>
 									<th style="text-align:left ;">{{translations['Folders']}}</th>
-									<th></th>
+									
 								</tr>
 							</thead>
 							<tbody id="folderListColumn">
@@ -164,11 +164,7 @@
 												{{ folder }}
 											</a>
 										</td>
-										<td>
-											<a target="_blank" href="{{ url_for('download_folder', folder=folder) }}" class="btn btn-sm btn-light">
-												<i class="fa fa-download"></i>
-											</a>
-										</td>
+										
 									</tr>
 									{% endfor %}
 								{% else %}
@@ -216,9 +212,7 @@
 											
 										</td>
 										<td>
-											<a target="_blank" href="{{ url_for('download_image', folder=selected_folder, filename=image) }}" class="btn btn-sm btn-light">
-												<i class="fa fa-download"></i>
-											</a>
+											
 											
 											{% set is_bookmarked = (selected_folder, image) in bookmark_set %}
 <label class="star-checkbox">
@@ -241,7 +235,7 @@
                 </div>
 
                 <!-- Right Column (3/5 width) -->
-                <div class="col-lg-6 ">
+                <div class="col-lg-7 ">
 						<div class="card right-panel" >
 								<div class="viewer-header">									
 									<!-- <button id="rotateBtn" class="btn btn-sm btn-primary">🔄 Rotate</button> -->
@@ -308,8 +302,7 @@
     function getImageUrl(imageName, folderName = folder) {
 		
         //return `https://aurexus.net/auximages/${proj}/${folderName}/${imageName}`;
-		const url = `https://zadig.aurexus.com/AD37/37273/${folderName}/${imageName}`;
-		alert(url); // alert inside the function so imageName/folderName are defined
+		const url = `https://zadig.aurexus.com/AD37/37273/${folderName}/${imageName}`;		
 		return url;
 	
  
@@ -398,12 +391,15 @@
 
     function updateThumbnails(activeImage = currentImage, folderName = folder) {
         const filter = $('#imageFilter').val();
-
-        $.getJSON(`/call/images/${folderName}/${activeImage || ''}?filter=${filter}`)
+		const encodedFolder = encodeURIComponent(folderName);
+		const encodedImage = encodeURIComponent(activeImage || '');
+		const urlPrefix = '/imageapp'; // match your blueprint prefix
+		$.getJSON(`${urlPrefix}/call/images/${encodedFolder}/${encodedImage}?filter=${filter}`)
             .done(images => {
                 if (!images || images.length === 0) {
                     $('#prefetch_image').empty();
-                    $('#imageViewerContainer').html('<p>No images found.</p>');
+                    $('#imageViewerContainer').html('<p>Aucune image trouvée</p>');
+					console.log("Fetching images for folder:", folderName, "image:", activeImage, "filter:", filter);
                     return;
                 }
 
@@ -413,7 +409,7 @@
                 loadMainImage(imgToLoad, folderName);
                 preloadThumbnails(images, imgToLoad, folderName);
             })
-            .fail(err => console.error('Failed to load images', err));
+            .fail(err => console.error('Échec du chargement des images', err));
     }
 
     function reloadFolders() {
@@ -426,7 +422,7 @@
                     updateThumbnails(null, firstFolder);
                 }
             })
-            .fail(err => console.error('Failed to reload folders', err));
+            .fail(err => console.error('Échec du rechargement des dossiers', err));
     }
 
 function loadBookmarkedImages() {
@@ -445,9 +441,9 @@ function loadBookmarkedImages() {
             $imageTable.empty();
 
             if (!bookmarkedImages.length) {
-                $imageTable.append('<tr><td colspan="2"><em>No Bookmarked Images</em></td></tr>');
+                $imageTable.append('<tr><td colspan="2"><em>Aucune image marquée dans vos favoris</em></td></tr>');
                 $('#prefetch_image').empty();
-                $('#imageViewerContainer').html('<p>No images found.</p>');
+                $('#imageViewerContainer').html('<p>Aucune image trouvée.</p>');
                 return;
             }
 
@@ -534,6 +530,7 @@ function loadBookmarkedImages() {
             $('.image-row').removeClass('table-active');
             $(this).addClass('table-active');
             updateThumbnails(imageName, folderName);
+			getImageUrl(imageName, folderName);
         });
     });
 

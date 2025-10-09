@@ -91,8 +91,13 @@ def imghome():
 
 @image_bp.route('/champdash')
 def champdash():
-    
-    return render_template("champagneindex.html")  
+    language = request.args.get("lang", session["lang"])
+    if language not in current_app.config["LANGUAGES"]:
+        language = current_app.config["DEFAULT_LANGUAGE"]
+        session["lang"] = language
+    else:
+        session["lang"] = language
+    return render_template("champagneindex.html",translations=translations[session["lang"]],)  
 
     
 #@image_bp.route('/imageGallery')
@@ -161,7 +166,7 @@ def imageGallery():
                                
 
 @image_bp.route('/call/images/<folder>/<active_image>')
-def call_images(folder, active_image):
+def call_images(folder, active_image):   
     proj = session.get("proj", "")
     filter_type = request.args.get("filter", "all")
 
@@ -199,6 +204,7 @@ def call_images(folder, active_image):
         return jsonify([])
 
 
+
 @image_bp.route('/api/folders')
 def api_folders():
     proj = session.get("proj", "")
@@ -226,6 +232,8 @@ def api_folders():
     except Exception as e:
         print("⚠️ DB error in /api/folders:", e)
         return jsonify([])
+
+        
 @image_bp.route('/api/bookmark', methods=['POST'])
 def add_bookmark():
     if "name" not in session:

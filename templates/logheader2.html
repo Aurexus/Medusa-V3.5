@@ -1,7 +1,15 @@
     <!-- Side nav bar -->  
-    <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
-        <div class="nano" style="height: 100%;">
-            <div class="nano-content" style="display: flex; flex-direction: column; height: 100%;">
+    <div 
+        class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures"
+    >
+        <div 
+            class="nano"
+            style="height: 100%;"
+        >
+            <div 
+                class="nano-content" 
+                style="display: flex; flex-direction: column; height: 100%;"
+            >
                 <ul style="flex-grow: 1; padding: 0;">
                     <div class="logo" style="text-align: center; padding: 10px 0;">
                         <img src="{{url_for('static',filename='assets/images/Aurexuslogo.png')}}" width="130px" height="130px">
@@ -14,7 +22,7 @@
                     </li> 
 					<li>
                         <a href="{{url_for('imageapp.imageGallery')}}">
-                            <i class="ti-layers-alt"></i> Gallery
+                            <i class="ti-layers-alt"></i> Images
                         </a>
                     </li>
 					<!-- <li>
@@ -49,49 +57,85 @@
 
 
 <!-- Header -->
-    <div class="header">
-        <div class="container-fluid" style="display: flex;flex-direction: column;">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="float-left">
-                        <div class="hamburger sidebar-toggle">
+    <div 
+        class="header"
+    >
+        <div 
+            class="container-fluid" 
+            style="display: flex;flex-direction: column;"
+        >
+            <div 
+                class="row"
+            >
+                <div 
+                    class="col-lg-12"
+                >
+                    <div 
+                        class="float-left"
+                    >
+                        <div 
+                            class="hamburger sidebar-toggle"
+                        >
                             <span class="line"></span>
                             <span class="line"></span>
                             <span class="line"></span>
                         </div>
                     </div>
-                    <div class="float-left" style="margin-top: 10px;">
+                    <div 
+                        class="float-left"
+                    >
                             <div class="">
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item">
+                                    <li 
+                                        class="breadcrumb-item"
+                                    >
                                         <a >Notices</a>
                                     </li>
                                 </ol>
                             </div>
                     </div>
-                    <div class="float-left" style="margin-top: 10px;margin-left: 10px;">
-                        <div class="">
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item" >
+                    <div 
+                        class="float-left"
+                    >
+                        <div 
+                            class=""
+                        >
+                                <ol 
+                                    class="breadcrumb"
+                                >
+                                    <li 
+                                        class="breadcrumb-item"
+                                    >
                                         <a class='badge badge-warning'>
-                                            <b>Projet {{session['proj']}}</b>
+                                            <b>{{ translations['project']}} {{session['proj']}}</b>
                                         </a>
                                     </li>
                                 </ol>
                             </div>
                          
                     </div>
-                    <div class="float-right">
-                        <div class="header-icon" disabled="disabled">
-                            <img  width="90px" height="30px" src="https://www.aurexus.com/wp-content/uploads/2021/10/1_80x50mm_adobe_illustratorwhite.png">
+                    <div 
+                        class="float-right"
+                    >
+                        <div 
+                            class="header-icon" 
+                            disabled="disabled"
+                        >
+                            <img  
+                                width="90px" 
+                                height="30px" 
+                                src="https://www.aurexus.com/wp-content/uploads/2021/10/1_80x50mm_adobe_illustratorwhite.png">
                             </img>
                         </div>
-                        <div class="header-icon"> 
-                           
-                        </div>                       
+                                             
                         
-                        <div class="dropdown dib">
-                            <div class="header-icon"   data-toggle="dropdown">
+                        <div 
+                            class="dropdown dib"
+                        >
+                            <div 
+                                class="header-icon" 
+                                data-toggle="dropdown"
+                            >
 								<span 
                                     id="notif-pill"
                                     style="position: absolute;
@@ -119,10 +163,6 @@
                                                 <i class="ti-file"></i> Documentation</a>
                                             </li>
                                             
-                                            <li>
-                                            <a href='#' onclick="myclickFunction()">
-                                                <i class="ti-power-off"></i>  Déconnexion</a>
-                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -151,7 +191,7 @@
                             notifpill.innerHTML = `<strong>${count}</strong>`;
                             notifArea.innerHTML = `<strong>${count}</strong>`;
                         } else {
-                            notifArea.innerHTML = `✅ No new notifications.`;
+                            notifArea.innerHTML = `0`;
                         }
                     }
                 })
