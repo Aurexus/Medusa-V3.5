@@ -2,22 +2,34 @@
 #!/bin/bash
 
 # Install the Microsoft ODBC Driver 17 for SQL Server
-curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list
-apt-get update
-ACCEPT_EULA=Y apt-get install -y msodbcsql17 
+#curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+#curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list
+#apt-get update
+#ACCEPT_EULA=Y apt-get install -y msodbcsql17 
 
 # Activate virtual environment
 source env/bin/activate
 
 # Install dependencies
-pip install --user -r requirements.txt
+#pip install --user -r requirements.txt
 
 # Set environment variables
-export FLASK_ENV=production
-export FLASK_APP=app.py
+#export FLASK_ENV=production
+#export FLASK_APP=app.py
 
 # Start Flask application
 #flask run --host=0.0.0.0 --port=8000
 #gunicorn app:app --bind=0.0.0.0:8000 --timeout 300000
-gunicorn app:app --bind=0.0.0.0:$PORT --timeout 300000
+#gunicorn app:app --bind=0.0.0.0:$PORT --timeout 300000
+
+#!/bin/bash
+
+# Set Python path so modules like imageapp can be found
+export PYTHONPATH=/home/site/wwwroot
+
+# Optional Flask settings
+export FLASK_ENV=production
+export FLASK_APP=app.py
+
+# Start your Flask app via Gunicorn (Azure sets the $PORT)
+gunicorn app:app --bind=0.0.0.0:$PORT --timeout 300
