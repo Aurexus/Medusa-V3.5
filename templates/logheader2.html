@@ -15,12 +15,12 @@
                         <img src="{{url_for('static',filename='assets/images/Aurexuslogo.png')}}" width="130px" height="130px">
                     </div>                    
                     
-                    <li>
+                    <li class="{% if request.endpoint == 'imageapp.champdash' %}active{% endif %}">
                         <a href="{{url_for('imageapp.champdash')}}">
                             <i class="ti-home"></i> Tableau de bord                        
                         </a>
                     </li> 
-					<li>
+					<li class="{% if request.endpoint == 'imageapp.imageGallery' %}active{% endif %}">
                         <a href="{{url_for('imageapp.imageGallery')}}">
                             <i class="ti-layers-alt"></i> Images
                         </a>

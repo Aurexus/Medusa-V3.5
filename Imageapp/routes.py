@@ -347,3 +347,21 @@ def get_images_from_db(folder):
     cursor.close()
     cnxn.close()
     return images
+    
+# === API endpoint to get data ===
+@image_bp.route('/get_dossier_data')
+def get_dossier_data():
+    cnxn = pyodbc.connect(conn_str)
+    cursor = cnxn.cursor()
+    cursor.execute("SELECT dossier, COUNT(dossier) AS image_count FROM dbo.ad37 GROUP BY dossier")
+    rows = cursor.fetchall()
+    cursor.close()
+    cnxn.close()
+
+    data = []
+    for row in rows:
+        data.append({
+            "dossier": row.dossier,
+            "image_count": row.image_count
+        })
+    return jsonify(data)
