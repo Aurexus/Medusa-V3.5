@@ -1,28 +1,25 @@
 #!/bin/bash
+#!/bin/bash
 
-# --- 1. Install ODBC Driver (optional if not needed in production) ---
+# Install the Microsoft ODBC Driver 17 for SQL Server
 curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list
 apt-get update
-ACCEPT_EULA=Y apt-get install -y msodbcsql17
+ACCEPT_EULA=Y apt-get install -y msodbcsql17 
 
-# --- 2. Activate Python virtual environment (if exists) ---
-if [ -d "env" ]; then
-    source env/bin/activate
-fi
+# Activate virtual environment
+source env/bin/activate
+# Point Python to the subfolder that contains app.py and imageapp/
 
-# --- 3. Install Python dependencies ---
+# Install dependencies
 pip install --user -r requirements.txt
 
-# --- 4. Ensure the app directory is in PYTHONPATH ---
-export PYTHONPATH=$(pwd)
-
-# --- 5. Set Flask environment variables ---
+# Set environment variables
 export FLASK_ENV=production
 export FLASK_APP=app.py
 
-# --- 6. Start with Gunicorn ---
-gunicorn app:app --bind=0.0.0.0:${PORT:-8000} --timeout 300000
-
-#gunicorn app:app --bind=0.0.0.0:$PORT --timeout 300000
+# Start Flask application
+#flask run --host=0.0.0.0 --port=8000
+#gunicorn app:app --bind=0.0.0.0:8000 --timeout 300000
+gunicorn app:app --bind=0.0.0.0:$PORT --timeout 300000
 
