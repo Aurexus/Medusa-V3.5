@@ -8,7 +8,7 @@
 #ACCEPT_EULA=Y apt-get install -y msodbcsql17 
 
 # Activate virtual environment
-source env/bin/activate
+#source env/bin/activate
 
 # Install dependencies
 #pip install --user -r requirements.txt
