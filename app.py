@@ -1,6 +1,11 @@
 # an object of WSGI application
-import sys, os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+import os
+import sys
+# Ensure the current directory is first in sys.path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, current_dir)
+
+from imageapp.routes import image_bp  # This should now work
 import json
 import math
 import os
