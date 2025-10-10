@@ -5,3 +5,4 @@ champagne_bp = Blueprint('champagne', __name__, url_prefix='/champagne')
 @champagne_bp.route('/')
 def champagne_home():
     return "Welcome to Champagne App!"
+h
