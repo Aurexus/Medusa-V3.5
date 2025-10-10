@@ -4,8 +4,7 @@ import sys
 # Ensure the current directory is first in sys.path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, current_dir)
-
-from imageapp.routes import image_bp  # This should now work
+print("Running in directory:", os.getcwd())
 import json
 import math
 import re
