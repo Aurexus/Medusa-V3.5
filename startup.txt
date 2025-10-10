@@ -1,6 +1,6 @@
 #!/bin/bash
 #!/bin/bash
-export PYTHONPATH=/home/site/wwwroot/Medusa-V3.5
+
 # Install the Microsoft ODBC Driver 17 for SQL Server
 curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list
