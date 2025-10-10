@@ -13,6 +13,7 @@ source env/bin/activate
 
 # Install dependencies
 pip install --user -r requirements.txt
+export PYTHONPATH=/home/gerard/Medusa-V3.5
 
 # Set environment variables
 export FLASK_ENV=production
