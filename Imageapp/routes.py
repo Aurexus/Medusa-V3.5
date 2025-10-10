@@ -365,3 +365,36 @@ def get_dossier_data():
             "image_count": row.image_count
         })
     return jsonify(data)
+    
+# --- Save comment ---
+@image_bp.route("/save_comment", methods=["POST"])
+def save_comment():
+    data = request.get_json()
+    folder = data["folder"]
+    image = data["image"]
+    comment = data["comment"]
+    cnxn = pyodbc.connect(conn_str)
+    cursor = cnxn.cursor()
+    cursor.execute("""
+        UPDATE dbo.ad37
+        SET comment = ?
+        WHERE dossier = ? AND image = ?
+    """, (comment, folder, image))
+    cnxn.commit()
+
+    return jsonify({"status": "ok"})
+
+# --- Get existing comment ---
+@image_bp.route("/get_comment")
+def get_comment():
+    folder = request.args.get("folder")
+    image = request.args.get("image")
+    cnxn = pyodbc.connect(conn_str)
+    cursor = cnxn.cursor()
+    cursor.execute("""
+        SELECT comment FROM dbo.ad37
+        WHERE dossier = ? AND image = ?
+    """, (folder, image))
+    row = cursor.fetchone()
+
+    return jsonify({"comment": row.comment if row and row.comment is not None else ""})   
