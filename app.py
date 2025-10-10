@@ -8,7 +8,6 @@ sys.path.insert(0, current_dir)
 from imageapp.routes import image_bp  # This should now work
 import json
 import math
-import os
 import re
 from datetime import datetime
 import csv
