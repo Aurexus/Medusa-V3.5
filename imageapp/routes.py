@@ -32,7 +32,7 @@ from flask import current_app
 # Load the Translation files
 def load_translations():
     base_dir = os.path.dirname(os.path.abspath(__file__))  # directory of this file
-    translations_path = os.path.join(base_dir, "..", "translations.json")
+    translations_path = os.path.join(base_dir, "..", "./translations.json")
     with open(translations_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
