@@ -1,27 +1,12 @@
-import os, sys
+import sys, os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-if BASE_DIR not in sys.path:
-    sys.path.insert(0, BASE_DIR)
-
-print("=== SYS.PATH ===", flush=True)
-for p in sys.path:
-    print(p, flush=True)
-
-print("=== BASE_DIR CONTENTS ===", flush=True)
-for item in os.listdir(BASE_DIR):
-    print(item, flush=True)
-
-imageapp_path = os.path.join(BASE_DIR, "imageapp")
-if os.path.exists(imageapp_path):
-    print("=== IMAGEAPP CONTENTS ===", flush=True)
-    for item in os.listdir(imageapp_path):
-        print(item, flush=True)
-else:
-    print("imageapp folder not found!", flush=True)
+medusa_dir = os.path.join(BASE_DIR, "Medusa-V3.5")
+if medusa_dir not in sys.path:
+    sys.path.insert(0, medusa_dir)
 
 
-#from imageapp.routes import image_bp
+from imageapp.routes import image_bp
 
 
 import json
