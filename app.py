@@ -1,29 +1,25 @@
-import sys
-import os
-
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
+import os, sys
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
-logging.debug("=== SYS.PATH ===")
+print("=== SYS.PATH ===", flush=True)
 for p in sys.path:
-    logging.debug(p)
+    print(p, flush=True)
 
-logging.debug("=== BASE_DIR CONTENTS ===")
+print("=== BASE_DIR CONTENTS ===", flush=True)
 for item in os.listdir(BASE_DIR):
-    logging.debug(item)
+    print(item, flush=True)
 
 imageapp_path = os.path.join(BASE_DIR, "imageapp")
 if os.path.exists(imageapp_path):
-    logging.debug("=== IMAGEAPP CONTENTS ===")
+    print("=== IMAGEAPP CONTENTS ===", flush=True)
     for item in os.listdir(imageapp_path):
-        logging.debug(item)
+        print(item, flush=True)
 else:
-    logging.debug("imageapp folder not found!")
+    print("imageapp folder not found!", flush=True)
+
 
 #from imageapp.routes import image_bp
 
