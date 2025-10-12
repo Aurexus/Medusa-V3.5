@@ -1,17 +1,18 @@
 import os, sys
 
-# Force add the current directory and submodules to Python path
+# --- Fix module path for Azure ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
-imageapp_path = os.path.join(BASE_DIR, "imageapp")
-if imageapp_path not in sys.path:
-    sys.path.insert(0, imageapp_path)
+IMAGEAPP_DIR = os.path.join(BASE_DIR, "imageapp")
+if IMAGEAPP_DIR not in sys.path:
+    sys.path.insert(0, IMAGEAPP_DIR)
 
-print("=== PYTHONPATH ===")
+print("=== SYS.PATH in Azure ===")
 for p in sys.path:
     print(p)
+print("Current working directory:", os.getcwd())
 
 import json
 import math
