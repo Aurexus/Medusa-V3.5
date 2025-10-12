@@ -1,6 +1,18 @@
-import sys, os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'imageapp'))
+import os, sys
+
+# Force add the current directory and submodules to Python path
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
+imageapp_path = os.path.join(BASE_DIR, "imageapp")
+if imageapp_path not in sys.path:
+    sys.path.insert(0, imageapp_path)
+
+print("=== PYTHONPATH ===")
+for p in sys.path:
+    print(p)
+
 import json
 import math
 import os
