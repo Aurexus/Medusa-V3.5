@@ -1,9 +1,6 @@
-# an object of WSGI application
-import sys
-import os
-
-# Add the directory containing imageapp to the Python path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'imageapp'))
 import json
 import math
 import os
