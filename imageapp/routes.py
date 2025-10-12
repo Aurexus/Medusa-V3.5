@@ -27,7 +27,7 @@ conn_str = "Driver={ODBC Driver 17 for SQL Server};Server=tcp:aurexdb.database.w
 cnxn = pyodbc.connect(conn_str)
 cursor = cnxn.cursor()
 image_bp = Blueprint('imageapp', __name__, url_prefix='/imageapp')
-BASE_IMAGE_URL = "https://zadig.aurexus.com/AD37/37273/"
+BASE_IMAGE_URL = "https://zadig.aurexus.com/AD37/"
 from flask import current_app
 # Load the Translation files
 def load_translations():
@@ -109,8 +109,7 @@ def champdash():
 @image_bp.route('/imageGallery')
 def imageGallery():
     proj_type = session.get("projtype")
-    proj = session.get("proj", "")
-
+    proj = session.get("proj", "")    
     user_id = session.get("name")
     language = request.args.get("lang", session["lang"])
     if language not in current_app.config["LANGUAGES"]:
@@ -137,7 +136,9 @@ def imageGallery():
         folders = get_folders_from_db()
         selected_folder = request.args.get('folder', folders[0] if folders else None)
         images = get_images_from_db(selected_folder) if selected_folder else []
-        selected_image = request.args.get('image', images[0] if images else None)
+        selected_image = request.args.get('image')
+        if not selected_image and images:
+            selected_image = images[0]["name"]
 
         # Build the URL directly to the hosted image
         
@@ -154,7 +155,8 @@ def imageGallery():
                                translations=translations[session["lang"]],
                                lang=session["lang"],
                                bookmarks=bookmarks,
-                               bookmark_set=bookmark_set)
+                               bookmark_set=bookmark_set                            
+                               )
     except Exception as e:
         print("⚠️ Could not retrieve data:", e)
         return render_template("champagneGallery.html", folders=[], images=[], selected_image=None,image_url=image_url,
@@ -176,11 +178,13 @@ def call_images(folder, active_image):
             cnxn = pyodbc.connect(conn_str)
             cursor = cnxn.cursor()
             cursor.execute("""
-                SELECT image FROM dbo.ImageBookmarks
-                WHERE user_id=? AND folder=?
-                ORDER BY image
+                SELECT a.image, a.root
+                FROM dbo.ImageBookmarks b
+                JOIN dbo.ad37 a ON b.folder = a.dossier AND b.image = a.image
+                WHERE b.user_id=? AND b.folder=?
+                ORDER BY a.image
             """, (user_id, folder))
-            images = [row[0] for row in cursor.fetchall()]
+            images = [{"name": row[0], "root": row[1]} for row in cursor.fetchall()]
             cursor.close()
             cnxn.close()
         else:
@@ -286,8 +290,13 @@ def get_bookmarks():
     try:
         cnxn = pyodbc.connect(conn_str)
         cursor = cnxn.cursor()
-        cursor.execute("SELECT folder, image FROM dbo.ImageBookmarks WHERE user_id=?", (user_id,))
-        bookmarks = [{"folder": row[0], "image": row[1]} for row in cursor.fetchall()]
+        cursor.execute("""
+            SELECT a.dossier, a.image, a.root
+            FROM dbo.ImageBookmarks b
+            JOIN dbo.ad37 a ON b.folder = a.dossier AND b.image = a.image
+            WHERE b.user_id=?
+        """, (user_id,))
+        bookmarks = [{"folder": row[0], "image": row[1], "root": row[2]} for row in cursor.fetchall()]
         cursor.close()
         cnxn.close()
         return jsonify(bookmarks)
@@ -338,15 +347,25 @@ def get_images_from_db(folder):
     cnxn = pyodbc.connect(conn_str)
     cursor = cnxn.cursor()
     cursor.execute("""
-        SELECT image 
+        SELECT image, root
         FROM [dbo].[ad37]
-        WHERE  dossier=?
+        WHERE dossier = ?
         ORDER BY image
     """, (folder,))
-    images = [row[0] for row in cursor.fetchall()]
+    rows = cursor.fetchall()
     cursor.close()
     cnxn.close()
+
+    images = []
+    for row in rows:
+        image_name = row.image
+        root_value = row.root
+        images.append({
+            "name": image_name,
+            "root": root_value
+        })
     return images
+
     
 # === API endpoint to get data ===
 @image_bp.route('/get_dossier_data')

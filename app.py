@@ -1,10 +1,7 @@
 # an object of WSGI application
 import os
 import sys
-# Ensure the current directory is first in sys.path
-current_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, current_dir)
-print("Running in directory:", os.getcwd())
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import json
 import math
 import re
@@ -34,8 +31,9 @@ from flask import (
     after_this_request
 )
 
+from imageapp import routes
 # from flask_session import Session
-#from imageapp.routes import image_bp
+from imageapp.routes import image_bp
 from fuzzywuzzy import process
 #from ultralytics import YOLO
 #import pytesseract
@@ -80,7 +78,7 @@ RESULT_FOLDER = 'static/results'
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(RESULT_FOLDER, exist_ok=True)
-#app.register_blueprint(image_bp)
+app.register_blueprint(image_bp)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config.from_object("config.Config")
 app.secret_key = "aurexus@106"

@@ -128,6 +128,14 @@
         .active {
 			background-color: #8080802b !important;
 		}
+		.bookmark-star {
+    float: right;
+    cursor: pointer;
+    color: gold;
+}
+.bookmarked-row .bookmark-star {
+    color: gold;
+}
 		/* Overlay covers full screen and centers popup */
 		.popup-overlay {
 			position: fixed;
@@ -316,35 +324,31 @@
 							</thead>
 							<tbody>
 								{% if images %}
-									{% for image in images %}
-									<tr class="image-row {% if image == selected_image %}table-active{% endif %}" data-image="{{ image }}" style="cursor: pointer;">
-										<td style="text-align:left ;color: #770000;">
-											
-										 🖼️ {{ image }}
-											
-										</td>
-										<td>
-											
-											
-											{% set is_bookmarked = (selected_folder, image) in bookmark_set %}
-											
-            <span class="comment-icon"
-                  style="cursor:pointer; color:#007BFF;"
-                  onclick="openCommentPopup('{{ selected_folder }}', '{{ image }}')">
-                💬
-            </span>
-        
-<label class="star-checkbox">
-    <input type="checkbox"
-           onchange="toggleBookmarkCheckbox('{{ selected_folder }}', '{{ image }}', this)"
-           {% if is_bookmarked %}checked{% endif %}>
-		   <!-- 💬 Comment icon -->
-        
-    <span class="star">&#9733;</span>
-</label>
-										</td>
-									</tr>
-									{% endfor %}
+							{% for image in images %}
+							<tr class="image-row {% if image.name == selected_image %}table-active{% endif %}" 
+								data-image="{{ image.name }}"
+								data-root="{{ image.root }}"
+								data-folder="{{ selected_folder }}"
+								style="cursor:pointer;">
+								<td style="text-align:left; color:#770000;">
+									🖼️ {{ image.name }}
+								</td>
+								<td>
+									<span class="comment-icon"
+										  style="cursor:pointer; color:#007BFF;"
+										  onclick="openCommentPopup('{{ selected_folder }}', '{{ image.name }}')">
+										💬
+									</span>
+									<label class="star-checkbox">
+										<input type="checkbox"
+										   onchange="toggleBookmarkCheckbox('{{ selected_folder }}', '{{ image.name }}', this)"
+										   {% if (selected_folder, image.name) in bookmark_set %}checked{% endif %}>
+										<span class="star">&#9733;</span>
+									</label>
+								</td>
+							</tr>
+							{% endfor %}
+
 								{% else %}
 									<tr><td colspan="2"><em>{{translations['No Images Found']}}</em></td></tr>
 								{% endif %}
@@ -428,224 +432,242 @@
     
 
 
-    <script>
-    // ========================
-    // GLOBAL VARIABLES
-    // ========================
-    let bookmarkMode = false;
-    let bookmarkedImages = []; // array of {folder, image} objects
-    let bookmarkIndex = 0;
-    let currentImage = {{ selected_image|tojson }};
-    const folder = {{ selected_folder|tojson }};
-    const proj = {{ session.get('proj', '')|tojson }};
-    let currentRotation = 0;
+<script>
+// ========================
+// GLOBAL VARIABLES
+// ========================
+let bookmarkMode = false;
+let bookmarkedImages = []; // array of {folder, image, root} objects
+let bookmarkIndex = 0;
+let currentImage = {{ selected_image|tojson }};
+const folder = {{ selected_folder|tojson }};
+const proj = {{ session.get('proj', '')|tojson }};
+let currentRotation = 0;
 
-    // ========================
-    // HELPER FUNCTIONS
-    // ========================
-	
-    function getImageUrl(imageName, folderName = folder) {
-		
-        //return `https://aurexus.net/auximages/${proj}/${folderName}/${imageName}`;
-		const url = `https://zadig.aurexus.com/AD37/37273/${folderName}/${imageName}`;		
-		return url;
-	
- 
-    }
+// ========================
+// IMAGE FUNCTIONS
+// ========================
+function getImageUrl(imageName, folderName = folder, root = "37273") {
+    return `https://zadig.aurexus.com/AD37/${root}/${folderName}/${imageName}`;
+}
 
-    function loadMainImage(imageName, folderName = folder) {
-        currentImage = imageName;
-        const imgLink = getImageUrl(imageName, folderName);
-        const $viewer = $('#imageViewerContainer').html(''); // clear existing
-		
-        $viewer.verySimpleImageViewer({
-            imageSource: imgLink,
-            frame: ['100%', '100%'],
-            maxZoom: '900%',
-            zoomFactor: '10%',
-            mouse: true,
-            keyboard: true,
-            toolbar: true,
-            rotateToolbar: false,
-            saveZoomPos: true,
-            callback(zoom, panX, panY) {
-                localStorage.setItem('imageZoomLevel', zoom);
+function loadMainImage(imageName, folderName = folder, rootValue = "37273") {
+    currentImage = imageName;
+    const imgLink = getImageUrl(imageName, folderName, rootValue);
+    const $viewer = $('#imageViewerContainer').html(''); // clear viewer
+
+    $viewer.verySimpleImageViewer({
+        imageSource: imgLink,
+        frame: ['100%', '100%'],
+        maxZoom: '900%',
+        zoomFactor: '10%',
+        mouse: true,
+        keyboard: true,
+        toolbar: true,
+        rotateToolbar: false,
+        saveZoomPos: true,
+        callback(zoom, panX, panY) {
+            localStorage.setItem('imageZoomLevel', zoom);
+            const $img = $viewer.find('img');
+            if ($img.length) {
+                localStorage.setItem('imageTranslateY', $img.css('transform'));
+            }
+        }
+    });
+
+    currentRotation = 0;
+
+    // Inject rotate button
+    setTimeout(() => {
+        const $toolbar = $viewer.find('.jqvsiv_toolbar');
+        if ($toolbar.length && !$toolbar.find('#rotateBtn').length) {
+            const rotateBtn = $(`
+                <button id="rotateBtn" class="vsiv-btn btn btn-sm btn-warning" 
+                    title="Rotation" style="width:25px;height:25px;padding:0;margin-left:0;">
+                    <i class="fa fa-repeat"></i>
+                </button>
+            `);
+            $toolbar.append(rotateBtn);
+            rotateBtn.on('click', function () {
+                currentRotation = (currentRotation + 90) % 360;
                 const $img = $viewer.find('img');
                 if ($img.length) {
-                    localStorage.setItem('imageTranslateY', $img.css('transform'));
+                    $img.css({
+                        'transform': `rotate(${currentRotation}deg)`,
+                        'transform-origin': 'center center',
+                        'transition': 'transform 0.3s ease-in-out'
+                    });
                 }
+            });
+        }
+    }, 100);
+}
+
+function preloadThumbnails(imageList, active, folderName = folder) {
+    const $thumb = $('#prefetch_image').empty();
+    $('#loading_indicator').show();
+
+    imageList.forEach(item => {
+		const imageName = item.name || item;
+		const rootValue = item.root || "37273";
+		const isBookmarked = bookmarkedImages.some(b => b.image === imageName && b.folder === folderName);
+
+		const img = $('<img loading="lazy" width="50" height="50">')
+			.attr('src', getImageUrl(imageName, folderName, rootValue))
+			.addClass('thumbnail-image')
+			.toggleClass('active-thumbnail', imageName === active)
+			.toggleClass('bookmarked', isBookmarked)  // add this for favoris highlight
+			.attr('data-bookmarked', isBookmarked)
+			.on('load', () => {
+				if ($('#prefetch_image img').length === imageList.length) {
+					$('#loading_indicator').hide();
+				}
+			})
+			.on('click', () => {
+				if (imageName !== currentImage) {
+					$('.thumbnail-image').removeClass('active-thumbnail');
+					img.addClass('active-thumbnail');
+					updateThumbnails(imageName, folderName);
+					$('.image-row').removeClass('table-active');
+					$(`.image-row[data-image="${imageName}"]`).addClass('table-active');
+				}
+			});
+
+		$thumb.append(img);
+	});
+
+}
+
+
+function updateThumbnails(activeImage = currentImage, folderName = folder) {
+    const filter = $('#imageFilter').val();
+    const encodedFolder = encodeURIComponent(folderName);
+    const encodedImage = encodeURIComponent(activeImage || '');
+    const urlPrefix = '/imageapp';
+
+    $.getJSON(`${urlPrefix}/call/images/${encodedFolder}/${encodedImage}?filter=${filter}`)
+        .done(images => {
+            if (!images || images.length === 0) {
+                $('#prefetch_image').empty();
+                $('#imageViewerContainer').html('<p>Aucune image trouvée</p>');
+                return;
             }
-        });
 
-        // reset rotation
-        currentRotation = 0;
+            // Handle both object array and string array
+            const first = images[0];
+            const found = images.find(x => x.name === activeImage);
+            const imgObj = found || first;
 
-        // inject rotate button
-        setTimeout(() => {
-            const $toolbar = $viewer.find('.jqvsiv_toolbar');
-            if ($toolbar.length && !$toolbar.find('#rotateBtn').length) {
-                const rotateBtn = $(`
-                    <button id="rotateBtn" class="vsiv-btn btn btn-sm btn-warning" 
-                        title="Rotate" style="width:25px;height:25px;padding:0px;margin-left:0;">
-                        <i class="fa fa-repeat"></i>
-                    </button>
-                `);
-                $toolbar.append(rotateBtn);
+            currentImage = imgObj.name || imgObj;
+            loadMainImage(imgObj.name || imgObj, folderName, imgObj.root || "37273");
+            preloadThumbnails(images, imgObj.name || imgObj, folderName);
+        })
+        .fail(err => console.error('Échec du chargement des images', err));
+}
 
-                rotateBtn.on('click', function () {
-                    currentRotation = (currentRotation + 90) % 360;
-                    const $img = $viewer.find('img');
-                    if ($img.length) {
-                        $img.css({
-                            'transform': `rotate(${currentRotation}deg)`,
-                            'transform-origin': 'center center',
-                            'transition': 'transform 0.3s ease-in-out'
-                        });
-                    }
-                });
+// ========================
+// FOLDER / BOOKMARK HANDLING
+// ========================
+function reloadFolders() {
+    const filter = $('#imageFilter').val();
+    $.getJSON(`/api/folders?filter=${filter}`)
+        .done(folders => {
+            renderFolderList(folders);
+            if (folders.length > 0) {
+                const firstFolder = folders[0];
+                updateThumbnails(null, firstFolder);
             }
-        }, 100);
-    }
-
-    function preloadThumbnails(imageList, active, folderName = folder) {
-        const $thumb = $('#prefetch_image').empty();
-        $('#loading_indicator').show();
-
-        imageList.forEach(src => {
-            const img = $('<img loading="lazy" width="50" height="50">')
-                .attr('src', getImageUrl(src, folderName))
-                .addClass('thumbnail-image')
-                .toggleClass('active-thumbnail', src === active)
-                .on('load', () => {
-                    if ($('#prefetch_image img').length === imageList.length) {
-                        $('#loading_indicator').hide();
-                    }
-                })
-                .on('click', () => {
-                    if (src !== currentImage) {
-                        $('.thumbnail-image').removeClass('active-thumbnail');
-                        img.addClass('active-thumbnail');
-                        updateThumbnails(src, folderName);
-                        $('.image-row').removeClass('table-active');
-                        $(`.image-row[data-image="${src}"]`).addClass('table-active');
-                    }
-                });
-            $thumb.append(img);
-        });
-    }
-
-    function updateThumbnails(activeImage = currentImage, folderName = folder) {
-        const filter = $('#imageFilter').val();
-		const encodedFolder = encodeURIComponent(folderName);
-		const encodedImage = encodeURIComponent(activeImage || '');
-		const urlPrefix = '/imageapp'; // match your blueprint prefix
-		$.getJSON(`${urlPrefix}/call/images/${encodedFolder}/${encodedImage}?filter=${filter}`)
-            .done(images => {
-                if (!images || images.length === 0) {
-                    $('#prefetch_image').empty();
-                    $('#imageViewerContainer').html('<p>Aucune image trouvée</p>');
-					console.log("Fetching images for folder:", folderName, "image:", activeImage, "filter:", filter);
-                    return;
-                }
-
-                let imgToLoad = activeImage && images.includes(activeImage) ? activeImage : images[0];
-                currentImage = imgToLoad;
-
-                loadMainImage(imgToLoad, folderName);
-                preloadThumbnails(images, imgToLoad, folderName);
-            })
-            .fail(err => console.error('Échec du chargement des images', err));
-    }
-
-    function reloadFolders() {
-        const filter = $('#imageFilter').val();
-        $.getJSON(`/api/folders?filter=${filter}`)
-            .done(folders => {
-                renderFolderList(folders);
-                if (folders.length > 0) {
-                    const firstFolder = folders[0];
-                    updateThumbnails(null, firstFolder);
-                }
-            })
-            .fail(err => console.error('Échec du rechargement des dossiers', err));
-    }
+        })
+        .fail(err => console.error('Échec du rechargement des dossiers', err));
+}
 
 function loadBookmarkedImages() {
     $.getJSON('/api/bookmarks')
         .done(function(data) {
-            bookmarkedImages = data || [];
+            // Normalize bookmarks
+            bookmarkedImages = (data || []).map(item => ({
+                image: item.image,
+                folder: item.folder,
+                root: item.root || "37273"
+            }));
             bookmarkIndex = 0;
 
-            // Hide folder list when showing bookmarks
             $('#folderListColumn').hide();
-
-            // Update header with bookmark count
-            $('#imageCountHeader').text(`🖼️ Images (${bookmarkedImages.length} Fichiers)`);
+            $('#imageCountHeader').text(`🖼️ Images (${bookmarkedImages.length} fichiers)`);
 
             const $imageTable = $('.col-lg-3:nth-child(2) .card-body .table tbody');
             $imageTable.empty();
+            $('#prefetch_image').empty();
 
             if (!bookmarkedImages.length) {
                 $imageTable.append('<tr><td colspan="2"><em>Aucune image marquée dans vos favoris</em></td></tr>');
-                $('#prefetch_image').empty();
                 $('#imageViewerContainer').html('<p>Aucune image trouvée.</p>');
                 return;
             }
 
             bookmarkedImages.forEach(function(item, index) {
-                const row = $(`<tr class="image-row"
-                    data-folder="${item.folder}"
-                    data-image="${item.image}"
-                    style="cursor:pointer;">
-                    <td style="color:#770000;">🖼️ ${item.image.split('/').pop()}
-                    <small>(Folder: ${item.folder})</small></td></tr>`);
+    const isBookmarked = bookmarkedImages.some(b => b.image === item.image && b.folder === item.folder);
 
-                row.click(function() {
-                    bookmarkIndex = index;
-                    updateThumbnails(item.image, item.folder);
-                    $('.image-row').removeClass('table-active');
-                    $(this).addClass('table-active');
-                });
+    const row = $(`
+        <tr class="image-row ${isBookmarked ? 'bookmarked-row' : ''}"
+            data-folder="${item.folder}"
+            data-image="${item.image}"
+            data-root="${item.root || '37273'}"
+            style="cursor:pointer;">
+            <td style="color:#770000;">
+                🖼️ ${item.image.split('/').pop()} 
+                <small>(Dossier: ${item.folder})</small>
+                <span class="bookmark-star">${isBookmarked ? '★' : '☆'}</span>
+            </td>
+        </tr>
+    `);
 
-                $imageTable.append(row);
-            });
+    row.click(function() {
+        bookmarkIndex = index;
+        updateThumbnails(item.image, item.folder);
+        $('.image-row').removeClass('table-active');
+        $(this).addClass('table-active');
+    });
 
+    $imageTable.append(row);
+});
+
+
+            // Load first bookmarked image
             $imageTable.find('tr').first().trigger('click');
         })
-        .fail(err => console.error('Failed to load bookmarked images', err));
+        .fail(err => console.error('Échec du chargement des favoris', err));
 }
 
 
 
+function toggleBookmarkCheckbox(folderName, imageName, checkbox) {
+    const url = checkbox.checked ? '/api/bookmark' : '/api/bookmark/delete';
+    fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folder: folderName, image: imageName })
+    })
+    .then(res => res.json())
+    .then(resp => {
+        alert(resp.message || resp.error);
+    })
+    .catch(err => console.error(err));
+}
 
-    function toggleBookmarkCheckbox(folderName, imageName, checkbox) {
-        const url = checkbox.checked ? '/api/bookmark' : '/api/bookmark/delete';
-        fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ folder: folderName, image: imageName })
-        })
-        .then(res => res.json())
-        .then(resp => {
-            alert(resp.message || resp.error);
-        })
-        .catch(err => console.error(err));
+let currentFilter = 'all';
+
+function reloadImages() {
+    currentFilter = $('#imageFilter').val();
+    if (currentFilter === 'bookmarks') {
+        bookmarkMode = true;
+        loadBookmarkedImages();
+    } else {
+        window.location.reload();
     }
+}
 
-    let currentFilter = 'all'; // default
-
-	function reloadImages() {
-		currentFilter = $('#imageFilter').val();
-
-		if (currentFilter === 'bookmarks') {
-			bookmarkMode = true;
-			loadBookmarkedImages();
-		} else {
-			window.location.reload();
-		}
-	}
-	
-	$('#viewMode').on('change', function () {
+$('#viewMode').on('change', function () {
     const mode = $(this).val();
 
     if (mode === 'bookmarks') {
@@ -653,88 +675,85 @@ function loadBookmarkedImages() {
         loadBookmarkedImages();
     } else {
         bookmarkMode = false;
-        $('#folderListColumn').show(); // show folder list again
-        reloadFolders();               // reload folder list
-        updateThumbnails(currentImage, folder); // reload thumbnails
+        $('#folderListColumn').show();
+        reloadFolders();
+        updateThumbnails(currentImage, folder);
     }
 });
 
-    // ========================
-    // INITIALIZATION
-    // ========================
-    $(function() {
-        // Initial thumbnails
-        if (currentImage) {
-            updateThumbnails(currentImage, folder);
-        }
+// ========================
+// INITIALIZATION
+// ========================
+$(function() {
+    if (currentImage) {
+        updateThumbnails(currentImage, folder);
+    }
 
-        // Row click for initial image list
-        $(document).on('click', '.image-row', function() {
-            const imageName = $(this).data('image');
-            const folderName = $(this).data('folder') || folder;
-            $('.image-row').removeClass('table-active');
-            $(this).addClass('table-active');
-            updateThumbnails(imageName, folderName);
-			getImageUrl(imageName, folderName);
-        });
+    $(document).on('click', '.image-row', function() {
+        const imageName = $(this).data('image');
+        const folderName = $(this).data('folder') || folder;
+        const root = $(this).data('root') || "37273";
+        $('.image-row').removeClass('table-active');
+        $(this).addClass('table-active');
+        updateThumbnails(imageName, folderName);
+        getImageUrl(imageName, folderName, root);
     });
+});
+
+// ========================
+// COMMENT POPUP
+// ========================
 let currentF = null;
 let currentI = null;
 
-// Open popup
 function openCommentPopup(folder, image) {
-  currentF = folder;
-  currentI = image;
+    currentF = folder;
+    currentI = image;
 
-  fetch(`/imageapp/get_comment?folder=${encodeURIComponent(folder)}&image=${encodeURIComponent(image)}`)
-    .then(res => res.json())
-    .then(data => {
-      const commentText = document.getElementById("commentText");
-      if (commentText) commentText.value = data.comment || "";
-
-      const popup = document.getElementById("commentPopup");
-      if (popup) popup.style.display = "flex";
-    })
-    .catch(err => console.error("Fetch error:", err));
+    fetch(`/imageapp/get_comment?folder=${encodeURIComponent(folder)}&image=${encodeURIComponent(image)}`)
+        .then(res => res.json())
+        .then(data => {
+            const commentText = document.getElementById("commentText");
+            if (commentText) commentText.value = data.comment || "";
+            const popup = document.getElementById("commentPopup");
+            if (popup) popup.style.display = "flex";
+        })
+        .catch(err => console.error("Erreur lors du chargement du commentaire:", err));
 }
 
-// Close popup
 function closeCommentPopup() {
-  const popup = document.getElementById("commentPopup");
-  if (popup) popup.style.display = "none";
+    const popup = document.getElementById("commentPopup");
+    if (popup) popup.style.display = "none";
 }
 
-// Save comment
 function saveComment() {
-  const commentText = document.getElementById("commentText");
-  const comment = commentText ? commentText.value.trim() : "";
+    const commentText = document.getElementById("commentText");
+    const comment = commentText ? commentText.value.trim() : "";
 
-  if (!comment) {
-    alert("Veuillez entrer un commentaire..");
-    return;
-  }
-
-  fetch("/imageapp/save_comment", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      folder: currentF,
-      image: currentI,
-      comment: comment
-    })
-  })
-  .then(res => {
-    if (res.ok) {
-      alert("Commentaire enregistré avec succès!");
-      closeCommentPopup();
-    } else {
-      alert("Erreur.");
+    if (!comment) {
+        alert("Veuillez entrer un commentaire.");
+        return;
     }
-  })
-  .catch(err => console.error("Erreur:", err));
+
+    fetch("/imageapp/save_comment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            folder: currentF,
+            image: currentI,
+            comment: comment
+        })
+    })
+    .then(res => {
+        if (res.ok) {
+            alert("Commentaire enregistré avec succès !");
+            closeCommentPopup();
+        } else {
+            alert("Erreur lors de l'enregistrement.");
+        }
+    })
+    .catch(err => console.error("Erreur:", err));
 }
-
-
 </script>
 
    
