@@ -1,9 +1,19 @@
-import sys, os
+import sys
+import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-medusa_dir = os.path.join(BASE_DIR, "Medusa-V3.5")
-if medusa_dir not in sys.path:
-    sys.path.insert(0, medusa_dir)
+MEDUSA_DIR = os.path.join(BASE_DIR, "Medusa-V3.5")
+
+if MEDUSA_DIR not in sys.path:
+    sys.path.insert(0, MEDUSA_DIR)
+
+# Optional: debug
+print("=== SYS.PATH ===")
+for p in sys.path:
+    print(p)
+print("=== MEDUSA_DIR CONTENTS ===")
+print(os.listdir(MEDUSA_DIR))
+
 
 
 from imageapp.routes import image_bp
