@@ -1,4 +1,23 @@
+#!/bin/bash
+
+# Install the Microsoft ODBC Driver 17 for SQL Server
+curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list
+apt-get update
+ACCEPT_EULA=Y apt-get install -y msodbcsql17 
+
+# Activate virtual environment
+source env/bin/activate
+
+# Add /root/.local/bin to PATH (for pip --user installed scripts)
+export PATH="/root/.local/bin:${PATH}"
 
 # Install dependencies
 pip install --user -r requirements.txt
+
+# Set environment variables
+export FLASK_ENV=production
+export FLASK_APP=app.py
+
+# Start Flask application with Gunicorn
 gunicorn --bind 0.0.0.0:8000 app:app
