@@ -9,7 +9,7 @@ print("=== SYS.PATH ===")
 for p in sys.path:
     print(p)
 
-from imageapp.routes import image_bp
+#from imageapp.routes import image_bp
 
 
 import json
@@ -87,7 +87,7 @@ RESULT_FOLDER = 'static/results'
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(RESULT_FOLDER, exist_ok=True)
-app.register_blueprint(image_bp)
+#app.register_blueprint(image_bp)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config.from_object("config.Config")
 app.secret_key = "aurexus@106"
