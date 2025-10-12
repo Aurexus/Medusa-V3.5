@@ -7,20 +7,21 @@ curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/source
 apt-get update
 ACCEPT_EULA=Y apt-get install -y msodbcsql17 
 
-# Activate virtual environment
-source env/bin/activate
-# Point Python to the subfolder that contains app.py and imageapp/
-cd /home/site/wwwroot
-export PYTHONPATH=/home/site/wwwroot
-# Install dependencies
+# 1️⃣ Activate virtual environment
+source /home/gerard/env/bin/activate
+
+# 2️⃣ Go to the folder containing app.py and imageapp/
+cd /home/gerard/Medusa-V3.5   # <- replace <project-root> with actual folder
+
+# 3️⃣ Set PYTHONPATH so Python can find imageapp
+export PYTHONPATH=$(pwd)
+
+# 4️⃣ Install dependencies if not already installed
 pip install --user -r requirements.txt
 
-# Set environment variables
+# 5️⃣ Set Flask environment variables
 export FLASK_ENV=production
 export FLASK_APP=app.py
 
-# Start Flask application
-#flask run --host=0.0.0.0 --port=8000
-gunicorn app:app --bind=0.0.0.0:8000 --timeout 300000
-#gunicorn app:app --bind=0.0.0.0:$PORT --timeout 300000
-
+# 6️⃣ Start Flask with Gunicorn
+gunicorn app:app --bind=0.0.0.0:8000 --timeout 300

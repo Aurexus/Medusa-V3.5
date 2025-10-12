@@ -1,13 +1,16 @@
-import os, sys
+import sys
+import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
-print("=== SYS.PATH in Azure ===")
+print("=== SYS.PATH ===")
 for p in sys.path:
     print(p)
-print("Current working directory:", os.getcwd())
+
+from imageapp.routes import image_bp
+
 
 import json
 import math
@@ -40,7 +43,6 @@ from flask import (
 )
 
 # from flask_session import Session
-from imageapp.routes import image_bp
 from fuzzywuzzy import process
 #from ultralytics import YOLO
 #import pytesseract
