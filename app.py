@@ -42,7 +42,7 @@ from flask import (
 
 from imageapp import routes
 # from flask_session import Session
-from imageapp.routes import image_bp
+#from imageapp.routes import image_bp
 from fuzzywuzzy import process
 #from ultralytics import YOLO
 #import pytesseract
