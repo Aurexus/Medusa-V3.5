@@ -16,7 +16,14 @@ export PATH="/root/.local/bin:${PATH}"
 export PYTHONPATH=/home/site/wwwroot:$PYTHONPATH
 
 # Install dependencies
-pip install --user -r requirements.txt
+#pip install --user -r requirements.txt
+
+# Upgrade pip and setuptools first
+pip install --upgrade pip setuptools wheel
+
+# Install requirements with verbose logging
+pip install -r requirements.txt --verbose
+
 
 # Set Flask environment
 export FLASK_ENV=production
