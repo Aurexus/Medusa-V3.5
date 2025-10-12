@@ -1,40 +1,36 @@
 import sys
 import os
 
-# Add current folder to sys.path
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
-# Print sys.path for debugging
-print("=== SYS.PATH ===")
+logging.debug("=== SYS.PATH ===")
 for p in sys.path:
-    print(p)
+    logging.debug(p)
 
-# Print contents of the base directory
-print("=== BASE_DIR CONTENTS ===")
+logging.debug("=== BASE_DIR CONTENTS ===")
 for item in os.listdir(BASE_DIR):
-    print(item)
+    logging.debug(item)
 
-# If imageapp exists, print its subfolders/files
 imageapp_path = os.path.join(BASE_DIR, "imageapp")
 if os.path.exists(imageapp_path):
-    print("=== imageapp CONTENTS ===")
-    for root, dirs, files in os.walk(imageapp_path):
-        print("Folder:", root)
-        for d in dirs:
-            print("  Dir:", d)
-        for f in files:
-            print("  File:", f)
+    logging.debug("=== IMAGEAPP CONTENTS ===")
+    for item in os.listdir(imageapp_path):
+        logging.debug(item)
 else:
-    print("imageapp folder not found in BASE_DIR")
+    logging.debug("imageapp folder not found!")
 
 #from imageapp.routes import image_bp
 
 
 import json
 import math
-import os
+
 import re
 from datetime import datetime
 import csv
