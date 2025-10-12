@@ -1,12 +1,7 @@
 # an object of WSGI application
-import sys, os
-#current_dir = os.path.dirname(os.path.abspath(__file__))
-# Add the directory containing imageapp to the Python path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-#if current_dir not in sys.path:
-    #sys.path.insert(0, current_dir)
 import json
 import math
+import os
 import re
 from datetime import datetime
 import csv
