@@ -90,7 +90,7 @@ def imghome():
                 
             session["lang"] = language
             # ✅ Redirect to your homepage view
-            return redirect(url_for("imageapp.champdash"))
+            return redirect(url_for("imageapp.imagedash"))
         else:
             return render_template(
                 "login.html", message="Please Check the Credential's"
@@ -99,7 +99,7 @@ def imghome():
     return render_template("login.html")
 
 @image_bp.route('/champdash')
-def champdash():
+def imagedash():
     language = request.args.get("lang", session["lang"])
     if language not in current_app.config["LANGUAGES"]:
         language = current_app.config["DEFAULT_LANGUAGE"]
