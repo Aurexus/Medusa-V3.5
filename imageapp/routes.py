@@ -31,13 +31,19 @@ BASE_IMAGE_URL = "https://zadig.aurexus.com/AD37/"
 from flask import current_app
 # Load the Translation files
 def load_translations():
-    # Build correct path to the main directory (where translations.json lives)
-    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+    import os, json
+
+    # Go one directory up from imageapp → wwwroot
+    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     translations_path = os.path.join(BASE_DIR, "translations.json")
 
-    # Load translations
+    if not os.path.exists(translations_path):
+        raise FileNotFoundError(f"Translation file not found at {translations_path}")
+
     with open(translations_path, "r", encoding="utf-8") as f:
         translations = json.load(f)
+    
+    return translations
 
 # Assign Translation JSON
 translations = load_translations()
