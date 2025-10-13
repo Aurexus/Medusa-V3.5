@@ -1,36 +1,6 @@
 import os
 import sys
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-print("=== BASE_DIR ===", BASE_DIR)
-
-# Print folder structure for debugging
-for root, dirs, files in os.walk(BASE_DIR):
-    level = root.replace(BASE_DIR, '').count(os.sep)
-    indent = ' ' * 4 * level
-    print(f"{indent}{os.path.basename(root)}/")
-    subindent = ' ' * 4 * (level + 1)
-    for f in files:
-        print(f"{subindent}{f}")
-
-# Add Medusa-V3.5 folder to sys.path if it exists
-medusa_path = os.path.join(BASE_DIR, "Medusa-V3.5")
-if os.path.exists(medusa_path):
-    sys.path.insert(0, medusa_path)
-    print("✅ Added Medusa-V3.5 to sys.path")
-else:
-    print("⚠️ Medusa-V3.5 folder not found!")
-
-print("=== SYS.PATH ===")
-for p in sys.path:
-    print(p)
-
-# Now import your blueprint
-from imageapp.routes import image_bp
-
-
-
-
 from imageapp.routes import image_bp
 
 
