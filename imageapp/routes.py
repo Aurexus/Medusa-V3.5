@@ -98,7 +98,7 @@ def imghome():
     #  ADD THIS to handle GET requests
     return render_template("login.html")
 
-@image_bp.route('/champdash')
+@image_bp.route('/imagedash')
 def imagedash():
     language = request.args.get("lang", session["lang"])
     if language not in current_app.config["LANGUAGES"]:
