@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AUREXUS</title>
+    <!-- ================= Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
+    <!-- Styles -->
+    <link href="{{url_for('static',filename='assets/css/lib/calendar2/pignose.calendar.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/chartist/chartist.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/font-awesome.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/themify-icons.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/owl.carousel.min.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/owl.theme.default.min.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/weather-icons.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='assets/css/lib/menubar/sidebar.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/lib/helper.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='assets/css/style.css')}}" rel="stylesheet">
+    <style>
+        .scrollable {
+            overflow-y: auto;
+            max-height: 100%;
+        }
+
+        .content-wrap {
+            height: 90vh !important;
+        }
+
+        @media (max-width: 991px) {
+            .row.h-100 > div {
+            height: auto !important;
+            }
+
+            .scrollable {
+            max-height: none !important;
+            }
+        }
+		.active{
+			background-color:#8080802b !important;
+		}
+		.right-panel {
+		  height: calc(100vh - 100px); /* Adjust depending on your header/nav height */
+		  display: flex;
+		  flex-direction: column;
+		  padding: 0;
+		  margin: 0;
+		}
+
+		.image-viewer-placeholder {
+		  flex: 1;
+		  display: flex;
+		  flex-direction: column;
+		}
+
+		#viewerContainer {
+		  flex: 1;
+		  display: flex;
+		  flex-direction: column;
+		  height: 100%;
+		}
+
+		#imageViewerContainer {
+		  flex: 1;
+		  width: 100%;
+		  height: 100%;
+		  overflow: hidden;
+		  position: relative;
+		}
+		#imageViewerContainer img{
+		  z-index:-2 !important;
+		}
+		.active-thumbnail {
+					  border: 2px solid red !important;
+					  animation: blink-border 1s step-start infinite;
+				}
+				.thumbnail-image {
+					  border: 2px solid #ffffff;
+					  box-shadow: 0 0 5px #686868 !important;
+					  border-radius: 4px !important;
+				}
+				#prefetch_image_container{
+					  display: flex;
+					  justify-content: center;   /* Center horizontally */
+					  align-items: center;       /* Center vertically if needed */
+					  gap: 10px;                 /* Optional: spacing between thumbnails */
+					  flex-wrap: wrap; 
+				}
+		.table::-webkit-scrollbar {
+			width: 4px !important; /* default is ~16px */
+		}
+		
+		#prefetch_image img:hover {
+		  transform: scale(1.05);
+		  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+		}
+		#imageViewerContainer img{
+		  z-index:-2 !important;
+		}
+		img.jqvsiv_toolbarButton{
+		  transform: none !important;
+		}
+		.jqvsiv_toolbar {
+        z-index: 9999 !important;  
+        pointer-events: auto !important;
+        position: absolute !important;
+        }
+ 
+        .jqvsiv_toolbarButton {
+        z-index: 10000 !important;
+        pointer-events: auto;
+        }
+		.active{
+            background-color:#8080802b !important;
+        } 
+		.star-checkbox input {
+    display: none; /* hide default checkbox */
+}
+
+.star-checkbox .star {
+    font-size: 20px;
+    color: gray;        /* default */
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.star-checkbox input:checked + .star {
+    color: gold;        /* when checked */
+    transform: scale(1.2);
+}
+.selected-row {
+  background-color: #d6dbe1 !important;
+  color: white !important;
+}
+    </style>
+
+</head>
+
+<body>
+
+	{% include 'logheader2.html' %}
+<div class="content-wrap vh-100 d-flex flex-column">
+  <div class="main flex-grow-1">
+    <div class="container-fluid h-100">
+      {% if error %}
+      <br/>
+      <div class="alert alert-danger" role="alert">{{ error }}</div>
+      {% endif %}
+
+      <div class="row">
+		  <!-- Left: Root folders -->
+		  <div class="col-lg-6 col-md-12 h-100 p-1">
+			<div class="card right-panel">
+			  <div class="card-body p-1 scrollable">
+				<h6 class="mb-3">📁 Dossier racine ({{ root | length }})</h6>
+				<div class="table-responsive" style="max-height: 700px; overflow-y: auto;">
+				  <table class="table table-hover table-sm" id="root-table">
+					<tbody>
+					  {% for r in root %}
+					  <tr>
+						<td>
+						  📁 <a href="#" class="root-link" data-root="{{ r }}" style="color:#770000;">{{ r }}</a>
+						</td>
+						<td>
+											<a target="_blank"  class="btn btn-sm btn-light">
+												<i class="fa fa-download"></i>
+											</a>
+										</td>
+					  </tr>
+					  {% endfor %}
+					</tbody>
+				  </table>
+				</div>
+			  </div>
+			</div>
+		  </div>
+
+		  <!-- Right: Subfolders -->
+		  <div class="col-lg-6 col-md-12 h-100 p-1">
+			<div class="card right-panel">
+			  <div class="card-body p-1 scrollable">
+				<h6 class="mb-3">📂 Sous-dossier</h6>
+				<div class="table-responsive" style="max-height: 700px; overflow-y: auto;">
+				  <table class="table table-hover table-sm" id="subfolder-table">
+					<tbody>
+					  <tr><td><em>Select a root folder to view subfolders</em></td></tr>
+					</tbody>
+				  </table>
+				</div>
+			  </div>
+			</div>
+		  </div>
+		</div>
+		
+		<!-- 📦 Modal Image Explorer -->
+<!-- Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 95vw;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Visionneuse d'images</h5>
+        <button type="button" class="btn btn-danger btn-close btn-close-white" data-bs-dismiss="modal">X</button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="row g-0">
+          <div class="col-3 border-end" style="overflow-y:auto; height:80vh;">
+            <div id="image-list" class="list-group list-group-flush"></div>
+          </div>
+          <div class="col-9">
+            <div id="imageViewerContainer" style="width:100%; height:80vh; background:#111;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+		
+    </div>
+  </div>
+</div>
+
+
+
+    <!-- jquery vendor -->
+    <script src="{{url_for('static',filename='assets/js/lib/jquery.min.js')}}"></script>
+
+    <!-- nano scroller -->
+    <script src="{{url_for('static',filename='assets/js/lib/menubar/sidebar.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/lib/preloader/pace.min.js')}}"></script>
+    <!-- sidebar -->
+
+    <script src="{{url_for('static',filename='assets/js/lib/bootstrap.min.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/scripts.js')}}"></script>
+    <!-- bootstrap -->
+	<!-- ✅ verySimpleImageViewer (load AFTER jQuery) -->
+	<script src="{{ url_for('static', filename='assets/js/jquery.verySimpleImageViewer.min.js') }}"></script>
+
+
+	<!-- Get suggestions -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const rootLinks = document.querySelectorAll(".root-link");
+    const subfolderTable = document.getElementById("subfolder-table");
+    let currentRoot = "";
+
+    // === Load subfolders for selected root ===
+    function loadSubfolders(rootName) {
+        currentRoot = rootName;
+        subfolderTable.innerHTML = `<tr><td>Chargement des sous-dossiers pour <b>${rootName}</b>...</td></tr>`;
+        const fetchUrl = "{{ url_for('imageapp.get_subfolders') }}?root=" + encodeURIComponent(rootName);
+
+        fetch(fetchUrl)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.subfolders.length > 0) {
+                        let rows = "";
+                        data.subfolders.forEach(sf => {
+                            rows += `
+                                <tr class="subfolder-row" data-subfolder="${sf.name}">
+                                    <td>
+                                        📂 <a href="#" class="subfolder-link" data-subfolder="${sf.name}" style="color:#770000;">
+                                            ${sf.name}
+                                        </a>
+                                    </td>
+                                    <td class="text-end text-muted">
+                                        <i class="badge badge-success">${sf.count} images</i>
+                                    </td>
+                                </tr>`;
+                        });
+
+                        subfolderTable.innerHTML = rows;
+
+                        // === Attach subfolder click event with row highlight ===
+                        document.querySelectorAll(".subfolder-link").forEach(link => {
+                            link.addEventListener("click", function(e) {
+                                e.preventDefault();
+                                const subfolder = this.getAttribute("data-subfolder");
+
+                                // Highlight selected row
+                                document.querySelectorAll(".subfolder-row").forEach(row => {
+                                    row.classList.remove("selected-row");
+                                });
+                                this.closest(".subfolder-row").classList.add("selected-row");
+
+                                // Load images for selected subfolder
+                                loadImages(currentRoot, subfolder);
+                            });
+                        });
+                    } else {
+                        subfolderTable.innerHTML = `<tr><td><em>Aucun sous-dossier trouvé pour ${rootName}.</em></td></tr>`;
+                    }
+                } else {
+                    subfolderTable.innerHTML = `<tr><td class="text-danger">Erreur : ${data.message}</td></tr>`;
+                }
+            })
+            .catch(err => {
+                console.error("Erreur :", err);
+                subfolderTable.innerHTML = `<tr><td class="text-danger">Échec du chargement des sous-dossiers.</td></tr>`;
+            });
+    }
+
+    // === Load image list from DB and show modal ===
+    function loadImages(rootName, subfolder) {
+        const url = "{{ url_for('imageapp.get_images') }}?root=" +
+                    encodeURIComponent(rootName) + "&subfolder=" + encodeURIComponent(subfolder);
+
+        const imageList = document.getElementById("image-list");
+        const viewerContainer = $("#imageViewerContainer");
+
+        imageList.innerHTML = `<div class="text-muted">Chargement des images pour <b>${subfolder}</b>...</div>`;
+        viewerContainer.empty();
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.images.length > 0) {
+                        let html = '<div class="list-group">';
+                        data.images.forEach(img => {
+                            html += `<a href="#" class="list-group-item list-group-item-action image-item" data-image="${img}">
+                                        🖼️ ${img}
+                                     </a>`;
+                        });
+                        html += '</div>';
+                        imageList.innerHTML = html;
+
+                        document.querySelectorAll(".image-item").forEach(el => {
+                            el.addEventListener("click", function(e) {
+                                e.preventDefault();
+                                const imgName = this.getAttribute("data-image");
+                                const imgUrl = "https://zadig.aurexus.com/AD37/" + rootName + "/" + subfolder + "/" + imgName;
+                                console.log("📷 Image URL:", imgUrl);
+                                openImageViewer(imgUrl);
+                            });
+                        });
+
+                    } else {
+                        imageList.innerHTML = `<div class="text-muted"><em>Aucune image trouvée dans ${subfolder}.</em></div>`;
+                    }
+                } else {
+                    imageList.innerHTML = `<div class="text-danger">Erreur : ${data.message}</div>`;
+                }
+            })
+            .catch(err => {
+                console.error("Erreur :", err);
+                imageList.innerHTML = `<div class="text-danger">Échec du chargement des images.</div>`;
+            });
+
+        // ✅ Show modal using Bootstrap 4-safe method
+        $('#imageModal').modal('show');
+    }
+
+    // === Image viewer function ===
+    function openImageViewer(imgUrl) {
+        const viewerContainer = $("#imageViewerContainer");
+        viewerContainer.empty();
+
+        const img = document.createElement("img");
+        img.src = imgUrl;
+        img.style.maxWidth = "100%";
+        img.style.maxHeight = "100%";
+        img.style.objectFit = "contain";
+        img.style.display = "block";
+        img.style.margin = "auto";
+        viewerContainer.append(img);
+
+        $('#imageModal').on('shown.bs.modal', function() {
+            $(img).on('load', function() {
+                console.log("🖼️ Initialisation du visualiseur...");
+                viewerContainer.verySimpleImageViewer({
+                    imageSource: imgUrl,
+                    frame: ["100%", "100%"],
+                    maxZoom: "900%",
+                    zoomFactor: "10%",
+                    mouse: true,
+                    keyboard: true,
+                    toolbar: true,
+                    rotateToolbar: false,
+                });
+            });
+        });
+    }
+
+    // === Root folder click handling ===
+    rootLinks.forEach(link => {
+        link.addEventListener("click", function(e) {
+            e.preventDefault();
+            const rootName = this.getAttribute("data-root");
+            rootLinks.forEach(l => l.style.fontWeight = "normal");
+            this.style.fontWeight = "bold";
+            loadSubfolders(rootName);
+        });
+    });
+
+    // === Prevent body shrink issue ===
+    $('#imageModal').on('shown.bs.modal', function() {
+        document.body.style.paddingRight = '0';
+    }).on('hidden.bs.modal', function() {
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+    });
+
+    // === Auto-load first root folder ===
+    if (rootLinks.length > 0) {
+        const first = rootLinks[0];
+        first.style.fontWeight = "bold";
+        loadSubfolders(first.getAttribute("data-root"));
+    } else {
+        subfolderTable.innerHTML = `<tr><td><em>Aucun dossier racine trouvé.</em></td></tr>`;
+    }
+});
+</script>
+
+
+
+
+</body>
+
+</html>

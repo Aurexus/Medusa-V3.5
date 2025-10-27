@@ -142,6 +142,7 @@ def imageGallery():
     
     
     try:
+        root = get_root_from_db()
         folders = get_folders_from_db()
         selected_folder = request.args.get('folder', folders[0] if folders else None)
         images = get_images_from_db(selected_folder) if selected_folder else []
@@ -155,7 +156,8 @@ def imageGallery():
         if selected_folder and selected_image:
             image_url = f"{BASE_IMAGE_URL}/{proj}/{selected_folder}/{selected_image}"
 
-        return render_template("champagneGallery.html",
+        return render_template("rootlist.html",
+                               root = root,
                                folders=folders,
                                selected_folder=selected_folder,
                                images=images,
@@ -168,7 +170,7 @@ def imageGallery():
                                )
     except Exception as e:
         print("⚠️ Could not retrieve data:", e)
-        return render_template("champagneGallery.html", folders=[], images=[], selected_image=None,image_url=image_url,
+        return render_template("rootlist.html", folders=[], images=[], selected_image=None,image_url=image_url,
                                translations=translations[session["lang"]],
                                lang=session["lang"],
                                # add your notice count if needed
@@ -215,7 +217,6 @@ def call_images(folder, active_image):
     except Exception as e:
         print("⚠️ DB error in /call/images:", e)
         return jsonify([])
-
 
 
 @image_bp.route('/api/folders')
@@ -337,6 +338,19 @@ def delete_bookmark():
         print("DB error:", e)
         return jsonify({"error": "Database error"}), 500
 
+def get_root_from_db():
+    cnxn = pyodbc.connect(conn_str)
+    cursor = cnxn.cursor()
+    cursor.execute("""
+        SELECT DISTINCT root 
+        FROM [dbo].[ad37]       
+        ORDER BY root
+    """)
+    root = [row[0] for row in cursor.fetchall()]
+    cursor.close()
+    cnxn.close()
+    return root
+
 
 def get_folders_from_db():
     cnxn = pyodbc.connect(conn_str)
@@ -426,3 +440,83 @@ def get_comment():
     row = cursor.fetchone()
 
     return jsonify({"comment": row.comment if row and row.comment is not None else ""})   
+    
+    
+@image_bp.route("/get_subfolders", methods=["GET"])
+def get_subfolders():
+    root_name = request.args.get("root")
+
+    if not root_name:
+        return {"success": False, "message": "Aucun dossier racine fourni.", "subfolders": []}, 400
+
+    try:
+        cnxn = pyodbc.connect(conn_str)
+        cursor = cnxn.cursor()
+
+        # ✅ Get subfolders and image count for each
+        cursor.execute("""
+            SELECT 
+                dossier, 
+                COUNT(*) AS image_count
+            FROM dbo.ad37
+            WHERE root = ? AND dossier IS NOT NULL
+            GROUP BY dossier
+            ORDER BY dossier
+        """, (root_name,))
+
+        results = cursor.fetchall()
+        cursor.close()
+        cnxn.close()
+
+        # ✅ Build JSON-friendly list
+        subfolders = [
+            {"name": row[0], "count": int(row[1])}
+            for row in results
+        ]
+
+        return {"success": True, "subfolders": subfolders}
+
+    except Exception as e:
+        print("❌ Erreur lors du chargement des sous-dossiers :", e)
+        return {"success": False, "message": str(e), "subfolders": []}, 500
+
+
+
+@image_bp.route("/get_images", methods=["GET"])
+def get_images():
+    root = request.args.get("root")
+    subfolder = request.args.get("subfolder")
+    images = []
+
+    if not root or not subfolder:
+        return {
+            "success": False,
+            "message": "Dossier racine ou sous-dossier manquant.",
+            "images": []
+        }, 400
+
+    try:
+        cnxn = pyodbc.connect(conn_str)
+        cursor = cnxn.cursor()
+
+        # ✅ Adjust column names if needed
+        cursor.execute("""
+            SELECT DISTINCT image
+            FROM dbo.ad37
+            WHERE root = ? AND dossier = ? AND image IS NOT NULL
+            ORDER BY image
+        """, (root, subfolder))
+
+        rows = cursor.fetchall()
+        images = [row[0] for row in rows]
+
+        cursor.close()
+        cnxn.close()
+
+        return {"success": True, "images": images}
+
+    except Exception as e:
+        print("❌ Erreur lors du chargement des images depuis la base de données :", e)
+        return {"success": False, "message": str(e), "images": []}, 500
+
+
