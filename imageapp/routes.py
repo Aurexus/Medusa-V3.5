@@ -106,7 +106,7 @@ def imagedash():
         session["lang"] = language
     else:
         session["lang"] = language
-    return render_template("champagneindex.html",translations=translations[session["lang"]],)  
+    return render_template("champagneIndex.html",translations=translations[session["lang"]],)  
 
     
 #@image_bp.route('/imageGallery')
