@@ -25,372 +25,305 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-   <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f8fafe;
-        margin: 0;
-        padding: 0;
-    }
+<style>
+        body {
+            font-family: "Segoe UI", Roboto, Arial, sans-serif;
+            background-color: #f4f6fb;
+            margin: 0;
+            padding: 0;
+        }
 
-    .main-content-wrapper {
-        display: flex;
-        gap: 20px;
-        padding: 20px;
-        box-sizing: border-box;
-        min-height: calc(100vh - 60px);
-        flex-wrap: wrap; 
-        width: 60%;
-        
-    }
-
-    .left-section,
-    .right-section {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-         align-self: flex-start;
-    }
-
-    .left-section {
-        flex: 1.5;
-        min-width: 320px;
-        max-width: 450px;
-    }
-
-    .right-section {
-        flex: 1.3;
-        min-width: 350px;
-        margin-top: 8px;
-    }
-
-    .card {
-        background: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-    }
-
-    .card-header h5 {
-        margin: 0;
-        font-size: 18px;
-        color: #333;
-    }
-
-    .card-header .icon {
-        font-size: 22px;
-        color: #030A76;
-    }
-
-    .card-body {
-        font-size: 16px;
-        color: #333;
-    }
-
-    .card-body canvas {
-        width: 100% !important;
-        height: 200px !important;
-    }
-
-    #chart-counter {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 28px;
-        font-weight: bold;
-        color: #030A76;
-        font-family: sans-serif;
-        pointer-events: none;
-    }
-
-    #totalImage{
-        font-size: 28px;
-        font-weight: bold;
-        color: #030A76;
-        font-family: sans-serif;
-        pointer-events: none;
-    }
-
-    .card-body.center-align {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 150px;
-    }
-
-    .progress-container {
-        width: 80%;
-        max-width: 300px;
-        background-color: #e6e6e6;
-        border-radius: 20px;
-        overflow: hidden;
-        height: 30px;
-        position: relative;
-    }
-
-    .progress-bar {
-        height: 100%;
-        background: linear-gradient(90deg, #030A76, #4681f4);
-        width: 100%;
-        animation: fillBar 2s ease-in-out;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-        transition: width 0.6s ease;
-    }
-
-    .range-label {
-        text-align: center;
-        margin-top: 10px;
-        color: #555;
-        font-size: 14px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 15px;
-    }
-
-    table th, table td {
-        padding: 12px 15px;
-        border-bottom: 1px solid #eee;
-        text-align: left;
-        white-space: nowrap;
-    }
-
-    table th {
-        background-color: #e8ecf8;
-        font-weight: bold;
-        color: #030A76;
-        text-transform: uppercase;
-        font-size: 14px;
-    }
-
-    table tbody tr:hover {
-        background-color: #f5f5f5;
-    }
-
-
-    .card-body {
-        overflow-x: auto;
-    }
-
-    .card-body table {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: auto; 
-    }
-
-
-    /* Responsive breakpoints */
-    @media (max-width: 992px) {
-        .main-content-wrapper {
+        .content-wrap {
+            min-height: 100vh;
+            display: flex;
             flex-direction: column;
         }
-        .left-section, .right-section {
-            width: 100%;
-            max-width: 100%;
-        }
-    }
 
-    @media (max-width: 768px) {
+        .main-content-wrapper {
+            display: flex;
+            gap: 24px;
+            padding: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* --- Column structure --- */
+        .left-section {
+            flex: 1;
+            min-width: 320px;
+            max-width: 400px;
+        }
+
+        .right-section {
+            flex: 2;
+            min-width: 420px;
+        }
+
+        /* --- Card --- */
         .card {
-            padding: 15px;
+            background: #fff;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(3, 10, 118, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 18px rgba(3, 10, 118, 0.12);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
         }
 
         .card-header h5 {
-            font-size: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #030A76;
+            margin: 0;
         }
 
-        .card-body {
-            font-size: 14px;
-        }
-
-        #chart-counter {
+        .card-header .icon {
             font-size: 22px;
         }
 
-        table th, table td {
-            padding: 10px;
-            font-size: 13px;
+        /* --- Counter cards --- */
+        #chart-counter,
+        #totalImage {
+            font-size: 30px;
+            font-weight: bold;
+            color: #030A76;
+            text-align: center;
         }
-    }
 
-    @media (max-width: 480px) {
-        .progress-container {
-            width: 100%;
-            max-width: none;
+        .range-label {
+            font-weight: 600;
+            color: #444;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        /* --- Table styles --- */
+        h2 {
+            color: #030A76;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            margin-top: 10px;
         }
 
         table {
-            font-size: 13px;
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
         }
 
-        table th, table td {
-            padding: 8px;
+        table th,
+        table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e8ecf8;
+            text-align: left;
+			color: #030A76;
+			font-size: 14px;
         }
 
-        .card-body {
-            overflow-x: auto;
+        table th {
+            background-color: #f0f3ff;
+            color: #030A76;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 14px;
         }
-    }
-</style>
 
+        table tbody tr:nth-child(even) {
+            background-color: #fafbff;
+        }
 
+        table tbody tr:hover {
+            background-color: #eef2ff;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 992px) {
+            .main-content-wrapper {
+                flex-direction: column;
+                padding: 20px;
+            }
+
+            .left-section, .right-section {
+                max-width: 100%;
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 16px;
+            }
+
+            table th, table td {
+                font-size: 13px;
+                padding: 8px;
+            }
+        }
+		  #chart-counter {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			font-size: 28px;
+			font-weight: bold;
+			color: #030A76;
+			font-family: sans-serif;
+			pointer-events: none;
+		}
+
+		#totalImage{
+			font-size: 28px;
+			font-weight: bold;
+			color: #030A76;
+			font-family: sans-serif;
+			pointer-events: none;
+		}
+
+    </style>
 </head>
 
 <body>
 
     {% include 'logheader2.html' %}
-    <div class="content-wrap vh-100 d-flex flex-column" style="background-color: #F8FAFE;">
-        <div class="main flex-grow-1">
-            <div class="main-content-wrapper">
-                <div class="left-section col-md-3">
-                    <div class="top-cards-container">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between">
-                                <h5>Nombre total de dossiers</h5>
-                                <div class="icon">📦</div>
-                            </div>
-                            <div class="card-body" style="position: relative; width: 100%; height: 200px;">
-                                <canvas id="counterChart"></canvas>
-                                <div id="chart-counter">610</div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between">
-                                <h5>Nombre total de fichiers</h5>
-                                <div class="icon">📅</div>
-                            </div>							
-                            <div class="card-body" style="width: 100%; height: 200px;display: flex;flex-direction: column;justify-content: center;align-items: center;">                                
-                                <div id="totalImage">300000</div>
-								<div class="range-label" style="font-weight: 800;">Images</div>
-                            </div>
-							
-                        </div>
+
+    <div class="content-wrap" style="background-color: #F8FAFE;">
+        <div class="main-content-wrapper">
+
+            <!-- Left Section -->
+            <div class="left-section">
+                <!-- Total Dossiers -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Nombre total de dossiers</h5>
+                        <div class="icon">📦</div>
                     </div>
-                    
+                    <div class="card-body" style="position: relative; height: 220px;">
+                        <canvas id="counterChart"></canvas>
+                        <div id="chart-counter">621</div>
+                    </div>
                 </div>
-                <div class="right-section ">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between">
-                            <h5>Liste des dossier</h5>
-                            <div class="icon">🗓️</div> </div>
-                        <div class="card-body" style="max-height: 60vh;overflow-y: scroll;min-height: 40vh;">
-                            <table style="width: 100%;">
-                                <thead>
-                                    <tr>
-                                        <th style="font-weight: 800;">Dossier</th>                                        
-                                        <th style="font-weight: 800;">Images</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dossier-table-body">
-									<!-- Data will be filled by AJAX -->
-								</tbody>
-                            </table>
-                        </div>
+
+                <!-- Total Images -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Nombre total de fichiers</h5>
+                        <div class="icon">🖼️</div>
                     </div>
+                    <div class="card-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div id="totalImage">300000</div>
+                        <div class="range-label">Images</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Section -->
+            <div class="right-section">
+                <div class="card">
+                    <h2>Résumé</h2>
+                    <table id="summary">
+                        <tr>
+                            <th></th>
+                            <th>Images</th>
+                            <th>Registres</th>
+                        </tr>
+                    </table>
+
+                    <h2 class="mt-4">Datas</h2>
+                    <table id="data">
+                        <tr>
+                            <th></th>
+                            <th>Numérisés</th>
+                            <th>Traités</th>
+                            <th>En cours</th>
+                            <th>Livrés FTP/Médusa</th>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="{{url_for('static',filename='assets/js/lib/jquery.min.js')}}"></script>
-    <script src="{{url_for('static',filename='assets/js/lib/jquery.nanoscroller.min.js')}}"></script>
-    <script src="{{url_for('static',filename='assets/js/lib/menubar/sidebar.js')}}"></script>
-    <script src="{{url_for('static',filename='assets/js/lib/preloader/pace.min.js')}}"></script>
-    <script src="{{url_for('static',filename='assets/js/lib/bootstrap.min.js')}}"></script>
-    <script src="{{url_for('static',filename='assets/js/scripts.js')}}"></script>
-    <script src="{{ url_for('static', filename='assets/js/jquery.verySimpleImageViewer.min.js') }}"></script>
-    <script src="{{url_for('static',filename='assets/js/lib/calendar-2/moment.latest.min.js')}}"></script>
-    <script src="{{url_for('static',filename='assets/js/lib/calendar-2/pignose.calendar.min.js')}}"></script>
-    <script src="{{url_for('static',filename='assets/js/lib/calendar-2/pignose.init.js')}}"></script>
-    <script src="{{url_for('static',filename='assets/js/lib/weather/jquery.simpleWeather.min.js')}}"></script>
-    <script src="{{url_for('static',filename='assets/js/lib/weather/weather-init.js')}}"></script>
-    <script src="{{url_for('static',filename='assets/js/lib/circle-progress/circle-progress.min.js')}}"></script>
-    <script src="{{url_for('static',filename='assets/js/lib/circle-progress/circle-progress-init.js')}}"></script>
-    <script src="{{url_for('static',filename='assets/js/lib/sparklinechart/jquery.sparkline.min.js')}}"></script>
-    <script src="{{url_for('static',filename='assets/js/lib/sparklinechart/sparkline.init.js')}}"></script>
-    <script src="{{url_for('static',filename='assets/js/lib/owl-carousel/owl.carousel.min.js')}}"></script>
-    <script src="{{url_for('static',filename='assets/js/lib/owl-carousel/owl.carousel-init.js')}}"></script>
-    <script src="{{url_for('static',filename='assets/js/dashboard2.js')}}"></script>
+    <!-- JS Dependencies -->
+    <script src="{{ url_for('static', filename='assets/js/lib/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/lib/bootstrap.min.js') }}"></script>
 
     <script>
-    // Counter chart
-    const done = 75;
-    const remaining = 100 - done;
+        // Counter Chart
+        const done = 100;
+        const remaining = 100 - done;
+        const ctx = document.getElementById("counterChart").getContext("2d");
 
-    const ctx = document.getElementById("counterChart").getContext("2d");
+        const gradientDone = ctx.createLinearGradient(0, 0, 300, 300);
+        gradientDone.addColorStop(0, "#030A76");
+        gradientDone.addColorStop(1, "#4B65FF");
 
-    const gradientDone = ctx.createLinearGradient(0, 0, 300, 300);
-    gradientDone.addColorStop(0, "#030A76");
-    gradientDone.addColorStop(1, "#4B65FF");
+        const gradientTodo = ctx.createLinearGradient(0, 0, 0, 300);
+        gradientTodo.addColorStop(0, "#C8D1FF");
+        gradientTodo.addColorStop(1, "#E6EBFF");
 
-    const gradientTodo = ctx.createLinearGradient(0, 0, 0, 300);
-    gradientTodo.addColorStop(0, "#C8D1FF");
-    gradientTodo.addColorStop(1, "#E6EBFF");
+        new Chart(ctx, {
+            type: "doughnut",
+            data: {
+                labels: ["Done", "Remaining"],
+                datasets: [{
+                    data: [done, remaining],
+                    backgroundColor: [gradientDone, gradientTodo],
+                    borderWidth: 0,
+                    cutout: "75%"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: false }
+                }
+            }
+        });
 
-    new Chart(ctx, {
-      type: "doughnut",
-      data: {
-        labels: ["Done", "Remaining"],
-        datasets: [
-          {
-            data: [done, remaining],
-            backgroundColor: [gradientDone, gradientTodo],
-            borderWidth: 0,
-            cutout: "75%"
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: { enabled: false }
+        // Load Summary Data
+        function loadData() {
+            $.getJSON("{{ url_for('imageapp.stats') }}", function(res) {
+                let s = res.summary;
+                let d = res.data;
+
+                $("#summary").html(`
+                    <tr><th></th><th>Images</th><th>Registres</th></tr>
+                    <tr><td>A faire</td><td>${s.total_images}</td><td>${s.total_registers}</td></tr>
+                    <tr><td>Livrable</td><td>${s.livrable_images}</td><td>${s.livrable_registers}</td></tr>
+                    <tr><td>Reste à faire</td><td>${s.remaining_images}</td><td>${s.remaining_registers}</td></tr>
+                    <tr><td>% Fait</td><td><span class="badge badge-xl badge-success">${s.percent_done}%</span></td><td></td></tr>
+                `);
+
+                $("#data").html(`
+                    <tr><th></th><th>Numérisés</th><th>Traités</th><th>En cours</th><th>Livrés FTP/Médusa</th></tr>
+                    <tr><td>Dossiers</td><td>${d.dossiers_scanned}</td><td>${d.dossiers_processed}</td><td>${d.dossiers_in_progress}</td><td>${d.files_delivered || "-"}</td></tr>
+                    <tr><td>Images</td><td>${d.images_scanned}</td><td>${d.images_processed}</td><td>${d.images_in_progress}</td><td>${d.files_delivered || "-"}</td></tr>
+                    <tr><td>Ratio Scan/Livrable</td><td>${d.ratio_scan_livrable}</td><td></td><td></td><td></td></tr>
+                `);
+            });
         }
-      }
-    });
-	$(document).ready(function() {
-		// Load data from Flask endpoint after page load
-		$.ajax({
-			url: '/imageapp/get_dossier_data',
-			type: 'GET',
-			dataType: 'json',
-			success: function(data) {
-				let rows = '';
-				data.forEach(function(item) {
-					rows += `<tr>
-						<td>${item.dossier}</td>
-						<td>${item.image_count}</td>
-					</tr>`;
-				});
-				$('#dossier-table-body').html(rows);
-			},
-			error: function(xhr, status, error) {
-				console.error('Error fetching data:', error);
-			}
-		});
-	});
+
+        loadData();
+//setInterval(loadData, 5000);
     </script>
 </body>
 </html>

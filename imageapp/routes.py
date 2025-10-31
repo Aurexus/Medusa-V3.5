@@ -114,6 +114,33 @@ def imagedash():
     
     #return render_template("champagneGallery.html")  
 
+@image_bp.route("/api/stats")
+def stats():
+    cnxn = pyodbc.connect(conn_str)
+    cursor = cnxn.cursor()
+
+    # Summary
+    cursor.execute("SELECT TOP 1 * FROM ad37_summary_stats ORDER BY id DESC")
+    summary_row = cursor.fetchone()
+    summary_cols = [col[0] for col in cursor.description]
+
+    # Data
+    cursor.execute("SELECT TOP 1 * FROM ad37_data_stats ORDER BY id DESC")
+    data_row = cursor.fetchone()
+    data_cols = [col[0] for col in cursor.description]
+
+    cursor.close()
+    cnxn.close()
+
+    def row_to_dict(row, cols):
+        if not row:
+            return {}
+        return dict(zip(cols, row))
+
+    summary = row_to_dict(summary_row, summary_cols)
+    data = row_to_dict(data_row, data_cols)
+
+    return jsonify({"summary": summary, "data": data})
 
 @image_bp.route('/imageGallery')
 def imageGallery():
