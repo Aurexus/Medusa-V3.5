@@ -11,7 +11,7 @@ ACCEPT_EULA=Y apt-get install -y msodbcsql17
 source env/bin/activate
 # Point Python to the subfolder that contains app.py and imageapp/
 #cd /home/site/wwwroot
-#export PYTHONPATH=/home/site/wwwroot
+export PYTHONPATH=/home/site/wwwroot
 # Install dependencies
 pip install --user -r requirements.txt
 
