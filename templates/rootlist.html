@@ -209,7 +209,7 @@
   <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 95vw;">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Visionneuse d'images  <span id="imgCount" class="badge badge-success"></span></h5>
+        <h5 class="modal-title">Visionneuse d'images  <span id="imgCount" class="badge badge-success"></span> <span id="selectedImgName" class="text-info"></span></h5>
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">X</button>
       </div>
       <div class="modal-body p-0">
@@ -345,6 +345,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 const imgName = this.getAttribute("data-image");
                                 const imgUrl = "https://zadig.aurexus.com/AD37/" + rootName + "/" + subfolder + "/" + imgName;
                                 console.log("📷 Image URL:", imgUrl);
+								document.getElementById("selectedImgName").innerText = ` - ${imgName}`;
                                 openImageViewer(imgUrl);
                             });
                         });
