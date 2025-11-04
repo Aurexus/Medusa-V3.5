@@ -209,7 +209,7 @@
   <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 95vw;">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Visionneuse d'images</h5>
+        <h5 class="modal-title">Visionneuse d'images  <span id="imgCount" class="badge badge-success"></span></h5>
         <button type="button" class="btn btn-danger btn-close btn-close-white" data-bs-dismiss="modal">X</button>
       </div>
       <div class="modal-body p-0">
@@ -329,6 +329,7 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(data => {
                 if (data.success) {
                     if (data.images.length > 0) {
+						document.getElementById("imgCount").innerText = `${data.images.length} images`;
                         let html = '<div class="list-group">';
                         data.images.forEach(img => {
                             html += `<a href="#" class="list-group-item list-group-item-action image-item" data-image="${img}">
