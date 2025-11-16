@@ -13,7 +13,7 @@ source env/bin/activate
 cd /home/site/wwwroot
 export PYTHONPATH=/home/site/wwwroot
 # Install dependencies
-#pip install --user -r requirements.txt
+pip install --user -r requirements.txt
 
 # Set environment variables
 export FLASK_ENV=production
