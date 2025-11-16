@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AUREXUS</title>
+
+  <!-- ================= Favicon ================== -->
+  <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+  <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+  <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+  <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+  <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
+
+  <!-- Styles -->
+  <link href="{{url_for('static',filename='assets/css/lib/calendar2/pignose.calendar.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='assets/css/lib/chartist/chartist.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='assets/css/lib/font-awesome.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='assets/css/lib/themify-icons.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='assets/css/lib/owl.carousel.min.css')}}" rel="stylesheet" />
+  <link href="{{url_for('static',filename='assets/css/lib/owl.theme.default.min.css')}}" rel="stylesheet" />
+  <link href="{{url_for('static',filename='assets/css/lib/weather-icons.css')}}" rel="stylesheet" />
+  <link href="{{url_for('static',filename='assets/css/lib/menubar/sidebar.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='assets/css/lib/bootstrap.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='assets/css/lib/helper.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='assets/css/style.css')}}" rel="stylesheet">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- DataTables & Icons -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+	:root {
+      --primary: #3E5FAA;
+      --accent: #edf0ff;
+      --white: #ffffff;
+      --gray-light: #f8f9fb;
+      --gray-border: #e0e3eb;
+    }
+
+    .content-wrap {
+		height: calc(100vh - 80px); 
+		flex: 1;
+		display: flex;
+		overflow: hidden;
+		padding: 12px;
+		gap: 6px;
+    }
+
+	/* Left Panel */
+    .left-panel {
+		min-width: 30%;
+		max-width: 60%;
+		background: var(--white);
+		border-radius: 12px;
+		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+		padding: 16px;
+		overflow-y: auto;
+		transition: width 0.25s ease;
+    }
+
+   /* Divider */
+   .resizer {
+		flex: 0 0 16px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background-color: transparent;
+		z-index: 10;
+	}
+
+	.resizer[data-direction="vertical"] {
+		cursor: col-resize;
+	}
+
+	.resizer[data-direction="horizontal"] {
+		cursor: row-resize;
+	}
+
+	.resizer-handle {
+		width: 6px;
+		height: 40px;
+		background-color:  #cdd6e1;
+		border-radius: 3px;
+		transition: background-color 0.2s ease;
+	}
+
+	.resizer:hover .resizer-handle,
+	.resizer:active .resizer-handle {
+		background-color:  #e6f2ff;
+	}
+
+	.resizer[data-direction="horizontal"] .resizer-handle {
+		width: 40px;
+		height: 6px;
+	}
+
+
+    /* Right Panel */
+    .right-panel {
+		flex: 1;
+		background: var(--white);
+		border-radius: 12px;
+		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+		padding: 12px;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		position: relative;
+    }
+
+    #your_div_image_container {
+		flex: 1;
+		position: relative;
+		background: #f0f0f0;
+		border-radius: 10px;
+		overflow: hidden;
+    }
+
+    /* Thumbnail bar */
+    .thumbnail-bar-container {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: var(--gray-light);
+		border-radius: 8px;
+		padding: 6px;
+		margin-top: 10px;
+		gap: 10px;
+    }
+
+    .nav-btn {
+		background: var(--white);
+		border: 1px solid var(--gray-border);
+		border-radius: 50%;
+		width: 32px;
+		height: 32px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: 0.3s;
+		color: var(--primary);
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+		flex-shrink: 0;
+    }
+
+    .nav-btn:hover {
+		background: var(--primary);
+		color: white;
+    }
+
+    .thumbnail-bar {
+		display: flex;
+		justify-content: center;
+		gap: 10px;
+		overflow-x: auto;
+		scroll-behavior: smooth;
+		flex: 1;
+		padding: 4px 0;
+    }
+
+    .thumbnail-bar img {
+		width: 80px;
+		height: 60px;
+		object-fit: cover;
+		border-radius: 6px;
+		cursor: pointer;
+		transition: 0.3s;
+		border: 2px solid transparent;
+		flex-shrink: 0;
+    }
+
+    .thumbnail-bar img:hover {
+		transform: scale(1.05);
+		border-color: var(--primary);
+    }
+
+    .thumbnail-bar img.active-thumb {
+      	border-color: var(--primary);
+    }
+
+    /* Image Viewer Arrows */
+    .viewer-arrow {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 42px;
+		height: 42px;
+		background: #ffffff;
+		color: #3E5FAA;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 20px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+		cursor: pointer;
+		transition: all 0.3s ease;
+		z-index: 20;
+	}
+
+	.viewer-arrow:hover {
+		background: #3E5FAA;
+		color: #ffffff;
+		box-shadow: 0 4px 12px rgba(62, 95, 170, 0.4);
+	}
+
+	.viewer-arrow.left {
+		left: 12px;
+	}
+
+	.viewer-arrow.right {
+		right: 12px;
+	}
+
+    /* DataTable styling */
+    table.dataTable {
+		width: 100% !important;
+		border-collapse: collapse;
+		font-size: 14px;
+		border-radius: 10px;
+		overflow: hidden;
+    }
+
+    table.dataTable thead {
+		background: var(--primary);
+		/* color: var(--white); */
+		color: white;
+		font-weight: 600;
+    }
+
+	table.dataTable th{
+		color: white;
+	}
+
+    table.dataTable tbody tr:hover {
+		background: var(--accent) !important;
+		cursor: pointer;
+    }
+
+    table.dataTable tbody tr.active {
+		background: #3e5eaa21 !important;
+		color: black;
+
+    }
+
+    .edit-btn {
+		color: var(--primary);
+		font-size: 16px;
+		padding: 4px 6px;
+		border-radius: 5px;
+		transition: 0.3s;
+		text-decoration: none;
+    }
+
+    .edit-btn:hover {
+		background: var(--primary);
+		color: var(--white);
+    }
+
+	/* Pagination styling */
+	.dataTables_wrapper .dataTables_paginate {
+		margin-top: 12px;
+		text-align: right;
+	}
+
+	.dataTables_wrapper .dataTables_paginate .paginate_button {
+		border: none;
+		border-radius: 6px;
+		padding: 6px 12px;
+		margin: 0 2px;
+		background: var(--white);
+		color: var(--primary) !important;
+		font-weight: 500;
+		transition: 0.2s ease;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+	}
+
+	.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+		background: var(--primary);
+		color: var(--white) !important;
+		box-shadow: 0 3px 6px rgba(62, 95, 170, 0.3);
+	}
+
+	.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+		background: var(--primary) !important;
+		color: var(--white) !important;
+		box-shadow: 0 3px 6px rgba(62, 95, 170, 0.3);
+	}
+
+	/* Remove ugly default borders */
+	.dataTables_wrapper .dataTables_paginate .paginate_button:active {
+		box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.15);
+	}
+
+	
+  </style>
+</head>
+
+<body>
+  	{% include 'logheader.html' %}
+  	<div class="content-wrap">
+			<!-- panel -->
+			<div class="left-panel">
+				<table id="myTable" class="display">
+					<thead>
+						<tr>
+							<th>Image</th>
+							<th>Category</th>
+							<th>Output</th>
+							<th>View</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr data-img="{{ url_for('static', filename='Images/img_1.png') }}">
+							<td>0001.JPG</td>
+							<td>Unknown</td>
+							<td></td>
+							<td><a href="#" class="edit-btn"><i class="fas fa-edit"></i></a></td>
+						</tr>
+						<tr data-img="{{ url_for('static', filename='Images/img_2.png') }}">
+							<td>0002.JPG</td>
+							<td>Unknown</td>
+							<td></td>
+							<td><a href="#" class="edit-btn"><i class="fas fa-edit"></i></a></td>
+						</tr>
+						<tr data-img="{{ url_for('static', filename='Images/img_3.png') }}">
+							<td>0003.JPG</td>
+							<td>Proces verbal</td>
+							<td></td>
+							<td><a href="#" class="edit-btn"><i class="fas fa-edit"></i></a></td>
+						</tr>
+						<tr data-img="{{ url_for('static', filename='Images/img_4.png') }}">
+							<td>0004.JPG</td>
+							<td>Proces verbal</td>
+							<td></td>
+							<td><a href="#" class="edit-btn"><i class="fas fa-edit"></i></a></td>
+						</tr>
+						<tr data-img="{{ url_for('static', filename='Images/img_5.png') }}">
+							<td>0005.JPG</td>
+							<td>Proces verbal</td>
+							<td></td>
+							<td><a href="#" class="edit-btn"><i class="fas fa-edit"></i></a></td>
+						</tr>
+						<tr data-img="{{ url_for('static', filename='Images/img_6.png') }}">
+							<td>0006.JPG</td>
+							<td>Proces verbal</td>
+							<td></td>
+							<td><a href="#" class="edit-btn"><i class="fas fa-edit"></i></a></td>
+						</tr>
+						<tr data-img="{{ url_for('static', filename='Images/img_7.png') }}">
+							<td>0007.JPG</td>
+							<td>Proces verbal</td>
+							<td></td>
+							<td><a href="#" class="edit-btn"><i class="fas fa-edit"></i></a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="resizer" data-direction="vertical">
+        		<div class="resizer-handle"></div>
+      		</div>
+
+
+			<div class="right-panel">
+				<div id="your_div_image_container"></div>
+				<!-- Left & Right Arrows -->
+				<div class="viewer-arrow left" id="viewerPrev"><i class="fas fa-chevron-left"></i></div>
+				<div class="viewer-arrow right" id="viewerNext"><i class="fas fa-chevron-right"></i></div>
+
+				<div class="thumbnail-bar-container">
+					<div class="nav-btn" id="prevBtn"><i class="fas fa-chevron-left"></i></div>
+					<div class="thumbnail-bar" id="thumbnailBar"></div>
+					<div class="nav-btn" id="nextBtn"><i class="fas fa-chevron-right"></i></div>
+				</div>
+			</div>
+    </div>
+
+  <!-- Scripts -->
+	<script src="{{url_for('static',filename='assets/js/lib/jquery.min.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/lib/jquery.nanoscroller.min.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/lib/menubar/sidebar.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/lib/preloader/pace.min.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/lib/bootstrap.min.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/scripts.js')}}"></script>
+	<script src="{{ url_for('static', filename='assets/js/jquery.verySimpleImageViewer.min.js') }}"></script>
+	<script src="{{url_for('static',filename='assets/js/lib/calendar-2/moment.latest.min.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/lib/calendar-2/pignose.calendar.min.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/lib/calendar-2/pignose.init.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/lib/weather/jquery.simpleWeather.min.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/lib/weather/weather-init.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/lib/circle-progress/circle-progress.min.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/lib/circle-progress/circle-progress-init.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/lib/chartist/chartist.min.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/lib/sparklinechart/jquery.sparkline.min.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/lib/sparklinechart/sparkline.init.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/lib/owl-carousel/owl.carousel.min.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/lib/owl-carousel/owl.carousel-init.js')}}"></script>
+	<script src="{{url_for('static',filename='assets/js/dashboard2.js')}}"></script>
+	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  	
+	<!-- Split Resizing Script -->
+
+  <script>
+    $(document).ready(function () {
+      	// --- Resizer Logic ---
+		const resizer = document.querySelector('.resizer');
+		const leftPanel = document.querySelector('.left-panel');
+		const rightPanel = document.querySelector('.right-panel');
+		const mainContainer = document.querySelector('.content-wrap');
+
+  		let isResizing = false;
+
+		resizer?.addEventListener('mousedown', (e) => {
+			isResizing = true;
+			let startX = e.clientX;
+			let startY = e.clientY;
+			if (!leftPanel) return;
+			let startLeftWidth = leftPanel.offsetWidth;
+			let startLeftHeight = leftPanel.offsetHeight;
+
+			document.body.style.userSelect = 'none';
+			document.body.style.pointerEvents = 'none';
+			resizer.style.cursor = isVerticalLayout() ? 'row-resize' : 'col-resize';
+
+			const onMouseMove = (moveEvent) => {
+			if (!isResizing) return;
+			if (!mainContainer || !leftPanel) return;
+
+			if (isVerticalLayout()) {
+				const dy = moveEvent.clientY - startY;
+				const newLeftHeight = startLeftHeight + dy;
+				const containerHeight = mainContainer.offsetHeight;
+				if (newLeftHeight > 100 && (containerHeight - newLeftHeight) > 100) {
+				leftPanel.style.flex = `0 0 ${newLeftHeight}px`;
+				}
+			} else {
+				const dx = moveEvent.clientX - startX;
+				const newLeftWidth = startLeftWidth + dx;
+				const containerWidth = mainContainer.offsetWidth;
+				if (newLeftWidth > 250 && (containerWidth - newLeftWidth) > 250) {
+				leftPanel.style.flex = `0 0 ${newLeftWidth}px`;
+				}
+			}
+			};
+
+			const onMouseUp = () => {
+			isResizing = false;
+			document.removeEventListener('mousemove', onMouseMove);
+			document.removeEventListener('mouseup', onMouseUp);
+			document.body.style.userSelect = '';
+			document.body.style.pointerEvents = '';
+			resizer.style.cursor = isVerticalLayout() ? 'row-resize' : 'col-resize';
+			};
+
+			document.addEventListener('mousemove', onMouseMove);
+			document.addEventListener('mouseup', onMouseUp);
+		});
+
+  		const isVerticalLayout = () => window.innerWidth <= 800;
+
+		window.addEventListener('resize', () => {
+			if (leftPanel) leftPanel.style.flex = '';
+			if (rightPanel) rightPanel.style.flex = '';
+			if (resizer) {
+			resizer.setAttribute('data-direction', isVerticalLayout() ? 'horizontal' : 'vertical');
+			resizer.style.cursor = isVerticalLayout() ? 'row-resize' : 'col-resize';
+			}
+		});
+
+		if (resizer) {
+			resizer.setAttribute('data-direction', isVerticalLayout() ? 'horizontal' : 'vertical');
+		}
+
+      	/** DataTable **/
+    	
+		$('#myTable').DataTable({
+			orderClasses: false,
+			pageLength: 50,
+			stripeClasses: [],
+			language: {
+				processing:     "Traitement en cours...",
+				search:         "Rechercher&nbsp;:",
+				lengthMenu:     "Afficher _MENU_ éléments",
+				info:           "Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments",
+				infoEmpty:      "Affichage de l'élément 0 à 0 sur 0 élément",
+				infoFiltered:   "(filtré à partir de _MAX_ éléments au total)",
+				infoPostFix:    "",
+				loadingRecords: "Chargement en cours...",
+				zeroRecords:    "Aucun élément correspondant trouvé",
+				emptyTable:     "Aucune donnée disponible dans le tableau",
+				paginate: {
+					first:      "Premier",
+					previous:   "Précédent",
+					next:       "Suivant",
+					last:       "Dernier"
+				},
+				aria: {
+					sortAscending:  ": activer pour trier la colonne par ordre croissant",
+					sortDescending: ": activer pour trier la colonne par ordre décroissant"
+				}
+			}
+		});
+
+      /** Image viewer **/
+	const thumbs = [
+	 	"{{ url_for('static', filename='Images/img_1.png') }}",
+  		"{{ url_for('static', filename='Images/img_2.png') }}",
+  		"{{ url_for('static', filename='Images/img_3.png') }}",
+  		"{{ url_for('static', filename='Images/img_4.png') }}",
+  		"{{ url_for('static', filename='Images/img_5.png') }}",
+  		"{{ url_for('static', filename='Images/img_4.png') }}",
+  		"{{ url_for('static', filename='Images/img_1.png') }}",
+  		"{{ url_for('static', filename='Images/img_2.png') }}",
+  		"{{ url_for('static', filename='Images/img_3.png') }}",
+  		"{{ url_for('static', filename='Images/img_4.png') }}"
+	];
+
+	const thumbBar = $("#thumbnailBar");
+	let currentIndex = 0;
+	let startIndex = 0; 
+	const thumbsPerPage = 10;
+
+	function loadImage(imageSrc) {
+	$('#your_div_image_container').empty().verySimpleImageViewer({
+		imageSource: imageSrc,
+		frame: ['100%', '100%'],
+		maxZoom: '800%',
+		zoomFactor: '10%',
+		mouse: true,
+		keyboard: true,
+		toolbar: true
+	});
+	}
+
+	// render a set of thumbnails (10 per page)
+	function renderThumbnails() {
+	thumbBar.empty();
+	const endIndex = Math.min(startIndex + thumbsPerPage, thumbs.length);
+	for (let i = startIndex; i < endIndex; i++) {
+		const src = thumbs[i];
+		const img = $("<img>").attr("src", src);
+		if (i === currentIndex) img.addClass("active-thumb");
+		img.on("click", function() {
+		$(".thumbnail-bar img").removeClass("active-thumb");
+		$(this).addClass("active-thumb");
+		currentIndex = i;
+		loadImage(src);
+		});
+		thumbBar.append(img);
+	}
+	}
+
+	function updateViewer() {
+	$(".thumbnail-bar img").removeClass("active-thumb");
+	const pageStart = Math.floor(currentIndex / thumbsPerPage) * thumbsPerPage;
+	if (pageStart !== startIndex) {
+		startIndex = pageStart;
+		renderThumbnails();
+	}
+	const currentThumbIndex = currentIndex % thumbsPerPage;
+	$(`.thumbnail-bar img:eq(${currentThumbIndex})`).addClass("active-thumb");
+	loadImage(thumbs[currentIndex]);
+	}
+
+	// initial render
+	renderThumbnails();
+	loadImage(thumbs[0]);
+
+	/** Thumbnail navigation buttons **/
+	$("#prevBtn").click(() => {
+	if (startIndex > 0) {
+		startIndex -= thumbsPerPage;
+		renderThumbnails();
+	}
+	});
+
+	$("#nextBtn").click(() => {
+	if (startIndex + thumbsPerPage < thumbs.length) {
+		startIndex += thumbsPerPage;
+		renderThumbnails();
+	}
+	});
+
+	/** Image viewer arrow navigation **/
+	$("#viewerPrev").click(() => {
+	currentIndex = (currentIndex - 1 + thumbs.length) % thumbs.length;
+	updateViewer();
+	});
+
+	$("#viewerNext").click(() => {
+	currentIndex = (currentIndex + 1) % thumbs.length;
+	updateViewer();
+	});
+
+	/** Table click to change image **/
+	 $('#myTable tbody').on('click', 'tr', function() {
+	 $('#myTable tbody tr').removeClass('active');
+	 $(this).addClass('active');
+	 const imgSrc = $(this).data('img');
+	 const index = thumbs.indexOf(imgSrc);
+	 if (index !== -1) {
+	 	currentIndex = index;
+	 	updateViewer();
+	 }
+	 });
+
+	});  
+  </script>
+</body>
+</html>
